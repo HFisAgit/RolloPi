@@ -44,6 +44,7 @@
             $luefter = [];
             $rollaeden = [];
             $path_to_regeln = "/home/harald/regeln.json";
+            $path_to_rolladiono = "/home/harald/Rolladoino.sh";
 
 
             # fülle die Hardware
@@ -58,7 +59,7 @@
                 'stufe' => '2'
             ];
             array_push($luefter, $newLufter2);
-
+            
             $newshutter1 = [
                 'name' => 'Küche',
                 'pos' => '1'
@@ -70,6 +71,18 @@
                 'pos' => '0'
             ];
             array_push($rollaeden, $newshutter2);
+
+            $newshutter3 = [
+                'name' => 'Terrasse',
+                'pos' => '0'
+            ];
+            array_push($rollaeden, $newshutter3);
+
+            $newshutter4 = [
+                'name' => 'Wohnzimmer',
+                'pos' => '0'
+            ];
+            array_push($rollaeden, $newshutter4);
 
 
             # lade Regeln aus Datei
@@ -88,10 +101,118 @@
                 array_push($rules, $newContact);
                 file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
             }
+            if (isset($_POST['morningearly']))
+            {
+                if (($timestamp = strtotime($_POST['morningearly'])) === false) 
+                {
+                    echo "ERROR die Zeit hat das falsche Format.";
+                }
+                else
+                {
+                    $rules['morgens'] = date('G:i:s', $timestamp);
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                }
+
+            }
+            if (isset($_POST['morninglate']))
+            {
+                if (($timestamp = strtotime($_POST['morninglate'])) === false) 
+                {
+                    echo "ERROR die Zeit hat das falsche Format.";
+                }
+                else
+                {
+                    $rules['morgenslate'] = date('G:i:s', $timestamp);
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                }
+            }
+            if (isset($_POST['eveningearly']))
+            {
+                if (($timestamp = strtotime($_POST['eveningearly'])) === false) 
+                {
+                    echo "ERROR die Zeit hat das falsche Format.";
+                }
+                else
+                {
+                    $rules['abends'] = date('G:i:s', $timestamp);
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                }
+            }
+            if (isset($_POST['eveninglate']))
+            {
+                if (($timestamp = strtotime($_POST['eveninglate'])) === false) 
+                {
+                    echo "ERROR die Zeit hat das falsche Format.";
+                }
+                else
+                {
+                    $rules['abendslate'] = date('G:i:s', $timestamp);
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                }
+            }
+            if (isset($_POST['Sonne']))
+            {
+                if ($_POST['Sonne'] == "True" || $_POST['Sonne'] == "true")
+                {
+                    $rules['sonne']['ein'] = True;
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                }
+                else if ($_POST['Sonne'] == "False" || $_POST['Sonne'] == "false")
+                {
+                    $rules['sonne']['ein'] = False;
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                }
+                else
+                {
+                    echo 'ERROR kein gültiger boolscher Ausdruck!';
+                }
+                
+            }
+            if (isset($_POST['SonneRunter']))
+            {
+                if (($timestamp = strtotime($_POST['SonneRunter'])) === false) 
+                {
+                    echo "ERROR die Zeit hat das falsche Format.";
+                }
+                else
+                {
+                    $rules['sonne']['runter'] = date('G:i:s', $timestamp);
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                }
+            }
+            if (isset($_POST['SonneHoch']))
+            {
+                if (($timestamp = strtotime($_POST['SonneHoch'])) === false) 
+                {
+                    echo "ERROR die Zeit hat das falsche Format.";
+                }
+                else
+                {
+                    $rules['sonne']['hoch'] = date('G:i:s', $timestamp);
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                }
+            }
+            if (isset($_POST['LuftReduzieren']))
+            {
+                if ($_POST['LuftReduzieren'] == "True" || $_POST['LuftReduzieren'] == "true")
+                {
+                    $rules['luftreduziert'] = True;
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                }
+                else if ($_POST['LuftReduzieren'] == "False" || $_POST['LuftReduzieren'] == "false")
+                {
+                    $rules['luftreduziert'] = False;
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                }
+                else
+                {
+                    echo 'ERROR kein gültiger boolscher Ausdruck!';
+                }
+            }
 
             # Überschrift der Seiten
             if ($_GET['page'] == 'start') {
-                $headline = 'Ein netter Text';
+                $headline = 'Haussteuerung';
             }
 
             if ($_GET['page'] == 'rollaeden') {
@@ -113,38 +234,73 @@
             # Überschrift tatsächlich anzeigen
             echo '<h1>' . $headline . '</h1>';
 
-###########################################################################
+######################################################################################################
+# ************************************************************************************************** #
+######################################################################################################
+
             # Hier kommt der Inhalt der Seiten
-            if ($_GET['page'] == 'delete') 
-            {
-                echo '<p>Dein Kontakt wurde gelöscht</p>';
-                # Wir laden die Nummer der Reihe aus den URL Parametern
-                $index = $_GET['delete']; 
-
-                # Wir löschen die Stelle aus dem Array 
-                unset($rules[$index]); 
-
-                # Tabelle erneut speichern in Datei contacts.txt
-                file_put_contents('contacts.txt', json_encode($rules, JSON_PRETTY_PRINT));
-            } 
+            
             # Seite zum rolläden fahren
             if ($_GET['page'] == 'fahreshutter') 
             {
-                $richt = $_GET['richtung'];
-                echo '<p>' . 'Richtung: ' . $richt . '</p>';
-                echo '<p>' . 'device: ' . $_GET['device'] . '</p>';
+                $deviceId;
+                $richtung;
 
+                if ($_GET['richtung'] == 'runter')
+                {
+                    $richtung = 'CMD_Rolladen_Runter';
+                }
+                else if($_GET['richtung'] == 'hoch')
+                {
+                    $richtung = 'CMD_Rolladen_Hoch';
+                }
+                else if($_GET['richtung'] == 'stop')
+                {
+                    $richtung = 'CMD_Rolladen_Stop';
+                }
 
-                header('?page=rollaeden');
+                if( $_GET['device'] == 'Küche')
+                {
+                    $deviceId = '0x0D';
+                }
+                else if( $_GET['device'] == 'WC')
+                {
+                    $deviceId = '0x0F';
+                }
+                else if( $_GET['device'] == 'Terrasse')
+                {
+                    $deviceId = '0x1F';
+                }
+                elseif( $_GET['device'] == 'Wohnzimmer')
+                {
+                    $deviceId = '0x0C';
+                }
+                
+                $command_with_parameter = $path_to_rolladiono . " " . $deviceId . " " . $richtung;
+                exec($command_with_parameter);
+
+                # zurück zur Rolladenseite...
+                header('Location: index.php?page=rollaeden');
             } 
             #Seite zum Lüfter schalten
-            if ($_GET['page'] == 'schaltelufter') 
+            else if ($_GET['page'] == 'schaltelufter') 
             {
-                echo '<p>' . 'Stufe: ' . $_GET['stufe'] . '</p>';
-                echo '<p>' . 'device: ' . $_GET['device'] . '</p>';
+                $deviceId;
+                
+                if( $_GET['device'] == 'Küche')
+                {
+                    $deviceId = '0x0D';
+                }
+                else if( $_GET['device'] == 'WC')
+                {
+                    $deviceId = '0x0F';
+                }
 
+                $command_with_parameter = $path_to_rolladiono . " " . $deviceId . " " . "CMD_Luefter " . $_GET['stufe'];
+                exec($command_with_parameter);
 
-                header('?page=luefter');
+                # zurück zur Lüfter seite
+                header('Location: index.php?page=luefter');
             } 
             # Inhalt von Lüftern
             else if ($_GET['page'] == 'luefter') {
@@ -193,7 +349,7 @@
             } 
             else if ($_GET['page'] == 'contacts') {
                 echo "
-                    <p>Auf dieser Seite hast du einen Überblick über deine <b>Kontakte</b></p>
+                    <p>Diese Seite Kann gelöscht werden. Die ist nur noch zum Abschreiben da... <b>Kontakte</b></p>
                 ";
 
                 foreach ($rules as $index=>$row) {
@@ -211,42 +367,114 @@
                     </div>
                     ";
                 }
+            # Brauche ich wirklich ein Impressum?? 
             } else if ($_GET['page'] == 'legal') {
                 echo "
                     Hier kommt das Impressum hin
                 ";
+            # Hier die Regeln! Das wird noch schwirig..... 
             } else if ($_GET['page'] == 'editRules') {
                 echo "
                     <div>
                         Auf dieser Seite kannst du die Regeln verwalten
                     </div>
+
                     <form action='?page=contacts' method='POST'>
                         <div>
-                            <a>Zeit Abends</a>
-                            <input placeholder='00:00:00' name='morning'>
+                            <a>Zeit Morgens früherstens</a>
+                            <a> -- hier kommt der aktuelle Wert hin -- </a>
                         </div>
                         <div>
-                            <a>Zeit Abends</a>
-                            <input placeholder='00:00:00' name='evening'> 
+                            <a>Neue Zeit: </a>
+                            <input placeholder='00:00:00' name='morningearly'>
+                            <button type='Submit'>Absenden</button>
                         </div>
-                        <div>
-                            <a>Sonnenautomatik</a>
-                            <input placeholder='true / false' name='Sonne'> 
-                        </div>
-                        <div>
-                            <a>Sonnenautomatik Runter</a>
-                            <input placeholder='00:00:00' name='SonneRunter'> 
-                        </div>
-                        <div>
-                            <a>Sonnenautomatik och</a>
-                            <input placeholder='00:00:00' name='SonneHoch'> 
-                        </div>
-                        <div>
-                            <a>Lüfter reduzieren</a>
-                            <input placeholder='true / false' name='LuftReduzieren'> 
-                        </div>
-                        <button type='Submit'>Absenden</button>
                     </form>
+                    
+                    <form action='?page=contacts' method='POST'>
+                        <div>
+                            <a>Zeit Morgens spätestens</a>
+                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                        </div>
+                        <div>
+                            <a>Neue Zeit: </a>
+                            <input placeholder='00:00:00' name='morninglate'>
+                            <button type='Submit'>Absenden</button>
+                        </div>
+                    </form>
+                    
+                    <form action='?page=editRules' method='POST'>
+                        <div>
+                            <a> Zeit Abends frühestens</a>
+                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                        </div>
+                        <div>
+                            <a>Neue Zeit: </a>
+                            <input placeholder='00:00:00' name='eveningearly'>
+                            <button type='Submit'>Absenden</button>
+                        </div>
+                    </form>
+                    
+                    <form action='?page=editRules' method='POST'>
+                        <div>
+                            <a> Zeit Abends spätestens</a>
+                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                        </div>
+                        <div>
+                            <a>Neue Zeit: </a>
+                            <input placeholder='00:00:00' name='eveninglate'>
+                            <button type='Submit'>Absenden</button>
+                        </div>
+                    </form>
+                    
+                    <form action='?page=editRules' method='POST'>
+                        <div>
+                            <a> Sonnenautomatik </a>
+                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                        </div>
+                        <div>
+                            <a>Ein/Aus schalten: </a>
+                            <input placeholder='true / false' name='Sonne'>
+                            <button type='Submit'>Absenden</button>
+                        </div>
+                    </form>
+
+                    <form action='?page=editRules' method='POST'>
+                        <div>
+                            <a> Sonnenautomatik Runter </a>
+                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                        </div>
+                        <div>
+                            <a>Neue Zeit: </a>
+                            <input placeholder='00:00:00' name='SonneRunter'>
+                            <button type='Submit'>Absenden</button>
+                        </div>
+                    </form>
+
+                    <form action='?page=editRules' method='POST'>
+                        <div>
+                            <a> Sonnenautomatik Hoch </a>
+                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                        </div>
+                        <div>
+                            <a>Neue Zeit: </a>
+                            <input placeholder='00:00:00' name='SonneHoch'>
+                            <button type='Submit'>Absenden</button>
+                        </div>
+                    </form>
+
+                    <form action='?page=editRules' method='POST'>
+                        <div>
+                            <a> Lüfter reduzieren </a>
+                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                        </div>
+                        <div>
+                            <a>Ein/Aus schalten: </a>
+                            <input placeholder='true / false' name='LuftReduzieren'>
+                            <button type='Submit'>Absenden</button>
+                        </div>
+                    </form>
+                    
                 ";
             } else {
                 echo 'Du bist auf der Startseite!';
