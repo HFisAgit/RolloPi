@@ -1,0 +1,10 @@
+{
+    "morgens":"7:00:00",
+    "abends":"21:00:00",
+    "sonne":{
+        "ein":false,
+        "runter":"11:00:00",
+        "hoch":"17:00"
+    },
+    "luftreduziert":true
+}
