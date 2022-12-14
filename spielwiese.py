@@ -7,13 +7,18 @@ from json import JSONEncoder
 
 sonnenschutz = {
     "ein": False,
-    "runter": datetime.datetime.now(),
-    "hoch": datetime.datetime.now()
+    "runter": datetime.time,
+    "hoch": datetime.time
+}
+
+rollozeit = {
+    "early": datetime.time,
+    "late": datetime.time
 }
 
 employee = {
-    "morgens": datetime.datetime.now(),
-    "abends": datetime.datetime.now(),
+    "morgens": rollozeit,
+    "abends": rollozeit,
     "luftreduziert": True,
     "sonne": sonnenschutz
 }
@@ -40,7 +45,7 @@ print("Encode DateTime Object into JSON using custom JSONEncoder")
 employeeJSONData = json.dumps(employee, indent=4, cls=DateTimeEncoder)
 print(employeeJSONData)
 
-path_regeln = '/var/www/html/php-kontaktbuch/spielwiese.json'
+path_regeln = '/var/www/html/RolloPi/spielwiese.json'
 
 with open(path_regeln, 'w', encoding='utf-8') as f:
     json.dump(employee, f, ensure_ascii=False, indent=4, cls=DateTimeEncoder)

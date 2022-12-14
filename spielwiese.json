@@ -1,10 +1,16 @@
 {
-    "morgens": "2022-11-29T20:48:02.583877",
-    "abends": "2022-11-29T20:48:02.583878",
+    "morgens": {
+        "early": null,
+        "late": null
+    },
+    "abends": {
+        "early": null,
+        "late": null
+    },
     "luftreduziert": true,
     "sonne": {
         "ein": false,
-        "runter": "2022-11-29T20:48:02.583870",
-        "hoch": "2022-11-29T20:48:02.583876"
+        "runter": null,
+        "hoch": null
     }
 }

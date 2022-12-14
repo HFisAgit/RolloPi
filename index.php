@@ -92,15 +92,6 @@
             }
 
             # Speichere neue Regeln falls nötig
-            if (isset($_POST['name']) && isset($_POST['phone'])) {
-                echo 'Kontakt <b>' . $_POST['name'] . '</b> wurde hinzugefügt';
-                $newContact = [
-                    'name' => $_POST['name'],
-                    'phone' => $_POST['phone']
-                ];
-                array_push($rules, $newContact);
-                file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
-            }
             if (isset($_POST['morningearly']))
             {
                 if (($timestamp = strtotime($_POST['morningearly'])) === false) 
@@ -109,7 +100,7 @@
                 }
                 else
                 {
-                    $rules['morgens'] = date('G:i:s', $timestamp);
+                    $rules['morgens']['early'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
 
@@ -122,7 +113,7 @@
                 }
                 else
                 {
-                    $rules['morgenslate'] = date('G:i:s', $timestamp);
+                    $rules['morgens']['late'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
             }
@@ -134,7 +125,7 @@
                 }
                 else
                 {
-                    $rules['abends'] = date('G:i:s', $timestamp);
+                    $rules['abends']['early'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
             }
@@ -146,7 +137,7 @@
                 }
                 else
                 {
-                    $rules['abendslate'] = date('G:i:s', $timestamp);
+                    $rules['abends']['late'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
             }
