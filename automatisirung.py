@@ -28,7 +28,8 @@ def stringToTime(timestring):
 print('Hello World!')
 
 # initialisire Program
-path_regeln = '/var/www/html/RolloPi/regeln.json'
+path_regeln = '/home/pi/gitRepos/RolloPi/regeln.json'
+#path_regeln = '/var/www/html/RolloPi/regeln.json'
 #path_sonne = '/home/harald/daten/BackupUSB/fries/suntimes'
 path_rolladoino = '/home/harald/daten/BackupUSB/fries/Rolladoino.py'
 heuteSchonSonnenaufgang = False
