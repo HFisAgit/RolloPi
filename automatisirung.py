@@ -30,8 +30,12 @@ print('Hello World!')
 
 struct_time = time.strptime("7:03:45", '%H:%M:%S')
 print(struct_time)
-dt_test = datetime.fromtimestamp(mktime(struct_time))
+lala = mktime(struct_time)
+print(lala)
+dt_test = datetime.fromtimestamp(lala)
 print(dt_test)
+
+print('end first test')
 
 str_time_fkt = stringToTime('7:03:45')
 print(str_time_fkt)
