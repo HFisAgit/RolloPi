@@ -28,6 +28,9 @@ def stringToTime(timestring):
 
 print('Hello World!')
 
+struct_time = time.strptime("7:03:45", '%H:%M:%S')
+print(struct_time)
+
 # initialisire Program
 path_regeln = '/home/pi/gitRepos/RolloPi/regeln.json'
 #path_regeln = '/var/www/html/RolloPi/regeln.json'
