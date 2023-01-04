@@ -20,6 +20,7 @@ def is_time_between(begin_time, end_time, check_time=None):
         return check_time >= begin_time or check_time <= end_time
 
 def stringToTime(timestring):
+    print('fkt_stringToTime')
     print(timestring)
     st_time = time.strptime(timestring, '%H:%M:%S')
     dt = datetime.fromtimestamp(mktime(st_time))
