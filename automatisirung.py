@@ -80,7 +80,7 @@ while heuteSchonSonnenaufgang == False:
     morgensspaet = stringToTime(data['morgens']['late'])
     
     if (startzeit.time() > morgensfrueh and is_time_between(startzeit, startzeit + delta_time, sunrise)) or \
-        (is_time_between(startzeit, startzeit + delta_time, morgensspaet)):
+        (is_time_between(startzeit.time(), (startzeit + delta_time).time(), morgensspaet)):
         os.system('./Rolladoino.py 0x0c CMD_Rolladen_Hoch')
         os.system('./Rolladoino.py 0x0d CMD_Rolladen_Hoch')
         os.system('./Rolladoino.py 0x0f CMD_Rolladen_Hoch')
@@ -93,7 +93,7 @@ while heuteSchonSonnenaufgang == False:
     abendsspaet = stringToTime(data['abends']['late'])
     
     if (startzeit.time() > abendsfrueh and is_time_between(startzeit, startzeit + delta_time, sunset)) or \
-        (is_time_between(startzeit, startzeit + delta_time, abendsspaet)):
+        (is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)):
         os.system('./Rolladoino.py 0x0c CMD_Rolladen_Runter')
         os.system('./Rolladoino.py 0x0d CMD_Rolladen_Runter')
         os.system('./Rolladoino.py 0x0f CMD_Rolladen_Runter')
@@ -105,12 +105,12 @@ while heuteSchonSonnenaufgang == False:
     sonnehoch = data['sonne']['hoch']
 
     if (sonnenschutz == "true" or sonnenschutz == "True" or sonnenschutz == "TRUE") and \
-        (is_time_between(startzeit, startzeit + delta_time, sonnerunter)):
+        (is_time_between(startzeit.time(), (startzeit + delta_time).time(), sonnerunter)):
         os.system('./Rolladoino.py 0x0c CMD_Rolladen_Runter')
     
     # prüfe regel 3 Sonne hoch
     if (sonnenschutz == "true" or sonnenschutz == "True" or sonnenschutz == "TRUE") and \
-        (is_time_between(startzeit, startzeit + delta_time, sonnehoch)):
+        (is_time_between(startzeit.time(), (startzeit + delta_time).time(), sonnehoch)):
         os.system('./Rolladoino.py 0x0c CMD_Rolladen_Hoch')
     
     # prüfe regel 5 lüfter
@@ -132,6 +132,6 @@ while heuteSchonSonnenaufgang == False:
     sleeptime = startzeit + delta_time - endzeit
 
     # sleep
-    time.sleep(sleeptime)
+    time.sleep(sleeptime.total_seconds())
     
 # ende Schleife
