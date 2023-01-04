@@ -31,6 +31,10 @@ print('Hello World!')
 struct_time = time.strptime("7:03:45", '%H:%M:%S')
 print(struct_time)
 
+str_time_fkt = stringToTime('7:03:45')
+print(str_time_fkt)
+
+
 # initialisire Program
 path_regeln = '/home/pi/gitRepos/RolloPi/regeln.json'
 #path_regeln = '/var/www/html/RolloPi/regeln.json'
@@ -53,8 +57,9 @@ data = json.load(f)
 
 f.close()
 print(type(data))
-print(type(data["morgens"]["late"]))
-zeit = stringToTime(data["morgens"]["early"])
+timestring = data["morgens"]["early"]
+print(timestring)
+zeit = stringToTime(timestring)
 print(zeit)
 delta_time = timedelta(seconds=1)
 
