@@ -42,8 +42,9 @@ print(str_time_fkt)
 
 
 # initialisire Program
-path_regeln = '/home/pi/gitRepos/RolloPi/regeln.json'
+#path_regeln = '/home/pi/gitRepos/RolloPi/regeln.json'
 #path_regeln = '/var/www/html/RolloPi/regeln.json'
+path_regeln = './regeln.json'
 #path_sonne = '/home/harald/daten/BackupUSB/fries/suntimes'
 path_rolladoino = '/home/harald/daten/BackupUSB/fries/Rolladoino.py'
 heuteSchonSonnenaufgang = False
@@ -151,3 +152,5 @@ while heuteSchonSonnenaufgang == False:
     time.sleep(sleeptime.total_seconds())
     
 # ende Schleife
+
+print('end of program')
