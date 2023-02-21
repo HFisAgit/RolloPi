@@ -22,24 +22,14 @@ def is_time_between(begin_time, end_time, check_time=None):
 def stringToTime(timestring):
     print('fkt_stringToTime')
     print(timestring)
-    st_time = time.strptime(timestring, '%H:%M:%S')
+    # raspberry pi can not work with date 1900! so we need to set the year....
+    inputstr = "2000 "
+    inputstr += timestring
+    st_time = time.strptime(inputstr, '%Y %H:%M:%S')
     dt = datetime.fromtimestamp(mktime(st_time))
     return dt.time()
 
 print('Hello World!')
-
-struct_time = time.strptime("7:03:45", '%H:%M:%S')
-print(struct_time)
-lala = mktime(struct_time)
-print(lala)
-dt_test = datetime.fromtimestamp(lala)
-print(dt_test)
-
-print('end first test')
-
-str_time_fkt = stringToTime('7:03:45')
-print(str_time_fkt)
-
 
 # initialisire Program
 #path_regeln = '/home/pi/gitRepos/RolloPi/regeln.json'
@@ -47,7 +37,7 @@ print(str_time_fkt)
 path_regeln = './regeln.json'
 #path_sonne = '/home/harald/daten/BackupUSB/fries/suntimes'
 path_rolladoino = '/home/harald/daten/BackupUSB/fries/Rolladoino.py'
-heuteSchonSonnenaufgang = False
+heuteSchonZeitenAktualisiert = False
 # https://www.latlong.net/
 lon = 8.502633
 lat = 49.831873
@@ -71,23 +61,24 @@ print(zeit)
 delta_time = timedelta(seconds=1)
 
 # starte schleife
-while heuteSchonSonnenaufgang == False:
+#while heuteSchonZeitenAktualisiert == False:
+while True:
     # hole aktuelle Zeit
     #startzeit = datetime.now(datetime.timezone.utc)
     startzeit = datetime.now()
     print(startzeit)
 
-    # reset heuteschonSonnenaufgang wenn ein neuer Tag anbricht.
+    # reset heuteSchonZeitenAktualisiert wenn ein neuer Tag anbricht.
     if( startzeit.hour == 0 & startzeit.minute == 0  & startzeit.second < 15 ):
-        heuteSchonSonnenaufgang = False
+        heuteSchonZeitenAktualisiert = False
 
     # prüfe, ob heute schon die Sonnen auf und Untergangszeiten geholt wprden
-    if heuteSchonSonnenaufgang == False:
+    if heuteSchonZeitenAktualisiert == False:
         # hole Zeiten, wenn nötig
         _times = get_times(startzeit, lon, lat, 0, [(-0.833, 'sunrise', 'sunset')])
         sunrise = _times["sunrise"]
         sunset = _times["sunset"]
-        heuteSchonSonnenaufgang = True
+        heuteSchonZeitenAktualisiert = True 
 
     # prüfe regel 1 Rolladen hoch
     # Was will ich Wissen? Muss ich den Rolladen jetzt hoch fahren?
