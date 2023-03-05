@@ -1,0 +1,14 @@
+[Unit]
+Description=Hausautomatisierung
+After=network.target
+
+[Service]
+Type=idle
+Restart=on-failure
+User=root
+ExecStart=/usr/bin/python /path-to-your-python-project/python_file.py
+#ExecStart=/usr/bin/python /home/pi/gitRepos/RolloPi/automatisierung.py
+#ExecStart=/bin/bash -c 'cd /home/pi/gitRepos/RolloPi/ && python app.py'
+
+[Install]
+WantedBy=multi-user.target
