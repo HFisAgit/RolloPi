@@ -3,13 +3,13 @@
 import sys
 import smbus
 
-def writeToFile(Text)
+def writeToFile(Text):
   with open('readme.txt', 'a') as f:
     f.write(Text)
     f.write('\n')
     f.close()
 
-len(sys.argv) > 2:
+if len(sys.argv) > 2:
 
   print(sys.argv[2])
 
@@ -64,14 +64,19 @@ len(sys.argv) > 2:
       writeToFile("SummSummSum, ...")
 
   elif str(sys.argv[2]) == "CMD_Set_Pos1":
+    writeToFile("tbd")
   
   elif str(sys.argv[2]) == "CMD_Set_Pos2":
+    writeToFile("tbd")
   
   elif str(sys.argv[2]) == "CMD_Set_Pos3":
+    writeToFile("tbd")
   
   elif str(sys.argv[2]) == "CMD_Set_Pos4":
+    writeToFile("tbd")
   
   elif str(sys.argv[2]) == "CMD_Set_Pos5":
+    writeToFile("tbd")
   
   elif str(sys.argv[2]) == "CMD_Set_PosMax":
     if len(sys.argv) > 3:
@@ -89,12 +94,16 @@ len(sys.argv) > 2:
       print("Error Position not avalible")
 
   elif str(sys.argv[2]) == "CMD_Read_Strom_Rolladen":
+    writeToFile("tbd")
   
   elif str(sys.argv[2]) == "CMD_Read_Licht":
+    writeToFile("tbd")
   
   elif str(sys.argv[2]) == "CMD_Read_Temperatur":
+    writeToFile("tbd")
   
   elif str(sys.argv[2]) == "CMD_Read_Feuchte":
+    writeToFile("tbd")
 
   elif str(sys.argv[2]) == "CMD_Read_Auto":
     #print ReceiveTwoBytes(0x50)
@@ -105,6 +114,7 @@ len(sys.argv) > 2:
     print("Error Position not avalible")
   
   elif str(sys.argv[2]) == "CMD_Read_Luefter":
+    writeToFile("tbd")
   
   elif str(sys.argv[2]) == "CMD_Read_Summer":
     #print ReceiveTwoBytes(0x53)
