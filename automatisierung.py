@@ -138,7 +138,7 @@ while True:
     sleeptime = startzeit + delta_time - endzeit
 
     # sleep
-    time.sleep(sleeptime.total_seconds())
+    time.sleep(sleeptime.total_seconds(sleeptime))
     
 # ende Schleife
 
