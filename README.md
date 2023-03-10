@@ -20,3 +20,22 @@ Es gibt noch weitere Seiten, die Aktionen ausführen (Rolläden fahren, Lüfter 
 #Automatik
 automatik.py wird über systemd automatisch gestartet.
 Es liest die regeln.json ein und läuft dann in einer endlosschleife. alle 2 Sekunden wird überprüft, ob zu dieser Zeit eine aktion nötig ist.
+
+
+#Rasbian OS
+
+https://www.abelectronics.co.uk/kb/article/1/i2c--smbus-and-raspbian-linux
+
+-activiere i2c:
+sudo raspi-config
+
+-install: 
+sudo apt-get update
+sudo apt-get install python3-smbus python3-dev i2c-tools
+
+-test i2c:
+sudo i2cdetect -y 1
+
+-python
+wir brauchen python3 und python-is-python3
+
