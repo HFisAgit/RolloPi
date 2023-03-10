@@ -57,7 +57,7 @@ timestring = data["morgens"]["early"]
 print(timestring)
 zeit = stringToTime(timestring)
 print(zeit)
-delta_time = timedelta(seconds=1)
+delta_time = timedelta(seconds=5)
 
 # starte schleife
 #while heuteSchonZeitenAktualisiert == False:
@@ -138,8 +138,13 @@ while True:
     sleeptime = startzeit + delta_time - endzeit
 
     # sleep
-    time.sleep(sleeptime.total_seconds(sleeptime))
-    
+    if (sleeptime.total_seconds() > 0):
+        time.sleep(sleeptime.total_seconds())
+        print(sleeptime.total_seconds())
+    else:
+        print("Error in sleeptime calculation")
+        print(sleeptime.total_seconds())
+        time.sleep(1)
 # ende Schleife
 
 print('end of program')
