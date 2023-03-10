@@ -43,7 +43,8 @@
             $rules = [];
             $luefter = [];
             $rollaeden = [];
-            $path_to_regeln = "/home/harald/regeln.json";
+            #$path_to_regeln = "/home/harald/regeln.json";
+            $path_to_regeln = "/var/www/html/RolloPi/regeln.json";
             $path_to_rolladiono = "/home/harald/Rolladoino.sh";
 
 
@@ -100,7 +101,10 @@
                 }
                 else
                 {
+                    echo "Jetzt speichern!";
                     $rules['morgens']['early'] = date('G:i:s', $timestamp);
+                    print_r($rules);
+                    # ich habe keine schreibrechte... glaube ich
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
 
@@ -113,6 +117,7 @@
                 }
                 else
                 {
+                    echo "Jetzt speichern!";
                     $rules['morgens']['late'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
@@ -125,6 +130,7 @@
                 }
                 else
                 {
+                    echo "Jetzt speichern!";
                     $rules['abends']['early'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
@@ -137,6 +143,7 @@
                 }
                 else
                 {
+                    echo "Jetzt speichern!";
                     $rules['abends']['late'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
@@ -145,12 +152,14 @@
             {
                 if ($_POST['Sonne'] == "True" || $_POST['Sonne'] == "true")
                 {
-                    $rules['sonne']['ein'] = True;
+                    echo "Jetzt speichern!";
+                    $rules['sonne']['ein'] = "true";
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
                 else if ($_POST['Sonne'] == "False" || $_POST['Sonne'] == "false")
                 {
-                    $rules['sonne']['ein'] = False;
+                    echo "Jetzt speichern!";
+                    $rules['sonne']['ein'] = "false";
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
                 else
@@ -167,6 +176,7 @@
                 }
                 else
                 {
+                    echo "Jetzt speichern!";
                     $rules['sonne']['runter'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
@@ -179,6 +189,7 @@
                 }
                 else
                 {
+                    echo "Jetzt speichern!";
                     $rules['sonne']['hoch'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
@@ -187,12 +198,14 @@
             {
                 if ($_POST['LuftReduzieren'] == "True" || $_POST['LuftReduzieren'] == "true")
                 {
-                    $rules['luftreduziert'] = True;
+                    echo "Jetzt speichern!";
+                    $rules['luftreduziert'] = "true";
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
                 else if ($_POST['LuftReduzieren'] == "False" || $_POST['LuftReduzieren'] == "false")
                 {
-                    $rules['luftreduziert'] = False;
+                    echo "Jetzt speichern!";
+                    $rules['luftreduziert'] = "false";
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
                 }
                 else
@@ -231,7 +244,7 @@
 
             # Hier kommt der Inhalt der Seiten
             
-            # Seite zum rolläden fahren
+            # Seite zum Rolläden fahren
             if ($_GET['page'] == 'fahreshutter') 
             {
                 $deviceId;
@@ -273,6 +286,7 @@
                 # zurück zur Rolladenseite...
                 header('Location: index.php?page=rollaeden');
             } 
+
             #Seite zum Lüfter schalten
             else if ($_GET['page'] == 'schaltelufter') 
             {
@@ -293,6 +307,7 @@
                 # zurück zur Lüfter seite
                 header('Location: index.php?page=luefter');
             } 
+
             # Inhalt von Lüftern
             else if ($_GET['page'] == 'luefter') {
                 echo '<p>Eine Liste mit Lüftern</p>';
@@ -316,6 +331,7 @@
                 }
 
             } 
+
             # Inhalt von Rolläden
             else if ($_GET['page'] == 'rollaeden') {
                 echo '<p>Eine Liste mit Rolläden</p>';
@@ -358,13 +374,26 @@
                     </div>
                     ";
                 }
+
             # Brauche ich wirklich ein Impressum?? 
             } else if ($_GET['page'] == 'legal') {
                 echo "
                     Hier kommt das Impressum hin
                 ";
+
             # Hier die Regeln! Das wird noch schwirig..... 
             } else if ($_GET['page'] == 'editRules') {
+                $MorgensEarly = $rules['morgens']['early'];
+                $MorgensLate = $rules['morgens']['late'];
+                $AbendsEarly = $rules['abends']['early'];
+                $AbendsLate = $rules['abends']['late'];
+                $SonneEin = $rules['sonne']['ein'];
+                $SonneRunter = $rules['sonne']['runter'];
+                $SonneHoch = $rules['sonne']['hoch'];
+                $Luftreduziert = $rules['luftreduziert'];
+
+                echo"$eineVariable";
+                echo"$eineAndereVar";
                 echo "
                     <div>
                         Auf dieser Seite kannst du die Regeln verwalten
@@ -373,7 +402,7 @@
                     <form action='?page=contacts' method='POST'>
                         <div>
                             <a>Zeit Morgens früherstens</a>
-                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                            $MorgensEarly
                         </div>
                         <div>
                             <a>Neue Zeit: </a>
@@ -385,7 +414,7 @@
                     <form action='?page=contacts' method='POST'>
                         <div>
                             <a>Zeit Morgens spätestens</a>
-                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                            $MorgensLate
                         </div>
                         <div>
                             <a>Neue Zeit: </a>
@@ -397,7 +426,7 @@
                     <form action='?page=editRules' method='POST'>
                         <div>
                             <a> Zeit Abends frühestens</a>
-                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                            $AbendsEarly
                         </div>
                         <div>
                             <a>Neue Zeit: </a>
@@ -409,7 +438,7 @@
                     <form action='?page=editRules' method='POST'>
                         <div>
                             <a> Zeit Abends spätestens</a>
-                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                            $AbendsLate
                         </div>
                         <div>
                             <a>Neue Zeit: </a>
@@ -421,7 +450,7 @@
                     <form action='?page=editRules' method='POST'>
                         <div>
                             <a> Sonnenautomatik </a>
-                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                            $SonneEin
                         </div>
                         <div>
                             <a>Ein/Aus schalten: </a>
@@ -433,7 +462,7 @@
                     <form action='?page=editRules' method='POST'>
                         <div>
                             <a> Sonnenautomatik Runter </a>
-                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                            $SonneRunter
                         </div>
                         <div>
                             <a>Neue Zeit: </a>
@@ -445,7 +474,7 @@
                     <form action='?page=editRules' method='POST'>
                         <div>
                             <a> Sonnenautomatik Hoch </a>
-                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                            $SonneHoch
                         </div>
                         <div>
                             <a>Neue Zeit: </a>
@@ -457,7 +486,7 @@
                     <form action='?page=editRules' method='POST'>
                         <div>
                             <a> Lüfter reduzieren </a>
-                            <a> -- hier kommt der aktuelle Wert hin -- </a>
+                            $Luftreduziert
                         </div>
                         <div>
                             <a>Ein/Aus schalten: </a>
