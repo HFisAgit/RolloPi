@@ -87,10 +87,10 @@ while True:
     
     if (startzeit.time() > morgensfrueh and is_time_between(startzeit, startzeit + delta_time, sunrise)) or \
         (is_time_between(startzeit.time(), (startzeit + delta_time).time(), morgensspaet)):
-        os.system('./Rolladoino.py 0x0c CMD_Rolladen_Hoch')
-        os.system('./Rolladoino.py 0x0d CMD_Rolladen_Hoch')
-        os.system('./Rolladoino.py 0x0f CMD_Rolladen_Hoch')
-        os.system('./Rolladoino.py 0x1f CMD_Rolladen_Hoch')
+        os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
+        os.system(path_rolladoino  + ' 0x0d CMD_Rolladen_Hoch')
+        os.system(path_rolladoino  + ' 0x0f CMD_Rolladen_Hoch')
+        os.system(path_rolladoino  + ' 0x1f CMD_Rolladen_Hoch')
 
     # prüfe regel 2 Rolladen runte
     # 1. ist es nach früh && sonnenuntergang -> ja
@@ -100,10 +100,10 @@ while True:
     
     if (startzeit.time() > abendsfrueh and is_time_between(startzeit, startzeit + delta_time, sunset)) or \
         (is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)):
-        os.system('./Rolladoino.py 0x0c CMD_Rolladen_Runter')
-        os.system('./Rolladoino.py 0x0d CMD_Rolladen_Runter')
-        os.system('./Rolladoino.py 0x0f CMD_Rolladen_Runter')
-        os.system('./Rolladoino.py 0x1f CMD_Rolladen_Runter')
+        os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
+        os.system(path_rolladoino  + ' 0x0d CMD_Rolladen_Runter')
+        os.system(path_rolladoino  + ' 0x0f CMD_Rolladen_Runter')
+        os.system(path_rolladoino  + ' 0x1f CMD_Rolladen_Runter')
         
     # prüfe regel 3 sonne runter
     sonnenschutz = data['sonne']['ein']
@@ -112,24 +112,24 @@ while True:
 
     if (sonnenschutz == "true" or sonnenschutz == "True" or sonnenschutz == "TRUE") and \
         (is_time_between(startzeit.time(), (startzeit + delta_time).time(), sonnerunter)):
-        os.system('./Rolladoino.py 0x0c CMD_Rolladen_Runter')
+        os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
     
     # prüfe regel 3 Sonne hoch
     if (sonnenschutz == "true" or sonnenschutz == "True" or sonnenschutz == "TRUE") and \
         (is_time_between(startzeit.time(), (startzeit + delta_time).time(), sonnehoch)):
-        os.system('./Rolladoino.py 0x0c CMD_Rolladen_Hoch')
+        os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
     
     # prüfe regel 5 lüfter
     luefter = data['luftreduziert']
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
         ( startzeit.minute == 0 and startzeit.second == delta_time.seconds and startzeit.hour % 2 == 0):
-        os.system('./Rolladoino.py 0x0d CMD_Luefter 0')
-        os.system('./Rolladoino.py 0x0f CMD_Luefter 0')
+        os.system(path_rolladoino  + ' 0x0d CMD_Luefter 0')
+        os.system(path_rolladoino  + ' 0x0f CMD_Luefter 0')
 
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
         ( startzeit.minute == 0 and startzeit.second == delta_time.seconds and startzeit.hour % 2 == 1):
-        os.system('./Rolladoino.py 0x0d CMD_Luefter 1')
-        os.system('./Rolladoino.py 0x0f CMD_Luefter 1')
+        os.system(path_rolladoino  + ' 0x0d CMD_Luefter 1')
+        os.system(path_rolladoino  + ' 0x0f CMD_Luefter 1')
 
     # hole neuen Zeitstempel
     endzeit = datetime.now()
