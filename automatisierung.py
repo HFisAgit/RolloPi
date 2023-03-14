@@ -34,8 +34,8 @@ print('Hello World!')
 #path_regeln = '/var/www/html/RolloPi/regeln.json'
 path_regeln = './regeln.json'
 #path_sonne = '/home/harald/daten/BackupUSB/fries/suntimes'
-#path_rolladoino = '/home/harald/daten/BackupUSB/fries/Rolladoino.py'
-path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
+path_rolladoino = '/home/pi/RolloPi/Rolladoino.py'
+#path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
 heuteSchonZeitenAktualisiert = False
 # https://www.latlong.net/
 lon = 8.502633

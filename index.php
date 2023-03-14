@@ -44,8 +44,8 @@
             $luefter = [];
             $rollaeden = [];
             #$path_to_regeln = "/home/harald/regeln.json";
-            $path_to_regeln = "/var/www/html/RolloPi/regeln.json";
-            $path_to_rolladiono = "/home/harald/Rolladoino.sh";
+            $path_to_regeln = "/home/pi/RolloPi/regeln.json";
+            $path_to_rolladiono = "/home/pi/RolloPi/Rolladoino.py";
 
 
             # fülle die Hardware
@@ -279,11 +279,11 @@
                 {
                     $deviceId = '0x0C';
                 }
-                
-                $command_with_parameter = $path_to_rolladiono . " " . $deviceId . " " . $richtung;
-                exec($command_with_parameter);
 
-                # zurück zur Rolladenseite...
+		$command_with_parameter = $path_to_rolladiono . " " . $deviceId . " " . $richtung;
+		exec($command_with_parameter, $output, $retval);
+		
+		# zurück zur Rolladenseite...
                 header('Location: index.php?page=rollaeden');
             } 
 
