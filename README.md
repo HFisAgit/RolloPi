@@ -38,4 +38,5 @@ sudo i2cdetect -y 1
 
 -python
 wir brauchen python3 und python-is-python3
+sudo apt-get install python3-pip
 

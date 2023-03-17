@@ -1,3 +1,3 @@
 #!/bin/bash
-cd /home/pi/gitRepos/RolloPi
-python automatisierung.py
+cd /home/pi/RolloPi
+python3 automatisierung.py

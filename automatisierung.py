@@ -27,13 +27,9 @@ def stringToTime(timestring):
     dt = datetime.fromtimestamp(mktime(st_time))
     return dt.time()
 
-print('Hello World!')
 
 # initialisire Program
-#path_regeln = '/home/pi/gitRepos/RolloPi/regeln.json'
-#path_regeln = '/var/www/html/RolloPi/regeln.json'
 path_regeln = './regeln.json'
-#path_sonne = '/home/harald/daten/BackupUSB/fries/suntimes'
 path_rolladoino = '/home/pi/RolloPi/Rolladoino.py'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
 heuteSchonZeitenAktualisiert = False
@@ -41,8 +37,6 @@ heuteSchonZeitenAktualisiert = False
 lon = 8.502633
 lat = 49.831873
 
-#sunset
-#sunrise
 
 
 # lade regeln.json
@@ -57,9 +51,9 @@ timestring = data["morgens"]["early"]
 print(timestring)
 zeit = stringToTime(timestring)
 print(zeit)
-delta_time = timedelta(seconds=5)
-
-# starte schleife
+delta_time = timedelta(seconds=10)
+        
+#starte schleife
 #while heuteSchonZeitenAktualisiert == False:
 while True:
     # hole aktuelle Zeit
@@ -88,8 +82,11 @@ while True:
     if (startzeit.time() > morgensfrueh and is_time_between(startzeit, startzeit + delta_time, sunrise)) or \
         (is_time_between(startzeit.time(), (startzeit + delta_time).time(), morgensspaet)):
         os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
+        time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x0d CMD_Rolladen_Hoch')
+        time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x0f CMD_Rolladen_Hoch')
+        time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x1f CMD_Rolladen_Hoch')
 
     # prüfe regel 2 Rolladen runte
@@ -101,8 +98,11 @@ while True:
     if (startzeit.time() > abendsfrueh and is_time_between(startzeit, startzeit + delta_time, sunset)) or \
         (is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)):
         os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
+        time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x0d CMD_Rolladen_Runter')
+        time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x0f CMD_Rolladen_Runter')
+        time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x1f CMD_Rolladen_Runter')
         
     # prüfe regel 3 sonne runter
@@ -124,11 +124,13 @@ while True:
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
         ( startzeit.minute == 0 and startzeit.second == delta_time.seconds and startzeit.hour % 2 == 0):
         os.system(path_rolladoino  + ' 0x0d CMD_Luefter 0')
+        time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x0f CMD_Luefter 0')
 
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
         ( startzeit.minute == 0 and startzeit.second == delta_time.seconds and startzeit.hour % 2 == 1):
         os.system(path_rolladoino  + ' 0x0d CMD_Luefter 1')
+        time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x0f CMD_Luefter 1')
 
     # hole neuen Zeitstempel
@@ -140,7 +142,6 @@ while True:
     # sleep
     if (sleeptime.total_seconds() > 0):
         time.sleep(sleeptime.total_seconds())
-        print(sleeptime.total_seconds())
     else:
         print("Error in sleeptime calculation")
         print(sleeptime.total_seconds())
