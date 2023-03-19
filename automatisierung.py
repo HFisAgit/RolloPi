@@ -80,9 +80,11 @@ while True:
     morgensfrueh = stringToTime(data['morgens']['early'])
     morgensspaet = stringToTime(data['morgens']['late'])
     
-    if (is_time_between(startzeit.time(), (startzeit + delta_time).time(), morgensfrueh) and startzeiti.time() > sunrise.time() or \
-        startzeit.time() > morgensfrueh and is_time_between(startzeit, startzeit + delta_time, sunrise)) or \
-        (is_time_between(startzeit.time(), (startzeit + delta_time).time(), morgensspaet)):
+    sunriseBefore = is_time_between( startzeit.time(), (startzeit + delta_time).time(), morgensfrueh ) and startzeit.time() > sunrise.time()
+    surriseBetwen = startzeit.time() > morgensfrueh and is_time_between(startzeit, startzeit + delta_time, sunrise)
+    sunriseAfter = is_time_between(startzeit.time(), (startzeit + delta_time).time(), morgensspaet)
+
+    if ( sunriseBefore or surriseBetwen or sunriseAfter ):
         os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
         time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x0d CMD_Rolladen_Hoch')
@@ -98,9 +100,11 @@ while True:
     abendsfrueh = stringToTime(data['abends']['early'])
     abendsspaet = stringToTime(data['abends']['late'])
     
-    if (is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet) and startzeit.time() > sunset.time() or \
-        startzeit.time() > abendsfrueh and is_time_between(startzeit, startzeit + delta_time, sunset)) or \
-        (is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)):
+    sunsetBefore = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet) and startzeit.time() > sunset.time()
+    sunsetBetween = startzeit.time() > abendsfrueh and is_time_between(startzeit, startzeit + delta_time, sunset)
+    sunsetAfter = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)
+
+    if ( sunsetBefore or sunsetBetween or sunsetAfter ):
         os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
         time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x0d CMD_Rolladen_Runter')
@@ -126,13 +130,13 @@ while True:
     # prüfe regel 5 lüfter
     luefter = data['luftreduziert']
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
-        ( startzeit.minute == 0 and startzeit.second == delta_time.seconds and startzeit.hour % 2 == 0):
+        ( startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2 == 0):
         os.system(path_rolladoino  + ' 0x0d CMD_Luefter 0')
         time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x0f CMD_Luefter 0')
 
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
-        ( startzeit.minute == 0 and startzeit.second == delta_time.seconds and startzeit.hour % 2 == 1):
+        ( startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2 == 1):
         os.system(path_rolladoino  + ' 0x0d CMD_Luefter 1')
         time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x0f CMD_Luefter 1')
