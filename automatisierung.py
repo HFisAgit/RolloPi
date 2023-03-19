@@ -46,11 +46,11 @@ f = open(path_regeln,)
 data = json.load(f)
 
 f.close()
-print(type(data))
-timestring = data["morgens"]["early"]
-print(timestring)
-zeit = stringToTime(timestring)
-print(zeit)
+#print(type(data))
+#timestring = data["morgens"]["early"]
+#print(timestring)
+#zeit = stringToTime(timestring)
+#print(zeit)
 delta_time = timedelta(seconds=10)
         
 #starte schleife
@@ -74,12 +74,14 @@ while True:
 
     # prüfe regel 1 Rolladen hoch
     # Was will ich Wissen? Muss ich den Rolladen jetzt hoch fahren?
-    # 1. ist es nach frühestens && Sonnenaufgang -> ja
-    # 2. ist es spätestens -> ja
+    # 1. ist es frühestens und nach sonnenaufgang -> ja
+    # 2. ist es nach frühestens && Sonnenaufgang -> ja
+    # 3. ist es spätestens -> ja
     morgensfrueh = stringToTime(data['morgens']['early'])
     morgensspaet = stringToTime(data['morgens']['late'])
     
-    if (startzeit.time() > morgensfrueh and is_time_between(startzeit, startzeit + delta_time, sunrise)) or \
+    if (is_time_between(startzeit.time(), (startzeit + delta_time).time(), morgensfrueh) and startzeiti.time() > sunrise.time() or \
+        startzeit.time() > morgensfrueh and is_time_between(startzeit, startzeit + delta_time, sunrise)) or \
         (is_time_between(startzeit.time(), (startzeit + delta_time).time(), morgensspaet)):
         os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
         time.sleep(0.1)
@@ -89,13 +91,15 @@ while True:
         time.sleep(0.1)
         os.system(path_rolladoino  + ' 0x1f CMD_Rolladen_Hoch')
 
-    # prüfe regel 2 Rolladen runte
-    # 1. ist es nach früh && sonnenuntergang -> ja
-    # 2. ist es spättestens -> ja
+    # prüfe regel 2 Rolladen runtr
+    # 1. ist es früh- und nach sonnenuntergang -> ja
+    # 2. ist es nach früh && sonnenuntergang -> ja
+    # 3. ist es spättestens -> ja
     abendsfrueh = stringToTime(data['abends']['early'])
     abendsspaet = stringToTime(data['abends']['late'])
     
-    if (startzeit.time() > abendsfrueh and is_time_between(startzeit, startzeit + delta_time, sunset)) or \
+    if (is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet) and startzeit.time() > sunset.time() or \
+        startzeit.time() > abendsfrueh and is_time_between(startzeit, startzeit + delta_time, sunset)) or \
         (is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)):
         os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
         time.sleep(0.1)
