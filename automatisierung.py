@@ -13,7 +13,7 @@ from time import mktime
 
 def is_time_between(begin_time, end_time, check_time=None):
     # If check time is not given, default to current UTC time
-    check_time = check_time or datetime.utcnow().time()
+  #  check_time = check_time or datetime.utcnow().time()
     if begin_time < end_time:
         return check_time >= begin_time and check_time <= end_time
     else: # crosses midnight
@@ -77,12 +77,12 @@ while True:
     # 1. ist es frühestens und nach sonnenaufgang -> ja
     # 2. ist es nach frühestens && Sonnenaufgang -> ja
     # 3. ist es spätestens -> ja
-    morgensfrueh = stringToTime(data['morgens']['early'])
-    morgensspaet = stringToTime(data['morgens']['late'])
+    morgensfrueh = stringToTime(data['morgens']['early']) #time
+    morgensspaet = stringToTime(data['morgens']['late']) #time
     
-    sunriseBefore = is_time_between( startzeit.time(), (startzeit + delta_time).time(), morgensfrueh ) and startzeit.time() > sunrise.time()
-    surriseBetwen = startzeit.time() > morgensfrueh and is_time_between(startzeit, startzeit + delta_time, sunrise)
-    sunriseAfter = is_time_between(startzeit.time(), (startzeit + delta_time).time(), morgensspaet)
+    sunriseBefore = is_time_between( startzeit.time(), (startzeit + delta_time).time(), morgensfrueh )   and sunrise.time() <= startzeit.time()
+    surriseBetwen = is_time_between( startzeit.time(), (startzeit + delta_time).time(), sunrise.time() ) and morgensfrueh   < startzeit.time()
+    sunriseAfter =  is_time_between( startzeit.time(), (startzeit + delta_time).time(), morgensspaet )
 
     if ( sunriseBefore or surriseBetwen or sunriseAfter ):
         os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
@@ -100,9 +100,9 @@ while True:
     abendsfrueh = stringToTime(data['abends']['early'])
     abendsspaet = stringToTime(data['abends']['late'])
     
-    sunsetBefore = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet) and startzeit.time() > sunset.time()
-    sunsetBetween = startzeit.time() > abendsfrueh and is_time_between(startzeit, startzeit + delta_time, sunset)
-    sunsetAfter = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)
+    sunsetBefore  = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsfrueh) and sunset.time() <= startzeit.time()
+    sunsetBetween = is_time_between(startzeit.time(), (startzeit + delta_time).time(), sunset)      and abendsfrueh < startzeit.time()
+    sunsetAfter   = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)
 
     if ( sunsetBefore or sunsetBetween or sunsetAfter ):
         os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
