@@ -110,8 +110,6 @@ while True:
         os.system(path_rolladoino  + ' 0x0d CMD_Rolladen_Runter')
         time.sleep(1)
         os.system(path_rolladoino  + ' 0x0f CMD_Rolladen_Runter')
-        time.sleep(1)
-        os.system(path_rolladoino  + ' 0x1f CMD_Rolladen_Runter')
         
     # prüfe regel 3 sonne runter
     sonnenschutz = data['sonne']['ein']
