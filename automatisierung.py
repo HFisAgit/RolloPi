@@ -86,11 +86,11 @@ while True:
 
     if ( sunriseBefore or surriseBetwen or sunriseAfter ):
         os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
-        time.sleep(0.1)
+        time.sleep(1)
         os.system(path_rolladoino  + ' 0x0d CMD_Rolladen_Hoch')
-        time.sleep(0.1)
+        time.sleep(1)
         os.system(path_rolladoino  + ' 0x0f CMD_Rolladen_Hoch')
-        time.sleep(0.1)
+        time.sleep(1)
         os.system(path_rolladoino  + ' 0x1f CMD_Rolladen_Hoch')
 
     # prüfe regel 2 Rolladen runtr
@@ -106,11 +106,11 @@ while True:
 
     if ( sunsetBefore or sunsetBetween or sunsetAfter ):
         os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
-        time.sleep(0.1)
+        time.sleep(1)
         os.system(path_rolladoino  + ' 0x0d CMD_Rolladen_Runter')
-        time.sleep(0.1)
+        time.sleep(1)
         os.system(path_rolladoino  + ' 0x0f CMD_Rolladen_Runter')
-        time.sleep(0.1)
+        time.sleep(1)
         os.system(path_rolladoino  + ' 0x1f CMD_Rolladen_Runter')
         
     # prüfe regel 3 sonne runter
@@ -132,13 +132,13 @@ while True:
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
         ( startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2 == 0):
         os.system(path_rolladoino  + ' 0x0d CMD_Luefter 0')
-        time.sleep(0.1)
+        time.sleep(1)
         os.system(path_rolladoino  + ' 0x0f CMD_Luefter 0')
 
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
         ( startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2 == 1):
         os.system(path_rolladoino  + ' 0x0d CMD_Luefter 1')
-        time.sleep(0.1)
+        time.sleep(1)
         os.system(path_rolladoino  + ' 0x0f CMD_Luefter 1')
 
     # hole neuen Zeitstempel

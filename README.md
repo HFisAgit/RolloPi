@@ -40,3 +40,6 @@ sudo i2cdetect -y 1
 wir brauchen python3 und python-is-python3
 sudo apt-get install python3-pip
 
+sudo apt install php
+
+in /etc/passwd dem user www-data die /bin/bash als shell geben.
