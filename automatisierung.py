@@ -100,8 +100,8 @@ while True:
     abendsfrueh = stringToTime(data['abends']['early'])
     abendsspaet = stringToTime(data['abends']['late'])
     
-    sunsetBefore  = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsfrueh) and sunset.time() <= startzeit.time()
-    sunsetBetween = is_time_between(startzeit.time(), (startzeit + delta_time).time(), sunset)      and abendsfrueh < startzeit.time()
+    sunsetBefore  = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsfrueh)    and sunset.time() <= startzeit.time()
+    sunsetBetween = is_time_between(startzeit.time(), (startzeit + delta_time).time(), sunset.time() ) and abendsfrueh < startzeit.time()
     sunsetAfter   = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)
 
     if ( sunsetBefore or sunsetBetween or sunsetAfter ):
