@@ -67,6 +67,7 @@ while True:
     # prüfe, ob heute schon die Sonnen auf und Untergangszeiten geholt wprden
     if heuteSchonZeitenAktualisiert == False:
         # hole Zeiten, wenn nötig
+        print("Neue Sonnen auf/unterganz Zeiten.")
         _times = get_times(startzeit, lon, lat, 0, [(-0.833, 'sunrise', 'sunset')])
         sunrise = _times["sunrise"]
         sunset = _times["sunset"]
