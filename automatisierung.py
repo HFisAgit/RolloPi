@@ -74,9 +74,9 @@ while True:
         heuteSchonZeitenAktualisiert = True 
         # zeiten für Anzeige exportieren
         suntimes = {
-            "date": startzeit.date(),
-            "sunrise": _times["sunrise"],
-            "sunset": _times["sunset"]
+            "date": startzeit.date().isoformat(),
+            "sunrise": _times["sunrise"].isoformat(),
+            "sunset": _times["sunset"].isoformat()
         }
         with open('suntimes.json', 'w') as f:
             json.dump(suntimes, f)
