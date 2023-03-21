@@ -72,11 +72,16 @@ while True:
         sunrise = _times["sunrise"]
         sunset = _times["sunset"]
         heuteSchonZeitenAktualisiert = True 
-        # zeiten für Anzeige exportieren
+        # zeiten für Anzeige exportiere
+        s_sunrise = _times["sunrise"].time().isoformat();
+        s_sunset  = _times["sunset"].time().isoformat();
+        sunriseCropIndex = s_sunrise.rfind(".");
+        sunsetCropIndex = s_sunset.rfind(".");
+
         suntimes = {
             "date": startzeit.date().isoformat(),
-            "sunrise": _times["sunrise"].time().isoformat(),
-            "sunset": _times["sunset"].time().isoformat()
+            "sunrise": s_sunrise[:sunriseCropIndex],
+            "sunset": s_sunset[:sunsetCropIndex]
         }
         with open('suntimes.json', 'w') as f:
             json.dump(suntimes, f)

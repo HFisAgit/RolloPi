@@ -448,8 +448,8 @@
             # Startseite
             else { 
                 echo '<p>Startseite der Haussteuerunng</p>';
-                echo 'Sonnenaufgang: ' . $suntimes['sunrise'] . '\n';
-                echo 'Sonnenuntergang: ' . $suntimes['sunset'] . '\n';
+                echo 'Sonnenaufgang: ' . $suntimes['sunrise'] . '<br>';
+                echo 'Sonnenuntergang: ' . $suntimes['sunset'] . '<br>';
             }
             ?>
         </div>
