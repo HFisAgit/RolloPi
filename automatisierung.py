@@ -31,6 +31,7 @@ def stringToTime(timestring):
 # initialisire Program
 path_regeln = './regeln.json'
 path_rolladoino = '/home/pi/RolloPi/Rolladoino.py'
+path_log = '/home/pi/RolloPi/automatisierung.log'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
 heuteSchonZeitenAktualisiert = False
 # https://www.latlong.net/
@@ -99,13 +100,15 @@ while True:
     sunriseAfter =  is_time_between( startzeit.time(), (startzeit + delta_time).time(), morgensspaet )
 
     if ( sunriseBefore or surriseBetwen or sunriseAfter ):
-        os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
+        with open('path_log', 'a') as f:
+            f.write(startzeit + "Rolladen hoch")
+        os.system('python3 ' + path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
         time.sleep(1)
-        os.system(path_rolladoino  + ' 0x0d CMD_Rolladen_Hoch')
+        os.system('python3 ' + path_rolladoino  + ' 0x0d CMD_Rolladen_Hoch')
         time.sleep(1)
-        os.system(path_rolladoino  + ' 0x0f CMD_Rolladen_Hoch')
+        os.system('python3 ' + path_rolladoino  + ' 0x0f CMD_Rolladen_Hoch')
         time.sleep(1)
-        os.system(path_rolladoino  + ' 0x1f CMD_Rolladen_Hoch')
+        os.system('python3 ' + path_rolladoino  + ' 0x1f CMD_Rolladen_Hoch')
 
     # prüfe regel 2 Rolladen runtr
     # 1. ist es früh- und nach sonnenuntergang -> ja
@@ -119,11 +122,13 @@ while True:
     sunsetAfter   = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)
 
     if ( sunsetBefore or sunsetBetween or sunsetAfter ):
-        os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
+        with open('path_log', 'a') as f:
+            f.write(startzeit + "Rolladen runter")
+        os.system('python3 ' + path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
         time.sleep(1)
-        os.system(path_rolladoino  + ' 0x0d CMD_Rolladen_Runter')
+        os.system('python3 ' + path_rolladoino  + ' 0x0d CMD_Rolladen_Runter')
         time.sleep(1)
-        os.system(path_rolladoino  + ' 0x0f CMD_Rolladen_Runter')
+        os.system('python3 ' + path_rolladoino  + ' 0x0f CMD_Rolladen_Runter')
         
     # prüfe regel 3 sonne runter
     sonnenschutz = data['sonne']['ein']
@@ -132,26 +137,30 @@ while True:
 
     if (sonnenschutz == "true" or sonnenschutz == "True" or sonnenschutz == "TRUE") and \
         (is_time_between(startzeit.time(), (startzeit + delta_time).time(), sonnerunter)):
-        os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
+        os.system('python3 ' + path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
     
     # prüfe regel 3 Sonne hoch
     if (sonnenschutz == "true" or sonnenschutz == "True" or sonnenschutz == "TRUE") and \
         (is_time_between(startzeit.time(), (startzeit + delta_time).time(), sonnehoch)):
-        os.system(path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
+        os.system('python3 ' + path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
     
     # prüfe regel 5 lüfter
     luefter = data['luftreduziert']
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
         ( startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2 == 0):
-        os.system(path_rolladoino  + ' 0x0d CMD_Luefter 0')
+        with open('path_log', 'a') as f:
+            f.write(startzeit + "Luefter aus")
+        os.system('python3 ' + path_rolladoino  + ' 0x0d CMD_Luefter 0')
         time.sleep(1)
-        os.system(path_rolladoino  + ' 0x0f CMD_Luefter 0')
+        os.system('python3 ' + path_rolladoino  + ' 0x0f CMD_Luefter 0')
 
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
         ( startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2 == 1):
-        os.system(path_rolladoino  + ' 0x0d CMD_Luefter 1')
+        with open('path_log', 'a') as f:
+            f.write(startzeit + "Luefter an")
+        os.system('python3 ' + path_rolladoino  + ' 0x0d CMD_Luefter 1')
         time.sleep(1)
-        os.system(path_rolladoino  + ' 0x0f CMD_Luefter 1')
+        os.system('python3 ' + path_rolladoino  + ' 0x0f CMD_Luefter 1')
 
     # hole neuen Zeitstempel
     endzeit = datetime.now()
