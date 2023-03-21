@@ -71,7 +71,15 @@ while True:
         sunrise = _times["sunrise"]
         sunset = _times["sunset"]
         heuteSchonZeitenAktualisiert = True 
-
+        # zeiten für Anzeige exportieren
+        suntimes = {
+            "date": startzeit.date(),
+            "sunrise": _times["sunrise"],
+            "sunset": _times["sunset"]
+        }
+        with open('suntimes.json', 'w') as f:
+            json.dump(suntimes, f)
+    
     # prüfe regel 1 Rolladen hoch
     # Was will ich Wissen? Muss ich den Rolladen jetzt hoch fahren?
     # 1. ist es frühestens und nach sonnenaufgang -> ja
