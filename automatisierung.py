@@ -75,8 +75,8 @@ while True:
         # zeiten für Anzeige exportieren
         suntimes = {
             "date": startzeit.date().isoformat(),
-            "sunrise": _times["sunrise"].isoformat(),
-            "sunset": _times["sunset"].isoformat()
+            "sunrise": _times["sunrise"].time().isoformat(),
+            "sunset": _times["sunset"].time().isoformat()
         }
         with open('suntimes.json', 'w') as f:
             json.dump(suntimes, f)
