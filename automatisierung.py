@@ -100,8 +100,8 @@ while True:
     sunriseAfter =  is_time_between( startzeit.time(), (startzeit + delta_time).time(), morgensspaet )
 
     if ( sunriseBefore or surriseBetwen or sunriseAfter ):
-        with open('path_log', 'a') as f:
-            f.write(startzeit + "Rolladen hoch")
+        with open('path.log', 'a') as f:
+            f.write(str(startzeit) + " Rolladen hoch")
         os.system('python3 ' + path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
         time.sleep(1)
         os.system('python3 ' + path_rolladoino  + ' 0x0d CMD_Rolladen_Hoch')
@@ -122,8 +122,8 @@ while True:
     sunsetAfter   = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)
 
     if ( sunsetBefore or sunsetBetween or sunsetAfter ):
-        with open('path_log', 'a') as f:
-            f.write(startzeit + "Rolladen runter")
+        with open('path.log', 'a') as f:
+            f.write(str(startzeit) + " Rolladen runter")
         os.system('python3 ' + path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
         time.sleep(1)
         os.system('python3 ' + path_rolladoino  + ' 0x0d CMD_Rolladen_Runter')
