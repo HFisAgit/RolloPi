@@ -230,7 +230,7 @@
                 } else if ($_GET['device'] == 'WC') {
                     $deviceId = '0x0F';
                 } else if ($_GET['device'] == 'Terrasse') {
-                    $deviceId = '0x1F';
+                    $deviceId = '0x0b';
                 } elseif ($_GET['device'] == 'Wohnzimmer') {
                     $deviceId = '0x0C';
                 }

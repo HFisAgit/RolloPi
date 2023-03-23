@@ -108,7 +108,7 @@ while True:
         time.sleep(1)
         os.system('python2 ' + path_rolladoino  + ' 0x0f CMD_Rolladen_Hoch')
         time.sleep(1)
-        os.system('python2 ' + path_rolladoino  + ' 0x1f CMD_Rolladen_Hoch')
+        os.system('python2 ' + path_rolladoino  + ' 0x0b CMD_Rolladen_Hoch')
 
     # prüfe regel 2 Rolladen runtr
     # 1. ist es früh- und nach sonnenuntergang -> ja
