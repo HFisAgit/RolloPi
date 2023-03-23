@@ -149,7 +149,7 @@ while True:
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
         ( startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2 == 0):
         with open('path_log', 'a') as f:
-            f.write(startzeit + "Luefter aus")
+            f.write(str(startzeit) + "Luefter aus")
         os.system('python3 ' + path_rolladoino  + ' 0x0d CMD_Luefter 0')
         time.sleep(1)
         os.system('python3 ' + path_rolladoino  + ' 0x0f CMD_Luefter 0')
@@ -157,7 +157,7 @@ while True:
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
         ( startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2 == 1):
         with open('path_log', 'a') as f:
-            f.write(startzeit + "Luefter an")
+            f.write(str(startzeit) + "Luefter an")
         os.system('python3 ' + path_rolladoino  + ' 0x0d CMD_Luefter 1')
         time.sleep(1)
         os.system('python3 ' + path_rolladoino  + ' 0x0f CMD_Luefter 1')
