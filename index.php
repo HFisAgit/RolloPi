@@ -45,6 +45,7 @@
             $rollaeden = [];
             #$path_to_regeln = "/home/harald/regeln.json";
             $path_to_regeln = "/home/pi/RolloPi/regeln.json";
+            $path_to_reloadRegeln = '/home/pi/RolloPi/reloadRegeln.txt';
             $path_to_rolladiono = "/home/pi/RolloPi/Rolladoino.py";
             $path_to_suntimes = "/home/pi/RolloPi/suntimes.json";
 
@@ -108,6 +109,7 @@
                     print_r($rules);
                     # ich habe keine schreibrechte... glaube ich
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
                 }
             }
             if (isset($_POST['morninglate'])) {
@@ -117,6 +119,7 @@
                     echo "Jetzt speichern!";
                     $rules['morgens']['late'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
                 }
             }
             if (isset($_POST['eveningearly'])) {
@@ -126,6 +129,7 @@
                     echo "Jetzt speichern!";
                     $rules['abends']['early'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
                 }
             }
             if (isset($_POST['eveninglate'])) {
@@ -135,6 +139,7 @@
                     echo "Jetzt speichern!";
                     $rules['abends']['late'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
                 }
             }
             if (isset($_POST['Sonne'])) {
@@ -142,10 +147,12 @@
                     echo "Jetzt speichern!";
                     $rules['sonne']['ein'] = "true";
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
                 } else if ($_POST['Sonne'] == "False" || $_POST['Sonne'] == "false") {
                     echo "Jetzt speichern!";
                     $rules['sonne']['ein'] = "false";
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
                 } else {
                     echo 'ERROR kein gültiger boolscher Ausdruck!';
                 }
@@ -157,6 +164,7 @@
                     echo "Jetzt speichern!";
                     $rules['sonne']['runter'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
                 }
             }
             if (isset($_POST['SonneHoch'])) {
@@ -166,6 +174,7 @@
                     echo "Jetzt speichern!";
                     $rules['sonne']['hoch'] = date('G:i:s', $timestamp);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
                 }
             }
             if (isset($_POST['LuftReduzieren'])) {
@@ -173,10 +182,12 @@
                     echo "Jetzt speichern!";
                     $rules['luftreduziert'] = "true";
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
                 } else if ($_POST['LuftReduzieren'] == "False" || $_POST['LuftReduzieren'] == "false") {
                     echo "Jetzt speichern!";
                     $rules['luftreduziert'] = "false";
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
                 } else {
                     echo 'ERROR kein gültiger boolscher Ausdruck!';
                 }
@@ -329,7 +340,7 @@
                     Hier kommt das Impressum hin
                 ";
 
-                # Hier die Regeln! Das wird noch schwirig..... 
+                # Hier die Regeln! 
             } else if ($_GET['page'] == 'editRules') {
                 $MorgensEarly = $rules['morgens']['early'];
                 $MorgensLate = $rules['morgens']['late'];

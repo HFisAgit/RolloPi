@@ -27,26 +27,34 @@ def stringToTime(timestring):
     dt = datetime.fromtimestamp(mktime(st_time))
     return dt.time()
 
+def loadRegeln():
+    f = open(path_regeln,)
+    # parse json
+    data = json.load(f)
+    f.close()
+
+# define addresses
+addrKueche = '0x0d'
+addrWc = '0x0f'
+addrWohnz = '0x0b'
+addrTerrasse = '0x0c'
 
 # initialisire Program
 path_regeln = './regeln.json'
 path_rolladoino = '/home/pi/RolloPi/Rolladoino.py'
 path_log = '/home/pi/RolloPi/automatisierung.log'
+path_reloadRegeln = '/home/pi/RolloPi/reloadRegeln.txt'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
+
 heuteSchonZeitenAktualisiert = False
+
 # https://www.latlong.net/
 lon = 8.502633
 lat = 49.831873
 
-
-
 # lade regeln.json
-f = open(path_regeln,)
+loadRegeln()
 
-# parse json
-data = json.load(f)
-
-f.close()
 #print(type(data))
 #timestring = data["morgens"]["early"]
 #print(timestring)
@@ -59,7 +67,13 @@ delta_time = timedelta(seconds=10)
 while True:
     # hole aktuelle Zeit
     #startzeit = datetime.now(datetime.timezone.utc)
-    startzeit = datetime.now()
+    startzeit = datetime.now() # local time
+
+    # check if reload of regeln is triggered
+    with open(path_reloadRegeln, 'rw') as fr:
+        if("true" == fr.readline()):
+            loadRegeln()
+            fr.write(" ")
 
     # reset heuteSchonZeitenAktualisiert wenn ein neuer Tag anbricht.
     if( startzeit.hour == 0 & startzeit.minute == 0  & startzeit.second < 15 ):
@@ -101,7 +115,7 @@ while True:
 
     if ( sunriseBefore or surriseBetwen or sunriseAfter ):
         with open(path_log, 'a') as f:
-            f.write(str(startzeit) + " Rolladen hoch")
+            f.write(str(startzeit) + " Rolladen hoch" + '\n')
         os.system('python2 ' + path_rolladoino  + ' 0x0c CMD_Rolladen_Hoch')
         time.sleep(1)
         os.system('python2 ' + path_rolladoino  + ' 0x0d CMD_Rolladen_Hoch')
@@ -123,7 +137,7 @@ while True:
 
     if ( sunsetBefore or sunsetBetween or sunsetAfter ):
         with open(path_log, 'a') as f:
-            f.write(str(startzeit) + " Rolladen runter")
+            f.write(str(startzeit) + " Rolladen runter" + '\n')
         os.system('python2 ' + path_rolladoino  + ' 0x0c CMD_Rolladen_Runter')
         time.sleep(1)
         os.system('python2 ' + path_rolladoino  + ' 0x0d CMD_Rolladen_Runter')
@@ -149,7 +163,7 @@ while True:
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
         ( startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2 == 0):
         with open(path_log, 'a') as f:
-            f.write(str(startzeit) + "Luefter aus")
+            f.write(str(startzeit) + "Luefter aus" + '\n')
         os.system('python2 ' + path_rolladoino  + ' 0x0d CMD_Luefter 0')
         time.sleep(1)
         os.system('python2 ' + path_rolladoino  + ' 0x0f CMD_Luefter 0')
@@ -157,7 +171,7 @@ while True:
     if (luefter == "true" or luefter == "True" or luefter == "TRUE") and \
         ( startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2 == 1):
         with open(path_log, 'a') as f:
-            f.write(str(startzeit) + "Luefter an")
+            f.write(str(startzeit) + "Luefter an" + '\n')
         os.system('python2 ' + path_rolladoino  + ' 0x0d CMD_Luefter 1')
         time.sleep(1)
         os.system('python2 ' + path_rolladoino  + ' 0x0f CMD_Luefter 1')
@@ -172,8 +186,10 @@ while True:
     if (sleeptime.total_seconds() > 0):
         time.sleep(sleeptime.total_seconds())
     else:
-        print("Error in sleeptime calculation")
+        print("Warning: loop takes longer then time_delta!")
         print(sleeptime.total_seconds())
+        with open(path_log, 'a') as f:
+            f.write(str(startzeit) + "Warning: loop takes longer then time_delta!" + '\n')
         time.sleep(1)
 # ende Schleife
 
