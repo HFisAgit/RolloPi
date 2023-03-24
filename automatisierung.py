@@ -33,6 +33,9 @@ def loadRegeln():
     data = json.load(f)
     f.close()
 
+# global vars
+clearReloadFile = false
+
 # define addresses
 addrKueche = '0x0d'
 addrWc = '0x0f'
@@ -70,10 +73,15 @@ while True:
     startzeit = datetime.now() # local time
 
     # check if reload of regeln is triggered
-    with open(path_reloadRegeln, 'rw') as fr:
+    with open(path_reloadRegeln, 'r') as fr:
         if("true" == fr.readline()):
             loadRegeln()
-            fr.write(" ")
+            clearReloadFile = true
+    
+    # clear 
+    if(clearReloadFile):
+        with open(path_reloadRegeln, 'w') as fw:
+            fw.write(" ")
 
     # reset heuteSchonZeitenAktualisiert wenn ein neuer Tag anbricht.
     if( startzeit.hour == 0 & startzeit.minute == 0  & startzeit.second < 15 ):
