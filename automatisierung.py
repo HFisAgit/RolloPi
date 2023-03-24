@@ -34,7 +34,7 @@ def loadRegeln():
     f.close()
 
 # global vars
-clearReloadFile = false
+clearReloadFile = False
 
 # define addresses
 addrKueche = '0x0d'
@@ -76,12 +76,13 @@ while True:
     with open(path_reloadRegeln, 'r') as fr:
         if("true" == fr.readline()):
             loadRegeln()
-            clearReloadFile = true
+            clearReloadFile = True
     
     # clear 
     if(clearReloadFile):
         with open(path_reloadRegeln, 'w') as fw:
             fw.write(" ")
+            clearReloadFile = False
 
     # reset heuteSchonZeitenAktualisiert wenn ein neuer Tag anbricht.
     if( startzeit.hour == 0 & startzeit.minute == 0  & startzeit.second < 15 ):
