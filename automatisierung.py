@@ -162,8 +162,8 @@ while True:
         
     # prüfe regel 3 sonne runter
     sonnenschutz = data['sonne']['ein']
-    sonnerunter = data['sonne']['runter']
-    sonnehoch = data['sonne']['hoch']
+    sonnerunter = stringToTime(data['sonne']['runter'])
+    sonnehoch = stringToTime(data['sonne']['hoch'])
 
     isSonnenschutzActive = sonnenschutz == "true" or sonnenschutz == "True" or sonnenschutz == "TRUE"
     isSonneRunter = is_time_between(startzeit.time(), (startzeit + delta_time).time(), sonnerunter)
