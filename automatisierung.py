@@ -183,16 +183,19 @@ while True:
     luefter = data['luftreduziert']
 
     isLuefterActive = luefter == "true" or luefter == "True" or luefter == "TRUE"
-    isHourEven = startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2
+    isHourEven = startzeit.minute == 0 and startzeit.second < delta_time.seconds and (startzeit.hour % 2)-1
+    isHourUneven = startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2
 
-    if (isLuefterActive and isHourEven == 0):
+    if (isLuefterActive and isHourEven == True):
+        print('aus')
         with open(path_log, 'a') as f:
             f.write(str(startzeit) + "Luefter aus" + '\n')
         os.system('python2 ' + path_rolladoino + ' ' + addrKueche +' CMD_Luefter 0')
         time.sleep(1)
         os.system('python2 ' + path_rolladoino + ' ' + addrWc + ' CMD_Luefter 0')
 
-    if (isLuefterActive and isHourEven == 1):
+    if (isLuefterActive and isHourUneven == True):
+        print('an')
         with open(path_log, 'a') as f:
             f.write(str(startzeit) + "Luefter an" + '\n')
         os.system('python2 ' + path_rolladoino + ' ' + addrKueche +' CMD_Luefter 1')
