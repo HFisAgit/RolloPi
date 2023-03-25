@@ -44,9 +44,12 @@ addrTerrasse = '0x0c'
 
 # initialisire Program
 path_regeln = './regeln.json'
-path_rolladoino = '/home/pi/RolloPi/Rolladoino.py'
-path_log = '/home/pi/RolloPi/automatisierung.log'
-path_reloadRegeln = '/home/pi/RolloPi/reloadRegeln.txt'
+#path_rolladoino = '/home/pi/RolloPi/Rolladoino.py'
+#path_log = '/home/pi/RolloPi/automatisierung.log'
+#path_reloadRegeln = '/home/pi/RolloPi/reloadRegeln.txt'
+path_rolladoino = './Rolladoino.py'
+path_log = './automatisierung.log'
+path_reloadRegeln = './reloadRegeln.txt'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
 
 heuteSchonZeitenAktualisiert = False
@@ -177,10 +180,11 @@ while True:
         os.system('python2 ' + path_rolladoino + ' ' + addrWohnz + ' CMD_Rolladen_Hoch')
     
     # prüfe regel 5 lüfter
+    luefter = data['luftreduziert']
+
     isLuefterActive = luefter == "true" or luefter == "True" or luefter == "TRUE"
     isHourEven = startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2
 
-    luefter = data['luftreduziert']
     if (isLuefterActive and isHourEven == 0):
         with open(path_log, 'a') as f:
             f.write(str(startzeit) + "Luefter aus" + '\n')
