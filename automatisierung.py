@@ -56,7 +56,12 @@ lon = 8.502633
 lat = 49.831873
 
 # lade regeln.json
-loadRegeln()
+#data = []
+#loadRegeln()
+
+with open(path_regeln, 'r') as regelnFile:
+    data = json.load(regelnFile)
+
 
 #print(type(data))
 #timestring = data["morgens"]["early"]
@@ -75,7 +80,8 @@ while True:
     # check if reload of regeln is triggered
     with open(path_reloadRegeln, 'r') as fr:
         if("true" == fr.readline()):
-            loadRegeln()
+            with open(path_regeln, 'r') as regelnFile:
+                data = json.load(regelnFile)
             clearReloadFile = True
     
     # clear 
@@ -83,6 +89,7 @@ while True:
         with open(path_reloadRegeln, 'w') as fw:
             fw.write(" ")
             clearReloadFile = False
+
 
     # reset heuteSchonZeitenAktualisiert wenn ein neuer Tag anbricht.
     if( startzeit.hour == 0 & startzeit.minute == 0  & startzeit.second < 15 ):
