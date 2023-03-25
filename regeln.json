@@ -1,6 +1,6 @@
 {
     "morgens": {
-        "early": "7:00:00",
+        "early": "6:00:00",
         "late": "8:00:00"
     },
     "abends": {
@@ -10,7 +10,7 @@
     "sonne": {
         "ein": "false",
         "runter": "11:00:00",
-        "hoch": "17:00"
+        "hoch": "17:00:00"
     },
     "luftreduziert": "true"
 }
