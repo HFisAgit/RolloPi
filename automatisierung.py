@@ -1,5 +1,6 @@
 # Abhänigkeiten
 # pip install suncalc
+# pip install pytz
 
 import json
 import time
@@ -9,7 +10,7 @@ import os
 from suncalc import get_position, get_times
 from datetime import datetime, timedelta
 from time import mktime
-from dateutil import tz
+import pytz
 
 
 def is_time_between(begin_time, end_time, check_time=None):
@@ -106,13 +107,26 @@ while True:
         _times = get_times(startzeitutc, lon, lat, 0, [(-0.833, 'sunrise', 'sunset')])
         # times are in UTC but without timezoneinfo (native)
         # so: add UTC time zone info
-        from_zone = tz.gettz('UTC')
-        to_zone = tz.gettz('Europe/Berlin')
+        from_zone = pytz.utc
+        to_zone = pytz.timezone('Europe/Berlin')
         _times["sunrise"] = _times["sunrise"].replace(tzinfo=from_zone)
         _times["sunset"] = _times["sunset"].replace(tzinfo=from_zone)
+
+        # debug
+        print('in UTC')
+        print(_times["sunrise"].dst())
+
         # and convert to local time
         sunrise = _times["sunrise"].astimezone(to_zone)
         sunset = _times["sunset"].astimezone(to_zone)
+
+
+        # debug
+
+        print('in local')
+        print(_times["sunrise"].dst())
+        
+
         heuteSchonZeitenAktualisiert = True 
         # zeiten für Anzeige exportiere
         s_sunrise = (_times["sunrise"].astimezone(to_zone)).time().isoformat();
