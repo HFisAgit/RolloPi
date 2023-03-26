@@ -96,27 +96,29 @@ while True:
 
 
     # reset heuteSchonZeitenAktualisiert wenn ein neuer Tag anbricht.
-    if( startzeit.hour == 0 & startzeit.minute == 0  & startzeit.second < 15 ):
+    # Nachts um vier, für den Fall, dass Sommerzeit anfängt oder endet. 
+    if( startzeit.hour == 4 & startzeit.minute == 0  & startzeit.second < 15 ):
         heuteSchonZeitenAktualisiert = False
 
     # prüfe, ob heute schon die Sonnen auf und Untergangszeiten geholt wprden
     if heuteSchonZeitenAktualisiert == False:
         # hole Zeiten, wenn nötig
         print("Neue Sonnen auf/unterganz Zeiten.")
-        _times = get_times(startzeitutc, lon, lat, 0, [(-0.833, 'sunrise', 'sunset')])
+        #_times = get_times(startzeitutc, lon, lat, 0, [(-0.833, 'sunrise', 'sunset')])
+        _times = get_times(startzeitutc, lon, lat)
         # times are in UTC but without timezoneinfo (native)
         # so: add UTC time zone info
         from_zone = tz.gettz('UTC')
         to_zone = tz.gettz('Europe/Berlin')
         _times["sunrise"] = _times["sunrise"].replace(tzinfo=from_zone)
-        _times["sunset"] = _times["sunset"].replace(tzinfo=from_zone)
+        _times["dusk"] = _times["dusk"].replace(tzinfo=from_zone)
         # and convert to local time
         sunrise = _times["sunrise"].astimezone(to_zone)
-        sunset = _times["sunset"].astimezone(to_zone)
+        sunset = _times["dusk"].astimezone(to_zone)
         heuteSchonZeitenAktualisiert = True 
         # zeiten für Anzeige exportiere
         s_sunrise = (_times["sunrise"].astimezone(to_zone)).time().isoformat();
-        s_sunset  = (_times["sunset"].astimezone(to_zone)).time().isoformat();
+        s_sunset  = (_times["dusk"].astimezone(to_zone)).time().isoformat();
         sunriseCropIndex = s_sunrise.rfind(".");
         sunsetCropIndex = s_sunset.rfind(".");
 
