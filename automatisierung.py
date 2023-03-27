@@ -110,14 +110,14 @@ while True:
         # so: add UTC time zone info
         from_zone = tz.gettz('UTC')
         to_zone = tz.gettz('Europe/Berlin')
-        _times["sunrise"] = _times["sunrise"].replace(tzinfo=from_zone)
+        _times["dawn"] = _times["dawn"].replace(tzinfo=from_zone)
         _times["dusk"] = _times["dusk"].replace(tzinfo=from_zone)
         # and convert to local time
-        sunrise = _times["sunrise"].astimezone(to_zone)
+        sunrise = _times["dawn"].astimezone(to_zone)
         sunset = _times["dusk"].astimezone(to_zone)
         heuteSchonZeitenAktualisiert = True 
         # zeiten für Anzeige exportiere
-        s_sunrise = (_times["sunrise"].astimezone(to_zone)).time().isoformat();
+        s_sunrise = (_times["dawn"].astimezone(to_zone)).time().isoformat();
         s_sunset  = (_times["dusk"].astimezone(to_zone)).time().isoformat();
         sunriseCropIndex = s_sunrise.rfind(".");
         sunsetCropIndex = s_sunset.rfind(".");
