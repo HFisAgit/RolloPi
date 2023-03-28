@@ -34,14 +34,21 @@ def loadRegeln():
     data = json.load(f)
     f.close()
 
+def datetime2local(dto:datetime, s_tz: str='Europe/Berlin'):
+    from_zone = tz.gettz('UTC')
+    to_zone = tz.gettz(s_tz)
+    _local = dto.replace(tzinfo=from_zone)
+    # and convert to local time
+    return _local.astimezone(to_zone)
+
 # global vars
 clearReloadFile = False
 
 # define addresses
 addrKueche = '0x0d'
 addrWc = '0x0f'
-addrWohnz = '0x0b'
-addrTerrasse = '0x0c'
+addrWohnz = '0x0c'
+addrTerrasse = '0x0b'
 
 # initialisire Program
 path_regeln = './regeln.json'
@@ -104,24 +111,21 @@ while True:
     if heuteSchonZeitenAktualisiert == False:
         # hole Zeiten, wenn nötig
         print("Neue Sonnen auf/unterganz Zeiten.")
-        #_times = get_times(startzeitutc, lon, lat, 0, [(-0.833, 'sunrise', 'sunset')])
         _times = get_times(startzeitutc, lon, lat)
-        # times are in UTC but without timezoneinfo (native)
-        # so: add UTC time zone info
-        from_zone = tz.gettz('UTC')
-        to_zone = tz.gettz('Europe/Berlin')
-        _times["dawn"] = _times["dawn"].replace(tzinfo=from_zone)
-        _times["dusk"] = _times["dusk"].replace(tzinfo=from_zone)
         # and convert to local time
-        sunrise = _times["dawn"].astimezone(to_zone)
-        sunset = _times["dusk"].astimezone(to_zone)
-        heuteSchonZeitenAktualisiert = True 
-        # zeiten für Anzeige exportiere
-        s_sunrise = (_times["dawn"].astimezone(to_zone)).time().isoformat();
-        s_sunset  = (_times["dusk"].astimezone(to_zone)).time().isoformat();
-        sunriseCropIndex = s_sunrise.rfind(".");
-        sunsetCropIndex = s_sunset.rfind(".");
+        for x in _times:
+            x = datetime2local(_times[x])
 
+        dawn_time = _times["dawn"]
+        dusk_time = _times["dusk"]
+        sunset_time = _times['sunset']
+        heuteSchonZeitenAktualisiert = True 
+
+        # zeiten für Anzeige exportiere
+        s_sunrise = _times["sunrise"].isoformat()
+        s_sunset  = _times["sunset"].isoformat()
+        sunriseCropIndex = s_sunrise.rfind(".")
+        sunsetCropIndex = s_sunset.rfind(".")
         suntimes = {
             "date": startzeit.date().isoformat(),
             "sunrise": s_sunrise[:sunriseCropIndex],
@@ -138,8 +142,8 @@ while True:
     morgensfrueh = stringToTime(data['morgens']['early']) #time
     morgensspaet = stringToTime(data['morgens']['late']) #time
     
-    sunriseBefore = is_time_between( startzeit.time(), (startzeit + delta_time).time(), morgensfrueh )   and sunrise.time() <= startzeit.time()
-    surriseBetwen = is_time_between( startzeit.time(), (startzeit + delta_time).time(), sunrise.time() ) and morgensfrueh   < startzeit.time()
+    sunriseBefore = is_time_between( startzeit.time(), (startzeit + delta_time).time(), morgensfrueh )   and dawn_time.time() <= startzeit.time()
+    surriseBetwen = is_time_between( startzeit.time(), (startzeit + delta_time).time(), dawn_time.time() ) and morgensfrueh   < startzeit.time()
     sunriseAfter =  is_time_between( startzeit.time(), (startzeit + delta_time).time(), morgensspaet )
 
     if ( sunriseBefore or surriseBetwen or sunriseAfter ):
@@ -153,26 +157,38 @@ while True:
         time.sleep(1)
         os.system('python2 ' + path_rolladoino + ' ' + addrTerrasse + ' CMD_Rolladen_Hoch')
 
-    # prüfe regel 2 Rolladen runtr
+    # prüfe regel 2 Rolladen runter Straße
     # 1. ist es früh- und nach sonnenuntergang -> ja
     # 2. ist es nach früh && sonnenuntergang -> ja
     # 3. ist es spättestens -> ja
     abendsfrueh = stringToTime(data['abends']['early'])
     abendsspaet = stringToTime(data['abends']['late'])
     
-    sunsetBefore  = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsfrueh)    and sunset.time() <= startzeit.time()
-    sunsetBetween = is_time_between(startzeit.time(), (startzeit + delta_time).time(), sunset.time() ) and abendsfrueh < startzeit.time()
+    duskBefore  = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsfrueh)    and dusk_time.time() <= startzeit.time()
+    duskBetween = is_time_between(startzeit.time(), (startzeit + delta_time).time(), dusk_time.time() ) and abendsfrueh < startzeit.time()
+    duskAfter   = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)
+
+    if ( duskBefore or duskBetween or duskAfter ):
+        with open(path_log, 'a') as f:
+            f.write(str(startzeit) + " Rolladen runter Straße" + '\n')
+        os.system('python2 ' + path_rolladoino + ' ' + addrKueche +' CMD_Rolladen_Runter')
+        time.sleep(1)
+        os.system('python2 ' + path_rolladoino + ' ' + addrWc + ' CMD_Rolladen_Runter')
+    
+    # prüfe regel 2 Rolladen runter Garten
+    # 1. ist es früh- und nach sonnenuntergang -> ja
+    # 2. ist es nach früh && sonnenuntergang -> ja
+    # 3. ist es spättestens -> ja
+    sunsetBefore  = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsfrueh)    and sunset_time.time() <= startzeit.time()
+    sunsetBetween = is_time_between(startzeit.time(), (startzeit + delta_time).time(), sunset_time.time() ) and abendsfrueh < startzeit.time()
     sunsetAfter   = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)
 
     if ( sunsetBefore or sunsetBetween or sunsetAfter ):
         with open(path_log, 'a') as f:
-            f.write(str(startzeit) + " Rolladen runter" + '\n')
-        os.system('python2 ' + path_rolladoino + ' ' + addrKueche +' CMD_Rolladen_Runter')
-        time.sleep(1)
-        os.system('python2 ' + path_rolladoino + ' ' + addrWc + ' CMD_Rolladen_Runter')
-        time.sleep(1)
+            f.write(str(startzeit) + " Rolladen runter Garten" + '\n')
         os.system('python2 ' + path_rolladoino + ' ' + addrWohnz + ' CMD_Rolladen_Runter')
         
+
     # prüfe regel 3 sonne runter
     sonnenschutz = data['sonne']['ein']
     sonnerunter = stringToTime(data['sonne']['runter'])
