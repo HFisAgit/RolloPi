@@ -114,7 +114,7 @@ while True:
         _times = get_times(startzeitutc, lon, lat)
         # and convert to local time
         for x in _times:
-            x = datetime2local(_times[x])
+            _times[x] = datetime2local(_times[x])
 
         dawn_time = _times["dawn"]
         dusk_time = _times["dusk"]
