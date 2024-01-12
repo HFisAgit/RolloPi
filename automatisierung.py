@@ -46,7 +46,8 @@ clearReloadFile = False
 
 # define addresses
 addrKueche = '0x0d'
-addrWc = '0x0f'
+addrWc = '0x03'
+addrWc_bug = '0x0f'
 addrWohnz = '0x0c'
 addrTerrasse = '0x0b'
 
@@ -153,6 +154,8 @@ while True:
         time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrWc + ' CMD_Rolladen_Hoch')
         time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Rolladen_Hoch')
+        time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrWohnz + ' CMD_Rolladen_Hoch')
         time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrTerrasse + ' CMD_Rolladen_Hoch')
@@ -174,6 +177,8 @@ while True:
         os.system('python3 ' + path_rolladoino + ' ' + addrKueche +' CMD_Rolladen_Runter')
         time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrWc + ' CMD_Rolladen_Runter')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Rolladen_Runter')
     
     # prüfe regel 2 Rolladen runter Garten
     # 1. ist es früh- und nach sonnenuntergang -> ja
@@ -219,6 +224,8 @@ while True:
         os.system('python3 ' + path_rolladoino + ' ' + addrKueche +' CMD_Luefter 0')
         time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrWc + ' CMD_Luefter 0')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Luefter 0')
 
     if (isLuefterActive and isHourUneven == True):
         print('an')
@@ -227,6 +234,8 @@ while True:
         os.system('python3 ' + path_rolladoino + ' ' + addrKueche +' CMD_Luefter 1')
         time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrWc + ' CMD_Luefter 1')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Luefter 1')
 
     # hole neuen Zeitstempel
     endzeit = datetime.now()
