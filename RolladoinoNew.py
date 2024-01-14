@@ -54,23 +54,27 @@ bus = smbus.SMBus(1)    # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
 
 if(args.command=="CMD_Rolladen_Hoch"):
     print("CMD_Rolladen_Hoch")
+    addr=int(args.address,16)
     setFloor(bus, args.floor)
-    SendSingleByte(bus, args.address, 0x00)
+    SendSingleByte(bus, addr, 0x00)
 
 elif(args.command=="CMD_Rolladen_Runter"):
     print("CMD_Rolladen_Runter")
+    addr=int(args.address,16)
     setFloor(bus, args.floor)
-    SendSingleByte(bus, args.address, 0x06)
+    SendSingleByte(bus, addr, 0x06)
 
 elif(args.command=="CMD_Rolladen_Stop"):
     print("CMD_Rolladen_Stop")
+    addr=int(args.address,16)
     setFloor(bus, args.floor)
-    SendSingleByte(bus, args.address, 0x08)
+    SendSingleByte(bus, addr, 0x08)
 
 elif(args.command=="CMD_Luefter"):
     print("CMD_Luefter")
+    addr=int(args.address,16)
     setFloor(bus, args.floor)
-    SendTwoBytes(bus, args.address, 0x12, args.stufe)
+    SendTwoBytes(bus, addr, 0x12, args.stufe)
 
 else:
     print("ERROR: Unknown command.")
