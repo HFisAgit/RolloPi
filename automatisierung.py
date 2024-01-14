@@ -46,7 +46,7 @@ clearReloadFile = False
 
 # define addresses
 addrKueche = '0x0d'
-addrWc = '0x03'
+addrWc = '0x0e'
 addrWc_bug = '0x0f'
 addrWohnz = '0x0c'
 addrTerrasse = '0x0b'
