@@ -2,6 +2,7 @@
 
 import sys
 import smbus
+#from smbus2 import SMBus
 
 
 def SendSingleByte(SendByte):
@@ -43,11 +44,11 @@ def ReceiveTwoBytes(Command):
 
   print("Lesen...")
   byte1 = bus.read_byte(DEVICE_ADDRESS)
-  print byte1
+  print (byte1)
 
   print("Lesen...")
   byte2 = bus.read_byte(DEVICE_ADDRESS)
-  print byte2
+  print (byte2)
   
   return byte1*255+byte2
 
@@ -136,16 +137,16 @@ if len(sys.argv) > 2:
       print("Error Position not avalible")
 
   elif str(sys.argv[2]) == "CMD_Read_Strom_Rolladen":
-    print ReceiveTwoBytes(0x40) 
+    print( ReceiveTwoBytes(0x40)) 
   
   elif str(sys.argv[2]) == "CMD_Read_Licht":
-    print ReceiveTwoBytes(0x41) 
+    print( ReceiveTwoBytes(0x41) )
   
   elif str(sys.argv[2]) == "CMD_Read_Temperatur":
-    print ReceiveTwoBytes(0x42) 
+    print( ReceiveTwoBytes(0x42)) 
   
   elif str(sys.argv[2]) == "CMD_Read_Feuchte":
-    print ReceiveTwoBytes(0x43) 
+    print( ReceiveTwoBytes(0x43) )
 
   elif str(sys.argv[2]) == "CMD_Read_Auto":
     #print ReceiveTwoBytes(0x50)
@@ -156,7 +157,7 @@ if len(sys.argv) > 2:
     print("Error Position not avalible")
   
   elif str(sys.argv[2]) == "CMD_Read_Luefter":
-    print ReceiveTwoBytes(0x52)
+    print( ReceiveTwoBytes(0x52))
   
   elif str(sys.argv[2]) == "CMD_Read_Summer":
     #print ReceiveTwoBytes(0x53)
