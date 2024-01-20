@@ -4,6 +4,7 @@ import sys
 import time
 import smbus
 import argparse
+import TCA9548A
 
 def setFloor(bus, floor):
     I2C_address = 0x70
@@ -11,12 +12,14 @@ def setFloor(bus, floor):
     if(floor == 'EG'):
         subbus=5
     elif(floor=='OG'):
-        subbus=7
+        subbus=3
     else:
         subbus=-1
 
     if(subbus > 0):
-        bus.write_byte(I2C_address,subbus)
+        print('set floor')
+       # bus.write_byte(I2C_address,subbus)
+        TCA9548A.I2C_setup(I2C_address,subbus)
         time.sleep(0.1)
 
     return
