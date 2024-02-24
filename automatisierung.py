@@ -10,6 +10,7 @@ from suncalc import get_position, get_times
 from datetime import datetime, timedelta
 from time import mktime
 from dateutil import tz
+from gpiozero import LED
 
 
 def is_time_between(begin_time, end_time, check_time=None):
@@ -41,6 +42,29 @@ def datetime2local(dto:datetime, s_tz: str='Europe/Berlin'):
     # and convert to local time
     return _local.astimezone(to_zone)
 
+def updateLauflicht(lauflicht):
+    with open(path_log, 'a') as f:
+            f.write(str(startzeit) + " Lauflicht: " + str(lauflicht) + '\n')
+    bit0 = lauflicht % 2
+    bit1 = (lauflicht >> 1) % 2
+    bit2 = (lauflicht >> 2) % 2
+    bit3 = (lauflicht >> 3) % 2
+    bit4 = (lauflicht >> 4) % 2
+    bit5 = (lauflicht >> 5) % 2
+    bit6 = (lauflicht >> 6) % 2
+    bit7 = (lauflicht >> 7) % 2
+
+    led0.off() if bit0 == 0 else led0.on()
+    led1.off() if bit1 == 0 else led1.on()
+    led2.off() if bit2 == 0 else led2.on()
+    led3.off() if bit3 == 0 else led3.on()
+    led4.off() if bit4 == 0 else led4.on()
+    led5.off() if bit5 == 0 else led5.on()
+    led6.off() if bit6 == 0 else led6.on()
+    led7.off() if bit7 == 0 else led7.on()
+
+
+
 # global vars
 clearReloadFile = False
 
@@ -56,10 +80,32 @@ path_regeln = './regeln.json'
 #path_rolladoino = '/home/pi/RolloPi/Rolladoino.py'
 #path_log = '/home/pi/RolloPi/automatisierung.log'
 #path_reloadRegeln = '/home/pi/RolloPi/reloadRegeln.txt'
-path_rolladoino = './Rolladoino3.py'
+#path_rolladoino = './Rolladoino3.py'
+path_rolladoino = './RolladoinoNew.py'
 path_log = './automatisierung.log'
 path_reloadRegeln = './reloadRegeln.txt'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
+
+#GPIO
+led0 = LED(26)
+led1 = LED(16)
+led2 = LED(19)
+led3 = LED(13)
+led4 = LED(12)
+led5 = LED(6)
+led6 = LED(5)
+led7 = LED(4)
+
+led0.on()
+led1.on()
+led2.on()
+led3.on()
+led4.on()
+led5.on()
+led6.on()
+led7.on()
+
+lauflicht = 0
 
 heuteSchonZeitenAktualisiert = False
 
@@ -237,6 +283,15 @@ while True:
         time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Luefter 1')
 
+
+    # lauflicht
+    if (lauflicht < 7):
+        lauflicht += 1
+    else:
+        lauflicht = 0
+    updateLauflicht(lauflicht)
+    
+    #########################################################################################
     # hole neuen Zeitstempel
     endzeit = datetime.now()
 
