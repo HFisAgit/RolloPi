@@ -48,6 +48,7 @@
             $path_to_reloadRegeln = '/home/pi/RolloPi/reloadRegeln.txt';
             $path_to_rolladiono = "/home/pi/RolloPi/Rolladoino.py";
             $path_to_suntimes = "/home/pi/RolloPi/suntimes.json";
+            $path_to_analogVals = "/home/pi/RolloPi/analogValues.json";
 
 
             # fülle die Hardware
@@ -88,9 +89,15 @@
             array_push($rollaeden, $newshutter4);
 
             # lade suntimes aus Datei
-            if (file_exists($path_to_regeln)) {
+            if (file_exists($path_to_suntimes)) {
                 $textsun = file_get_contents($path_to_suntimes, true);
                 $suntimes = json_decode($textsun, true);
+            }
+            
+            # lade analogwerte aus Datei
+            if (file_exists($path_to_analogVals)) {
+                $textadc = file_get_contents($path_to_analogVals, true);
+                $adcvals = json_decode($textadc, true);
             }
 
             # lade Regeln aus Datei
@@ -461,6 +468,11 @@
                 echo '<p>Startseite der Haussteuerunng</p>';
                 echo 'Sonnenaufgang: ' . $suntimes['sunrise'] . '<br>';
                 echo 'Sonnenuntergang: ' . $suntimes['sunset'] . '<br>';
+                echo '<br>';
+                echo 'ADC Kanal 1: ' . $adcvals['adc1'] . '<br>';
+                echo 'ADC Kanal 2: ' . $adcvals['adc2'] . '<br>';
+                echo 'ADC Kanal 3: ' . $adcvals['adc3'] . '<br>';
+                echo 'ADC Kanal 4: ' . $adcvals['adc4'] . '<br>';
             }
             ?>
         </div>

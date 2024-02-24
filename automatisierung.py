@@ -5,12 +5,14 @@ import json
 import time
 import subprocess
 import os
+import ads1115
 
 from suncalc import get_position, get_times
 from datetime import datetime, timedelta
 from time import mktime
 from dateutil import tz
 from gpiozero import LED
+
 
 
 def is_time_between(begin_time, end_time, check_time=None):
@@ -291,6 +293,21 @@ while True:
         lauflicht = 0
     updateLauflicht(lauflicht)
     
+    # ADC
+    adc1 = ads1115.readSingle(0)
+    adc2 = ads1115.readSingle(1)
+    adc3 = ads1115.readSingle(2)
+    adc4 = ads1115.readSingle(3)
+
+    analogVals = {
+            "adc1": str(adc1),
+            "adc2": str(adc2),
+            "adc3": str(adc3),
+            "adc4": str(adc4)
+        }
+    with open('analogValues.json', 'w') as f:
+            json.dump(analogVals, f)
+
     #########################################################################################
     # hole neuen Zeitstempel
     endzeit = datetime.now()

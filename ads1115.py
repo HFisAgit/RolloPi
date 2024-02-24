@@ -2,6 +2,7 @@
 
 import time
 import smbus
+import TCA9548A
 
 # ADS1115 + hardware constants
 I2C_BUS = 1
@@ -47,7 +48,19 @@ def resetChip():
     BUS.write_byte(RESET_ADDRESS, RESET_COMMAND)
     return
 
+
+def setFloor():
+    I2C_address = 0x70
+    subbus=7
+
+    TCA9548A.I2C_setup(I2C_address,subbus)
+    time.sleep(0.1)
+
+    return
+
 def readSingle(input):
+    setFloor()
+    
     inbm = '100'
     if(input == 0):
         inbm = '100'
@@ -77,7 +90,7 @@ def readSingle(input):
     return value
 
 #test program
-
+setFloor()
 value = readSingle(1)
 print("Value: " + str(value))
       
