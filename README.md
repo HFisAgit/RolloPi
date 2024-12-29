@@ -38,6 +38,10 @@ sudo apt-get install python3-smbus python3-dev i2c-tools
 
 -test i2c:
 sudo i2cdetect -y 1
+- for debugging:
+sudo apt install jq
+run i2c_monitor.sh as a cronjob
+(crontab -e ; ***** /pfad/i2c_monitor.sh )
 
 -python
 wir brauchen python3 und python-is-python3
