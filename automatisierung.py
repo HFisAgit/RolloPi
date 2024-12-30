@@ -72,7 +72,20 @@ def readTempSensor(sensorName) :
     f.close()
     return lines
  
-
+ 
+def readTempLines(sensorName) :
+    lines = readTempSensor(sensorName)
+    # Solange nicht die Daten gelesen werden konnten, bin ich hier in einer Endlosschleife
+    while lines[0].strip()[-3:] != 'YES':
+        time.sleep(0.2)
+        lines = readTempSensor(sensorName)
+    temperaturStr = lines[1].find('t=')
+    # Ich überprüfe ob die Temperatur gefunden wurde.
+    if temperaturStr != -1 :
+        tempData = lines[1][temperaturStr+2:]
+        tempCelsius = float(tempData) / 1000.0
+        return tempCelsius
+ 
 
 
 # global vars
@@ -349,12 +362,12 @@ while True:
     
     # Temperatur auslesen
     """Mit einem Timestamp versehe ich meine Messung und lasse mir diese in der Console ausgeben."""
-    print(time.strftime('%H:%M:%S') +" - " + str(readTempSensor(sensor)))
+   # print(time.strftime('%H:%M:%S') +" - " + str(readTempSensor(sensor)))
     
     tempSensVal = {
         "time": time.strftime('%H:%M:%S'),
-        "temp1": str(readTempSensor(sensor1)),
-        "temp2": str(readTempSensor(sensor2))
+        "temp1": str(readTempLines(sensor1)),
+        "temp2": str(readTempLines(sensor2))
     }
     with open('temperaturValues.json', 'w') as f:
             json.dump(tempSensVal, f)

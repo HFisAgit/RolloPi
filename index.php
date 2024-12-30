@@ -476,8 +476,8 @@
                 echo 'ADC Kanal 3: ' . $adcvals['adc3'] . '<br>';
                 echo 'ADC Kanal 4: ' . $adcvals['adc4'] . '<br>';
                 echo '<br>';
-                echo 'Temperatur Kanal 1: ' . $tempvals['adc1'] . '<br>';
-                echo 'Temperatur Kanal 2: ' . $tempvals['adc2'] . '<br>';
+                echo 'Temperatur Kanal 1: ' . $tempvals['temp1'] . '<br>';
+                echo 'Temperatur Kanal 2: ' . $tempvals['temp2'] . '<br>';
             }
             ?>
         </div>
