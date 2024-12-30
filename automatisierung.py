@@ -171,8 +171,8 @@ delta_time = timedelta(seconds=10)
 #while heuteSchonZeitenAktualisiert == False:
 while True:
     # hole aktuelle Zeit
-    #startzeitutc = datetime.utcnow() # deprecated ...
-    startzeitutc = time.time().now(datetime.timezone.utc) # new variant
+    startzeitutc = datetime.utcnow() # deprecated ...
+    #startzeitutc = time.time().now(datetime.timezone.utc) # new variant
     startzeit = datetime.now() # local time
 
     # check if reload of regeln is triggered
