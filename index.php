@@ -49,6 +49,7 @@
             $path_to_rolladiono = "/home/pi/RolloPi/Rolladoino.py";
             $path_to_suntimes = "/home/pi/RolloPi/suntimes.json";
             $path_to_analogVals = "/home/pi/RolloPi/analogValues.json";
+            $path_to_temperaturVals = "/home/pi/RolloPi/temperaturValues.json";
 
 
             # fülle die Hardware
@@ -133,6 +134,14 @@
                 $textadc = file_get_contents($path_to_analogVals, true);
                 $adcvals = json_decode($textadc, true);
             }
+
+            # lade Temperaturwerte aus Datei
+            if (file_exists($path_to_temperaturVals)) {
+                $texttemp = file_get_contents($path_to_temperaturVals, true);
+                $tempvals = json_decode($texttemp, true);
+            }
+
+            
 
             # lade Regeln aus Datei
             if (file_exists($path_to_regeln)) {
@@ -466,6 +475,9 @@
                 echo 'ADC Kanal 2: ' . $adcvals['adc2'] . '<br>';
                 echo 'ADC Kanal 3: ' . $adcvals['adc3'] . '<br>';
                 echo 'ADC Kanal 4: ' . $adcvals['adc4'] . '<br>';
+                echo '<br>';
+                echo 'Temperatur Kanal 1: ' . $tempvals['adc1'] . '<br>';
+                echo 'Temperatur Kanal 2: ' . $tempvals['adc2'] . '<br>';
             }
             ?>
         </div>

@@ -30,6 +30,9 @@ https://www.abelectronics.co.uk/kb/article/1/i2c--smbus-and-raspbian-linux
 -activiere i2c:
 sudo raspi-config
 
+-activiere onewire:
+sudo raspi-config
+
 -install: 
 sudo apt-get update
 sudo apt install git vim 

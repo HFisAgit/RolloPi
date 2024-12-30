@@ -65,6 +65,14 @@ def updateLauflicht(lauflicht):
     led6.off() if bit6 == 0 else led6.on()
     led7.off() if bit7 == 0 else led7.on()
 
+def readTempSensor(sensorName) :
+    """Aus dem Systembus lese ich die Temperatur der DS18B20 aus."""
+    f = open(sensorName, 'r')
+    lines = f.readlines()
+    f.close()
+    return lines
+ 
+
 
 
 # global vars
@@ -119,6 +127,14 @@ lauflicht = 0
 
 heuteSchonZeitenAktualisiert = False
 
+
+# Systempfad zum den Sensor, weitere Systempfade könnten über ein Array
+# oder weiteren Variablen hier hinzugefügt werden.
+# 28-0000039a30a1 müsst ihr durch die eures Sensors ersetzen!
+sensor1 = '/sys/bus/w1/devices/28-0000039a30a1/w1_slave'
+sensor2 = '/sys/bus/w1/devices/28-0000039a478d/w1_slave'
+ 
+ 
 # https://www.latlong.net/
 lon = 8.504561
 lat = 49.809986
@@ -329,6 +345,20 @@ while True:
         }
     with open('analogValues.json', 'w') as f:
             json.dump(analogVals, f)
+
+    
+    # Temperatur auslesen
+    """Mit einem Timestamp versehe ich meine Messung und lasse mir diese in der Console ausgeben."""
+    print(time.strftime('%H:%M:%S') +" - " + str(readTempSensor(sensor)))
+    
+    tempSensVal = {
+        "time": time.strftime('%H:%M:%S'),
+        "temp1": str(readTempSensor(sensor1)),
+        "temp2": str(readTempSensor(sensor2))
+    }
+    with open('temperaturValues.json', 'w') as f:
+            json.dump(tempSensVal, f)
+
 
     #########################################################################################
     # hole neuen Zeitstempel
