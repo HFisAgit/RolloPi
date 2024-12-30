@@ -52,18 +52,7 @@
 
 
             # fülle die Hardware
-            $newLufter1 = [
-                'name' => 'Küche',
-                'stufe' => '1'
-            ];
-            array_push($luefter, $newLufter1);
-
-            $newLufter2 = [
-                'name' => 'WC',
-                'stufe' => '2'
-            ];
-            array_push($luefter, $newLufter2);
-
+            # EG
             $newshutter1 = [
                 'name' => 'Küche',
                 'pos' => '1'
@@ -71,22 +60,67 @@
             array_push($rollaeden, $newshutter1);
 
             $newshutter2 = [
-                'name' => 'WC',
-                'pos' => '0'
+                'name' => 'HWR',
+                'pos' => '1'
             ];
-            array_push($rollaeden, $newshutter2);
+            array_push($rollaeden, $newshutter1);
 
             $newshutter3 = [
-                'name' => 'Terrasse',
+                'name' => 'WC',
                 'pos' => '0'
             ];
             array_push($rollaeden, $newshutter3);
 
             $newshutter4 = [
+                'name' => 'Gaderobe',
+                'pos' => '1'
+            ];
+            array_push($rollaeden, $newshutter4);
+
+            $newshutter5 = [
+                'name' => 'Büro Peter',
+                'pos' => '1'
+            ];
+            array_push($rollaeden, $newshutter5);
+
+            $newshutter6 = [
                 'name' => 'Wohnzimmer',
                 'pos' => '0'
             ];
-            array_push($rollaeden, $newshutter4);
+            array_push($rollaeden, $newshutter6);
+
+            $newshutter7 = [
+                'name' => 'Terrasse',
+                'pos' => '0'
+            ];
+            array_push($rollaeden, $newshutter7);
+
+            # 1 OG
+            $newshutter11 = [
+                'name' => 'Schlafzimmer',
+                'pos' => '0'
+            ];
+            array_push($rollaeden, $newshutter11);
+
+            $newshutter12 = [
+                'name' => 'Bad',
+                'pos' => '0'
+            ];
+            array_push($rollaeden, $newshutter12);
+
+            $newshutter13 = [
+                'name' => 'Büro Rita',
+                'pos' => '0'
+            ];
+            array_push($rollaeden, $newshutter13);
+
+            $newshutter14 = [
+                'name' => 'Gästezimmer',
+                'pos' => '0'
+            ];
+            array_push($rollaeden, $newshutter14);
+
+            ########################################################################
 
             # lade suntimes aus Datei
             if (file_exists($path_to_suntimes)) {
@@ -200,6 +234,9 @@
                 }
             }
 
+            #############################################################################################
+
+
             # Überschrift der Seiten
             if ($_GET['page'] == 'start') {
                 $headline = 'Haussteuerung';
@@ -207,10 +244,6 @@
 
             if ($_GET['page'] == 'rollaeden') {
                 $headline = 'Rolläden';
-            }
-
-            if ($_GET['page'] == 'luefter') {
-                $headline = 'Lüfter';
             }
 
             if ($_GET['page'] == 'editRules') {
@@ -230,7 +263,7 @@
 
             # Hier kommt der Inhalt der Seiten
 
-            # Seite zum Rolläden fahren
+            # Seite zum Rolläden fahren - unsichtbar nur für aktion
             if ($_GET['page'] == 'fahreshutter') {
                 $deviceId;
                 $richtung;
@@ -258,46 +291,6 @@
 
                 # zurück zur Rolladenseite...
                 header('Location: index.php?page=rollaeden');
-            }
-
-            #Seite zum Lüfter schalten
-            else if ($_GET['page'] == 'schaltelufter') {
-                $deviceId;
-
-                if ($_GET['device'] == 'Küche') {
-                    $deviceId = '0x0D';
-                } else if ($_GET['device'] == 'WC') {
-                    $deviceId = '0x0F';
-                }
-
-                $command_with_parameter = $path_to_rolladiono . " " . $deviceId . " " . "CMD_Luefter " . $_GET['stufe'];
-                exec($command_with_parameter);
-
-                # zurück zur Lüfter seite
-                header('Location: index.php?page=luefter');
-            }
-
-            # Inhalt von Lüftern
-            else if ($_GET['page'] == 'luefter') {
-                echo '<p>Eine Liste mit Lüftern</p>';
-
-                foreach ($luefter as $index => $row) {
-                    $name = $row['name'];
-                    $phone = $row['stufe'];
-
-                    echo "
-                    <div class='card'>
-                        <img class='profile-picture' src='img/profile-picture.png'>
-                        <b>$name</b><br>
-                        $phone
-
-                        <a class='ersterbtn' href='?page=schaltelufter&stufe=0&device=$name'>Stufe 0</a>
-                        <a class='ersterbtn' href='?page=schaltelufter&stufe=1&device=$name'>Stufe 1</a>
-                        <a class='ersterbtn' href='?page=schaltelufter&stufe=2&device=$name'>Stufe 2</a>
-                        <a class='ersterbtn' href='?page=schaltelufter&stufe=3&device=$name'>Stufe 3</a>
-                    </div>
-                    ";
-                }
             }
 
             # Inhalt von Rolläden

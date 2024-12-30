@@ -71,11 +71,19 @@ def updateLauflicht(lauflicht):
 clearReloadFile = False
 
 # define addresses
-addrKueche = '0x0d'
-addrWc = '0x0e'
-addrWc_bug = '0x0f'
-addrWohnz = '0x0c'
-addrTerrasse = '0x0b'
+# todo: echte Adressen eintragen
+addrKueche = '0x0a'
+addrHwr = '0x0b'
+addrWc = '0x0c'
+addrGaderobe = '0x0d'
+addrBuroP = '0x0e'
+addrWohnz = '0x0f'
+addrTerrasse = '0x0g'
+
+addrSchlafz = '0x1a'
+addrBad = '0x1b'
+addrBuroR = '0x1c'
+addrGaste = '0x1d'
 
 # initialisire Program
 path_regeln = './regeln.json'
@@ -112,8 +120,8 @@ lauflicht = 0
 heuteSchonZeitenAktualisiert = False
 
 # https://www.latlong.net/
-lon = 8.502633
-lat = 49.831873
+lon = 8.504561
+lat = 49.809986
 
 # lade regeln.json
 #data = []
@@ -134,7 +142,8 @@ delta_time = timedelta(seconds=10)
 #while heuteSchonZeitenAktualisiert == False:
 while True:
     # hole aktuelle Zeit
-    startzeitutc = datetime.utcnow()
+    #startzeitutc = datetime.utcnow() # deprecated ...
+    startzeitutc = time.time().now(datetime.timezone.utc) # new variant
     startzeit = datetime.now() # local time
 
     # check if reload of regeln is triggered
@@ -200,13 +209,26 @@ while True:
             f.write(str(startzeit) + " Rolladen hoch" + '\n')
         os.system('python3 ' + path_rolladoino + ' ' + addrKueche +' CMD_Rolladen_Hoch')
         time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrHwr + ' CMD_Rolladen_Hoch')
+        time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrWc + ' CMD_Rolladen_Hoch')
         time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Rolladen_Hoch')
+        os.system('python3 ' + path_rolladoino + ' ' + addrGaderobe + ' CMD_Rolladen_Hoch')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrBuroP + ' CMD_Rolladen_Hoch')
         time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrWohnz + ' CMD_Rolladen_Hoch')
         time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrTerrasse + ' CMD_Rolladen_Hoch')
+
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrSchlafz + ' CMD_Rolladen_Hoch')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrBad + ' CMD_Rolladen_Hoch')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrBuroR + ' CMD_Rolladen_Hoch')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrGaste + ' CMD_Rolladen_Hoch')
 
     # prüfe regel 2 Rolladen runter Straße
     # 1. ist es früh- und nach sonnenuntergang -> ja
@@ -226,7 +248,12 @@ while True:
         time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrWc + ' CMD_Rolladen_Runter')
         time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Rolladen_Runter')
+        os.system('python3 ' + path_rolladoino + ' ' + addrGaderobe + ' CMD_Rolladen_Runter')
+
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrSchlafz + ' CMD_Rolladen_Runter')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrBad + ' CMD_Rolladen_Runter')
     
     # prüfe regel 2 Rolladen runter Garten
     # 1. ist es früh- und nach sonnenuntergang -> ja
@@ -239,7 +266,15 @@ while True:
     if ( sunsetBefore or sunsetBetween or sunsetAfter ):
         with open(path_log, 'a') as f:
             f.write(str(startzeit) + " Rolladen runter Garten" + '\n')
+        os.system('python3 ' + path_rolladoino + ' ' + addrBuroP + ' CMD_Rolladen_Runter')
+        time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrWohnz + ' CMD_Rolladen_Runter')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrTerrasse + ' CMD_Rolladen_Runter')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrBuroR + ' CMD_Rolladen_Runter')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrGaste + ' CMD_Rolladen_Runter')
         
 
     # prüfe regel 3 sonne runter
@@ -253,39 +288,26 @@ while True:
 
     if (isSonnenschutzActive and isSonneRunter):
         os.system('python3 ' + path_rolladoino + ' ' + addrWohnz + ' CMD_Rolladen_Runter')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrTerrasse + ' CMD_Rolladen_Runter')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrBuroR + ' CMD_Rolladen_Runter')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrGaste + ' CMD_Rolladen_Runter')
     
     # prüfe regel 3 Sonne hoch
     if (isSonnenschutzActive and isSonneHoch):
         os.system('python3 ' + path_rolladoino + ' ' + addrWohnz + ' CMD_Rolladen_Hoch')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrTerrasse + ' CMD_Rolladen_Hoch')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrBuroR + ' CMD_Rolladen_Hoch')
+        time.sleep(1)
+        os.system('python3 ' + path_rolladoino + ' ' + addrGaste + ' CMD_Rolladen_Hoch')
     
-    # prüfe regel 5 lüfter
-    luefter = data['luftreduziert']
+    #######################################################################################
 
-    isLuefterActive = luefter == "true" or luefter == "True" or luefter == "TRUE"
-    isHourEven = startzeit.minute == 0 and startzeit.second < delta_time.seconds and (startzeit.hour % 2)-1
-    isHourUneven = startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2
-
-    if (isLuefterActive and isHourEven == True):
-        print('aus')
-        with open(path_log, 'a') as f:
-            f.write(str(startzeit) + "Luefter aus" + '\n')
-        os.system('python3 ' + path_rolladoino + ' ' + addrKueche +' CMD_Luefter 0')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrWc + ' CMD_Luefter 0')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Luefter 0')
-
-    if (isLuefterActive and isHourUneven == True):
-        print('an')
-        with open(path_log, 'a') as f:
-            f.write(str(startzeit) + "Luefter an" + '\n')
-        os.system('python3 ' + path_rolladoino + ' ' + addrKueche +' CMD_Luefter 1')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrWc + ' CMD_Luefter 1')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Luefter 1')
-
-
+    # Hardware Tests:
     # lauflicht
     if (lauflicht < 7):
         lauflicht += 1
