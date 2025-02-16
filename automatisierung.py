@@ -5,7 +5,7 @@ import json
 import time
 import subprocess
 import os
-import ads1115
+import drivers.ads1115 as ads1115
 
 from suncalc import get_position, get_times
 from datetime import datetime, timedelta
