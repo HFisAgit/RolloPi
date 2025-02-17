@@ -66,6 +66,12 @@ def readTempLines(sensorName) :
         tempCelsius = float(tempData) / 1000.0
         return tempCelsius
  
+# Funktion zum Steuern der Lüfter
+# add parameter to control if on or off
+def control_fans():
+    for device in config['devices']:
+        Rolladoino.main('CMD_Luefter', device['channel'], device['address'])
+        time.sleep(1)
 
 
 # global vars
@@ -85,6 +91,15 @@ addrSchlafz = '0x1a'
 addrBad = '0x1b'
 addrBuroR = '0x1c'
 addrGaste = '0x1d'
+
+
+# Pfad zur Konfigurationsdatei
+config_path = 'luefterAddr.json'
+
+# Konfiguration laden
+with open(config_path, 'r') as f:
+    config = json.load(f)
+
 
 # initialisire Program
 path_regeln = './regeln.json'
@@ -203,8 +218,35 @@ while True:
     
 
 
-    # add lüfter logik. from branch golle v1
-    
+    # prüfe regel lüfter
+    luefter = data['luftreduziert']
+
+    isLuefterActive = luefter == "true" or luefter == "True" or luefter == "TRUE"
+    isHourEven = startzeit.minute == 0 and startzeit.second < delta_time.seconds and (startzeit.hour % 2)-1
+    isHourUneven = startzeit.minute == 0 and startzeit.second < delta_time.seconds and startzeit.hour % 2
+
+    if (isLuefterActive and isHourEven == True):
+        print('aus')
+        with open(path_log, 'a') as f:
+            f.write(str(startzeit) + "Luefter aus" + '\n')
+        #os.system('python3 ' + path_rolladoino + ' ' + addrKueche +' CMD_Luefter 0')
+        Rolladoino.main('CMD_Luefter', 'ch1', addrKueche)
+        time.sleep(1)
+        #os.system('python3 ' + path_rolladoino + ' ' + addrWc + ' CMD_Luefter 0')
+        Rolladoino.main('CMD_Luefter', 'ch2', addrWc)
+        time.sleep(1)
+        #os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Luefter 0')
+        Rolladoino.main('CMD_Luefter', 'ch3', addrWc_bug)
+        time.sleep(1)
+        #os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Luefter 0')
+        Rolladoino.main('CMD_Luefter', 'ch3', addrBad)
+
+    if (isLuefterActive and isHourUneven == True):
+        print('an')
+        with open(path_log, 'a') as f:
+            f.write(str(startzeit) + "Luefter an" + '\n')
+        control_fans() 
+
     #######################################################################################
 
     #########################################################################################

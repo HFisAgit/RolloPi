@@ -1,0 +1,10 @@
+{
+    "devices": [
+        {"channel": "ch1", "address": "addrKueche"},
+        {"channel": "ch1", "address": "addrWc"},
+        {"channel": "ch1", "address": "addrWc_bug"},
+        {"channel": "ch2", "address": "addrWc_bug"},
+        {"channel": "ch3", "address": "addrWc_bug"},
+        {"channel": "ch3", "address": "addrBad"}
+    ]
+}
