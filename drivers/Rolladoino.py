@@ -45,48 +45,54 @@ def SendTwoBytes(bus, address, Command, Argument):
 
   return ret
 
-def main(cmd, floor, addr, ):
+def main(cmd, floor, addr, param=0):
     bus = smbus.SMBus(1)    # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
 
     if(cmd=="CMD_Rolladen_Hoch"):
         print("CMD_Rolladen_Hoch")
         setFloor(bus, floor)
         SendSingleByte(bus, addr, 0x00)
+        return None
 
     elif(cmd=="CMD_Rolladen_Runter"):
         print("CMD_Rolladen_Runter")
         setFloor(bus, floor)
         SendSingleByte(bus, addr, 0x06)
+        return None
 
     elif(cmd=="CMD_Rolladen_Stop"):
         print("CMD_Rolladen_Stop")
         setFloor(bus, floor)
         SendSingleByte(bus, addr, 0x08)
+        return None
 
     elif(cmd=="CMD_Luefter"):
         print("CMD_Luefter")
         setFloor(bus, floor)
-        SendTwoBytes(bus, addr, 0x12, args.stufe)
+        SendTwoBytes(bus, addr, 0x12, param)
+        return None
 
     elif(cmd=="CMD_Read_Pos"):
         print("CMD_Read_Pos")
         setFloor(bus, floor)
-        pos = SendSingleByte(bus, aaddr, 0x60)
+        pos = SendSingleByte(bus, addr, 0x60)
+        return pos
 
     else:
         print("ERROR: Unknown command.")
+        return None
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("floor", help="Das stockwerk auf dem sich das Device befindet", choices=['ch1', 'ch2', 'ch3', 'ch4', 'ch5'])
+parser.add_argument("floor", help="Das stockwerk auf dem sich das Device befindet", choices=['EGN', 'EGS', 'OGN', 'OGS'])
 parser.add_argument("address", help="Die Adresse des I2C device", type=lambda x: int(x,16))
-parser.add_argument("command", help="Der Befehl, der ausgefuehrt werden soll. [CMD_Rolladen_Hoch ; CMD_Rolladen_Runter ; CMD_Rolladen_Stop ; CMD_Luefter ]")
+parser.add_argument("command", help="Der Befehl, der ausgefuehrt werden soll. [CMD_Rolladen_Hoch ; CMD_Rolladen_Runter ; CMD_Rolladen_Stop ; CMD_Luefter ; CMD_Read_Pos ]")
 parser.add_argument("--stufe", help="Die Stufe auf die der Luefter gesetzt werden soll", type=int, choices=[0,1,2,3])
 
 args = parser.parse_args()
 
 bus = smbus.SMBus(1)    # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
 
-main(args.command, args.floor, args.address)
+main(args.command, args.floor, args.address, args.stufe) # !! What if stufe is empty???
 print(args.command)
 

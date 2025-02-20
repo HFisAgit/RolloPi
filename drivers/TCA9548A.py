@@ -1,4 +1,13 @@
 #!/usr/bin/python
+# I2C Switch - 4 channels used
+# channel 0 - Rolladoino 1
+# channel 1 - Rolladoino 2
+# channel 2 - Rolladoino 3
+# channel 3 - Rolladoino 4
+# channel 4 - Rolladoino 5
+# channel 5 - X12
+# channel 6 - X23
+# channel 7 - ads1115 ADC
 # intended for import to change channel of TCA9548A
 # import then call I2C_setup(multiplexer_addr,multiplexer_channel)
 

@@ -12,8 +12,6 @@ from suncalc import get_position, get_times
 from datetime import datetime, timedelta
 from time import mktime
 from dateutil import tz
-from gpiozero import LED
-
 
 
 def is_time_between(begin_time, end_time, check_time=None):
@@ -52,7 +50,6 @@ def readTempSensor(sensorName) :
     f.close()
     return lines
  
- 
 def readTempLines(sensorName) :
     lines = readTempSensor(sensorName)
     # Solange nicht die Daten gelesen werden konnten, bin ich hier in einer Endlosschleife
@@ -67,31 +64,14 @@ def readTempLines(sensorName) :
         return tempCelsius
  
 # Funktion zum Steuern der Lüfter
-# add parameter to control if on or off
-def control_fans():
+def control_fans(stufe):
     for device in config['devices']:
-        Rolladoino.main('CMD_Luefter', device['channel'], device['address'])
+        Rolladoino.main('CMD_Luefter', device['channel'], device['address'], stufe)
         time.sleep(1)
 
 
 # global vars
 clearReloadFile = False
-
-# define addresses
-# todo: echte Adressen eintragen
-addrKueche = '0x0a'
-addrHwr = '0x0b'
-addrWc = '0x0c'
-addrGaderobe = '0x0d'
-addrBuroP = '0x0e'
-addrWohnz = '0x0f'
-addrTerrasse = '0x0g'
-
-addrSchlafz = '0x1a'
-addrBad = '0x1b'
-addrBuroR = '0x1c'
-addrGaste = '0x1d'
-
 
 # Pfad zur Konfigurationsdatei
 config_path = 'luefterAddr.json'
@@ -100,38 +80,12 @@ config_path = 'luefterAddr.json'
 with open(config_path, 'r') as f:
     config = json.load(f)
 
-
 # initialisire Program
 path_regeln = './regeln.json'
-#path_rolladoino = '/home/pi/RolloPi/Rolladoino.py'
-#path_log = '/home/pi/RolloPi/automatisierung.log'
-#path_reloadRegeln = '/home/pi/RolloPi/reloadRegeln.txt'
-#path_rolladoino = './Rolladoino3.py'
-path_rolladoino = './RolladoinoNew.py'
 path_log = './automatisierung.log'
 path_reloadRegeln = './reloadRegeln.txt'
+path_rolladoino = './drivers/Rolladoino.py'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
-
-#GPIO
-led0 = LED(26)
-led1 = LED(16)
-led2 = LED(19)
-led3 = LED(13)
-led4 = LED(12)
-led5 = LED(6)
-led6 = LED(5)
-led7 = LED(4)
-
-led0.on()
-led1.on()
-led2.on()
-led3.on()
-led4.on()
-led5.on()
-led6.on()
-led7.on()
-
-lauflicht = 0
 
 heuteSchonZeitenAktualisiert = False
 
@@ -148,18 +102,10 @@ lon = 8.504561
 lat = 49.809986
 
 # lade regeln.json
-#data = []
-#loadRegeln()
-
 with open(path_regeln, 'r') as regelnFile:
     data = json.load(regelnFile)
 
 
-#print(type(data))
-#timestring = data["morgens"]["early"]
-#print(timestring)
-#zeit = stringToTime(timestring)
-#print(zeit)
 delta_time = timedelta(seconds=10)
         
 #starte schleife
@@ -189,35 +135,6 @@ while True:
     if( startzeit.hour == 4 & startzeit.minute == 0  & startzeit.second < 15 ):
         heuteSchonZeitenAktualisiert = False
 
-    # prüfe, ob heute schon die Sonnen auf und Untergangszeiten geholt wprden
-    if heuteSchonZeitenAktualisiert == False:
-        # hole Zeiten, wenn nötig
-        print("Neue Sonnen auf/unterganz Zeiten.")
-        _times = get_times(startzeitutc, lon, lat)
-        # and convert to local time
-        for x in _times:
-            _times[x] = datetime2local(_times[x])
-
-        dawn_time = _times["dawn"]
-        dusk_time = _times["dusk"]
-        sunset_time = _times['sunset']
-        heuteSchonZeitenAktualisiert = True 
-
-        # zeiten für Anzeige exportiere
-        s_sunrise = _times["sunrise"].isoformat()
-        s_sunset  = _times["sunset"].isoformat()
-        sunriseCropIndex = s_sunrise.rfind(".")
-        sunsetCropIndex = s_sunset.rfind(".")
-        suntimes = {
-            "date": startzeit.date().isoformat(),
-            "sunrise": s_sunrise[:sunriseCropIndex],
-            "sunset": s_sunset[:sunsetCropIndex]
-        }
-        with open('suntimes.json', 'w') as f:
-            json.dump(suntimes, f)
-    
-
-
     # prüfe regel lüfter
     luefter = data['luftreduziert']
 
@@ -229,25 +146,13 @@ while True:
         print('aus')
         with open(path_log, 'a') as f:
             f.write(str(startzeit) + "Luefter aus" + '\n')
-        #os.system('python3 ' + path_rolladoino + ' ' + addrKueche +' CMD_Luefter 0')
-        Rolladoino.main('CMD_Luefter', 'ch1', addrKueche)
-        time.sleep(1)
-        #os.system('python3 ' + path_rolladoino + ' ' + addrWc + ' CMD_Luefter 0')
-        Rolladoino.main('CMD_Luefter', 'ch2', addrWc)
-        time.sleep(1)
-        #os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Luefter 0')
-        Rolladoino.main('CMD_Luefter', 'ch3', addrWc_bug)
-        time.sleep(1)
-        #os.system('python3 ' + path_rolladoino + ' ' + addrWc_bug + ' CMD_Luefter 0')
-        Rolladoino.main('CMD_Luefter', 'ch3', addrBad)
+        control_fans(0) 
 
     if (isLuefterActive and isHourUneven == True):
         print('an')
         with open(path_log, 'a') as f:
             f.write(str(startzeit) + "Luefter an" + '\n')
-        control_fans() 
-
-    #######################################################################################
+        control_fans(1) 
 
     #########################################################################################
     # hole neuen Zeitstempel

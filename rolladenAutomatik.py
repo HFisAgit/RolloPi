@@ -12,7 +12,6 @@ from suncalc import get_position, get_times
 from datetime import datetime, timedelta
 from time import mktime
 from dateutil import tz
-from gpiozero import LED
 
 
 
@@ -45,109 +44,29 @@ def datetime2local(dto:datetime, s_tz: str='Europe/Berlin'):
     # and convert to local time
     return _local.astimezone(to_zone)
 
-def updateLauflicht(lauflicht):
-    with open(path_log, 'a') as f:
-            f.write(str(startzeit) + " Lauflicht: " + str(lauflicht) + '\n')
-    bit0 = lauflicht % 2
-    bit1 = (lauflicht >> 1) % 2
-    bit2 = (lauflicht >> 2) % 2
-    bit3 = (lauflicht >> 3) % 2
-    bit4 = (lauflicht >> 4) % 2
-    bit5 = (lauflicht >> 5) % 2
-    bit6 = (lauflicht >> 6) % 2
-    bit7 = (lauflicht >> 7) % 2
-
-    led0.off() if bit0 == 0 else led0.on()
-    led1.off() if bit1 == 0 else led1.on()
-    led2.off() if bit2 == 0 else led2.on()
-    led3.off() if bit3 == 0 else led3.on()
-    led4.off() if bit4 == 0 else led4.on()
-    led5.off() if bit5 == 0 else led5.on()
-    led6.off() if bit6 == 0 else led6.on()
-    led7.off() if bit7 == 0 else led7.on()
-
-def readTempSensor(sensorName) :
-    """Aus dem Systembus lese ich die Temperatur der DS18B20 aus."""
-    f = open(sensorName, 'r')
-    lines = f.readlines()
-    f.close()
-    return lines
- 
- 
-def readTempLines(sensorName) :
-    lines = readTempSensor(sensorName)
-    # Solange nicht die Daten gelesen werden konnten, bin ich hier in einer Endlosschleife
-    while lines[0].strip()[-3:] != 'YES':
-        time.sleep(0.2)
-        lines = readTempSensor(sensorName)
-    temperaturStr = lines[1].find('t=')
-    # Ich überprüfe ob die Temperatur gefunden wurde.
-    if temperaturStr != -1 :
-        tempData = lines[1][temperaturStr+2:]
-        tempCelsius = float(tempData) / 1000.0
-        return tempCelsius
- 
+# Funktion zum Steuern der Lüfter
+# time can be 'sunset' or 'dusk'
+def control_shutter(time, pos):
+    for device in config['devices'][time]:
+        if pos == "hoch":
+            Rolladoino.main('CMD_Rolladen_Hoch', device['channel'], device['address'])
+        elif pos == "runter":
+            Rolladoino.main('CMD_Rolladen_Runter', device['channel'], device['address'])
+        time.sleep(1)
 
 
 # global vars
 clearReloadFile = False
 
-# define addresses
-# todo: echte Adressen eintragen
-addrKueche = '0x0a'
-addrHwr = '0x0b'
-addrWc = '0x0c'
-addrGaderobe = '0x0d'
-addrBuroP = '0x0e'
-addrWohnz = '0x0f'
-addrTerrasse = '0x0g'
-
-addrSchlafz = '0x1a'
-addrBad = '0x1b'
-addrBuroR = '0x1c'
-addrGaste = '0x1d'
-
 # initialisire Program
 path_regeln = './regeln.json'
-#path_rolladoino = '/home/pi/RolloPi/Rolladoino.py'
-#path_log = '/home/pi/RolloPi/automatisierung.log'
-#path_reloadRegeln = '/home/pi/RolloPi/reloadRegeln.txt'
-#path_rolladoino = './Rolladoino3.py'
-path_rolladoino = './RolladoinoNew.py'
+config_path = 'rolladenAddr.json'
 path_log = './automatisierung.log'
 path_reloadRegeln = './reloadRegeln.txt'
+path_rolladoino = './drivers/Rolladoino.py'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
 
-#GPIO
-led0 = LED(26)
-led1 = LED(16)
-led2 = LED(19)
-led3 = LED(13)
-led4 = LED(12)
-led5 = LED(6)
-led6 = LED(5)
-led7 = LED(4)
-
-led0.on()
-led1.on()
-led2.on()
-led3.on()
-led4.on()
-led5.on()
-led6.on()
-led7.on()
-
-lauflicht = 0
-
 heuteSchonZeitenAktualisiert = False
-
-
-# Systempfad zum den Sensor, weitere Systempfade könnten über ein Array
-# oder weiteren Variablen hier hinzugefügt werden.
-# 28-0000039a30a1 müsst ihr durch die eures Sensors ersetzen!
-sensor1 = '/sys/bus/w1/devices/28-0000039a30a1/w1_slave'
-sensor2 = '/sys/bus/w1/devices/28-0000039a478d/w1_slave'
- 
  
 # https://www.latlong.net/
 lon = 8.504561
@@ -156,16 +75,15 @@ lat = 49.809986
 # lade regeln.json
 #data = []
 #loadRegeln()
-
 with open(path_regeln, 'r') as regelnFile:
     data = json.load(regelnFile)
 
 
-#print(type(data))
-#timestring = data["morgens"]["early"]
-#print(timestring)
-#zeit = stringToTime(timestring)
-#print(zeit)
+# Konfiguration laden
+with open(config_path, 'r') as f:
+    config = json.load(f)
+
+
 delta_time = timedelta(seconds=10)
         
 #starte schleife
@@ -237,74 +155,38 @@ while True:
     if ( sunriseBefore or surriseBetwen or sunriseAfter ):
         with open(path_log, 'a') as f:
             f.write(str(startzeit) + " Rolladen hoch" + '\n')
-        os.system('python3 ' + path_rolladoino + ' ' + addrKueche +' CMD_Rolladen_Hoch')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrHwr + ' CMD_Rolladen_Hoch')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrWc + ' CMD_Rolladen_Hoch')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrGaderobe + ' CMD_Rolladen_Hoch')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrBuroP + ' CMD_Rolladen_Hoch')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrWohnz + ' CMD_Rolladen_Hoch')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrTerrasse + ' CMD_Rolladen_Hoch')
+        # wir fahren alle Rolläden. die Zeitinformation ist nur bein Runterfahren relevant.
+        control_shutter('dusk', 'hoch')
+        control_shutter('sunset', 'hoch')
 
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrSchlafz + ' CMD_Rolladen_Hoch')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrBad + ' CMD_Rolladen_Hoch')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrBuroR + ' CMD_Rolladen_Hoch')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrGaste + ' CMD_Rolladen_Hoch')
-
-    # prüfe regel 2 Rolladen runter Straße
+    # prüfe regel 2 Rolladen runter Straße - dusk ist die spätere Zeit
     # 1. ist es früh- und nach sonnenuntergang -> ja
     # 2. ist es nach früh && sonnenuntergang -> ja
     # 3. ist es spättestens -> ja
     abendsfrueh = stringToTime(data['abends']['early'])
     abendsspaet = stringToTime(data['abends']['late'])
     
-    duskBefore  = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsfrueh)    and sunset_time.time() <= startzeit.time()
-    duskBetween = is_time_between(startzeit.time(), (startzeit + delta_time).time(), sunset_time.time() ) and abendsfrueh < startzeit.time()
+    duskBefore  = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsfrueh)    and dusk_time.time() <= startzeit.time()
+    duskBetween = is_time_between(startzeit.time(), (startzeit + delta_time).time(), dusk_time.time() ) and abendsfrueh < startzeit.time()
     duskAfter   = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)
 
     if ( duskBefore or duskBetween or duskAfter ):
         with open(path_log, 'a') as f:
             f.write(str(startzeit) + " Rolladen runter Straße" + '\n')
-        os.system('python3 ' + path_rolladoino + ' ' + addrKueche +' CMD_Rolladen_Runter')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrWc + ' CMD_Rolladen_Runter')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrGaderobe + ' CMD_Rolladen_Runter')
-
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrSchlafz + ' CMD_Rolladen_Runter')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrBad + ' CMD_Rolladen_Runter')
+        control_shutter('dusk', 'runter')
     
-    # prüfe regel 2 Rolladen runter Garten
+    # prüfe regel 2 Rolladen runter Garten - sunset ist die frühere Zeit
     # 1. ist es früh- und nach sonnenuntergang -> ja
     # 2. ist es nach früh && sonnenuntergang -> ja
     # 3. ist es spättestens -> ja
-    sunsetBefore  = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsfrueh)    and dusk_time.time() <= startzeit.time()
-    sunsetBetween = is_time_between(startzeit.time(), (startzeit + delta_time).time(), dusk_time.time() ) and abendsfrueh < startzeit.time()
+    sunsetBefore  = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsfrueh)    and sunset_time.time() <= startzeit.time()
+    sunsetBetween = is_time_between(startzeit.time(), (startzeit + delta_time).time(), sunset_time.time() ) and abendsfrueh < startzeit.time()
     sunsetAfter   = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)
 
     if ( sunsetBefore or sunsetBetween or sunsetAfter ):
         with open(path_log, 'a') as f:
             f.write(str(startzeit) + " Rolladen runter Garten" + '\n')
-        os.system('python3 ' + path_rolladoino + ' ' + addrBuroP + ' CMD_Rolladen_Runter')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrWohnz + ' CMD_Rolladen_Runter')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrTerrasse + ' CMD_Rolladen_Runter')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrBuroR + ' CMD_Rolladen_Runter')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrGaste + ' CMD_Rolladen_Runter')
+        control_shutter('sunset', 'runter')
         
 
     # prüfe regel 3 sonne runter
@@ -317,63 +199,12 @@ while True:
     isSonneHoch = is_time_between(startzeit.time(), (startzeit + delta_time).time(), sonnehoch)
 
     if (isSonnenschutzActive and isSonneRunter):
-        os.system('python3 ' + path_rolladoino + ' ' + addrWohnz + ' CMD_Rolladen_Runter')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrTerrasse + ' CMD_Rolladen_Runter')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrBuroR + ' CMD_Rolladen_Runter')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrGaste + ' CMD_Rolladen_Runter')
+        control_shutter('dusk', 'runter')
     
     # prüfe regel 3 Sonne hoch
     if (isSonnenschutzActive and isSonneHoch):
-        os.system('python3 ' + path_rolladoino + ' ' + addrWohnz + ' CMD_Rolladen_Hoch')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrTerrasse + ' CMD_Rolladen_Hoch')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrBuroR + ' CMD_Rolladen_Hoch')
-        time.sleep(1)
-        os.system('python3 ' + path_rolladoino + ' ' + addrGaste + ' CMD_Rolladen_Hoch')
+        control_shutter('dusk', 'hoch')
     
-    #######################################################################################
-
-    # Hardware Tests:
-    # lauflicht
-    if (lauflicht < 7):
-        lauflicht += 1
-    else:
-        lauflicht = 0
-    updateLauflicht(lauflicht)
-    
-    # ADC
-    adc1 = ads1115.readSingle(0)
-    adc2 = ads1115.readSingle(1)
-    adc3 = ads1115.readSingle(2)
-    adc4 = ads1115.readSingle(3)
-
-    analogVals = {
-            "adc1": str(adc1),
-            "adc2": str(adc2),
-            "adc3": str(adc3),
-            "adc4": str(adc4)
-        }
-    with open('analogValues.json', 'w') as f:
-            json.dump(analogVals, f)
-
-    
-    # Temperatur auslesen
-    """Mit einem Timestamp versehe ich meine Messung und lasse mir diese in der Console ausgeben."""
-   # print(time.strftime('%H:%M:%S') +" - " + str(readTempSensor(sensor)))
-    
-    tempSensVal = {
-        "time": time.strftime('%H:%M:%S'),
-        "temp1": str(readTempLines(sensor1)),
-        "temp2": str(readTempLines(sensor2))
-    }
-    with open('temperaturValues.json', 'w') as f:
-            json.dump(tempSensVal, f)
-
-
     #########################################################################################
     # hole neuen Zeitstempel
     endzeit = datetime.now()

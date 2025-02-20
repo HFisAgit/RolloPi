@@ -1,10 +1,17 @@
 {
-    "devices": [
-        {"channel": "ch1", "address": "addrKueche"},
-        {"channel": "ch1", "address": "addrWc"},
-        {"channel": "ch1", "address": "addrWc_bug"},
-        {"channel": "ch2", "address": "addrWc_bug"},
-        {"channel": "ch3", "address": "addrWc_bug"},
-        {"channel": "ch3", "address": "addrBad"}
-    ]
+    "devices": {
+        "sunset": [
+            {"channel": "EGN", "address": "addrKueche"},
+            {"channel": "EGN", "address": "addrWc"},
+            {"channel": "EGN", "address": "addrWc_bug"},
+            {"channel": "OGN", "address": "addrBad"},
+            {"channel": "OGN", "address": "addrSchlafzimmer"}
+        ],
+        "dusk": [
+            {"channel": "EGS", "address": "addrWohnzimmer"},
+            {"channel": "EGS", "address": "addrTerasse"},
+            {"channel": "OGS", "address": "addrYoga"},
+            {"channel": "OGS", "address": "addrPuzzle"}
+        ]
+    }
 }
