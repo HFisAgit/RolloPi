@@ -60,7 +60,7 @@ clearReloadFile = False
 # initialisire Program
 path_regeln = './regeln.json'
 config_path = 'rolladenAddr.json'
-path_log = './automatisierung.log'
+path_log = './roll_automatisierung.log'
 path_reloadRegeln = './reloadRegeln.txt'
 path_rolladoino = './drivers/Rolladoino.py'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
