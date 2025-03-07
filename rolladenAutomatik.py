@@ -14,7 +14,6 @@ from time import mktime
 from dateutil import tz
 
 
-
 def is_time_between(begin_time, end_time, check_time=None):
     # If check time is not given, default to current UTC time
   #  check_time = check_time or datetime.utcnow().time()
