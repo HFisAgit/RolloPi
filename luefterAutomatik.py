@@ -1,5 +1,4 @@
 # Abhänigkeiten
-# pip install suncalc
 
 import json
 import time
@@ -8,7 +7,6 @@ import os
 import drivers.ads1115 as ads1115
 import drivers.Rolladoino as Rolladoino
 
-from suncalc import get_position, get_times
 from datetime import datetime, timedelta
 from time import mktime
 from dateutil import tz
@@ -43,26 +41,6 @@ def datetime2local(dto:datetime, s_tz: str='Europe/Berlin'):
     # and convert to local time
     return _local.astimezone(to_zone)
 
-def readTempSensor(sensorName) :
-    """Aus dem Systembus lese ich die Temperatur der DS18B20 aus."""
-    f = open(sensorName, 'r')
-    lines = f.readlines()
-    f.close()
-    return lines
- 
-def readTempLines(sensorName) :
-    lines = readTempSensor(sensorName)
-    # Solange nicht die Daten gelesen werden konnten, bin ich hier in einer Endlosschleife
-    while lines[0].strip()[-3:] != 'YES':
-        time.sleep(0.2)
-        lines = readTempSensor(sensorName)
-    temperaturStr = lines[1].find('t=')
-    # Ich überprüfe ob die Temperatur gefunden wurde.
-    if temperaturStr != -1 :
-        tempData = lines[1][temperaturStr+2:]
-        tempCelsius = float(tempData) / 1000.0
-        return tempCelsius
- 
 # Funktion zum Steuern der Lüfter
 def control_fans(stufe):
     for device in config['devices']:
@@ -73,43 +51,25 @@ def control_fans(stufe):
 # global vars
 clearReloadFile = False
 
-# Pfad zur Konfigurationsdatei
-config_path = 'luefterAddr.json'
-
-# Konfiguration laden
-with open(config_path, 'r') as f:
-    config = json.load(f)
-
 # initialisire Program
 path_regeln = './regeln.json'
 path_log = './automatisierung.log'
 path_reloadRegeln = './reloadRegeln.txt'
 path_rolladoino = './drivers/Rolladoino.py'
+config_path = 'luefterAddr.json'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
-
-heuteSchonZeitenAktualisiert = False
-
-
-# Systempfad zum den Sensor, weitere Systempfade könnten über ein Array
-# oder weiteren Variablen hier hinzugefügt werden.
-# 28-0000039a30a1 müsst ihr durch die eures Sensors ersetzen!
-sensor1 = '/sys/bus/w1/devices/28-0000039a30a1/w1_slave'
-sensor2 = '/sys/bus/w1/devices/28-0000039a478d/w1_slave'
- 
- 
-# https://www.latlong.net/
-lon = 8.504561
-lat = 49.809986
 
 # lade regeln.json
 with open(path_regeln, 'r') as regelnFile:
     data = json.load(regelnFile)
 
+# Konfiguration laden
+with open(config_path, 'r') as f:
+    config = json.load(f)
 
 delta_time = timedelta(seconds=10)
         
-#starte schleife
-#while heuteSchonZeitenAktualisiert == False:
+# --- starte schleife ---
 while True:
     # hole aktuelle Zeit
     startzeitutc = datetime.utcnow() # deprecated ...
@@ -129,11 +89,6 @@ while True:
             fw.write(" ")
             clearReloadFile = False
 
-
-    # reset heuteSchonZeitenAktualisiert wenn ein neuer Tag anbricht.
-    # Nachts um vier, für den Fall, dass Sommerzeit anfängt oder endet. 
-    if( startzeit.hour == 4 & startzeit.minute == 0  & startzeit.second < 15 ):
-        heuteSchonZeitenAktualisiert = False
 
     # prüfe regel lüfter
     luefter = data['luftreduziert']

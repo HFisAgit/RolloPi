@@ -1,8 +1,8 @@
 {
     "devices": [
-        {"channel": "EGN", "address": "addrKueche"},
-        {"channel": "EGN", "address": "addrWc"},
-        {"channel": "EGN", "address": "addrWc_bug"},
-        {"channel": "OGN", "address": "addrBad"}
+        {"name": "addrKueche", "channel": "EGN", "address": "addrKueche"},
+        {"name": "", "channel": "EGN", "address": "addrWc"},
+        {"name": "", "channel": "EGN", "address": "addrWc_bug"},
+        {"name": "", "channel": "OGN", "address": "addrBad"}
     ]
 }

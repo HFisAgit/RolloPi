@@ -9,9 +9,13 @@ import TCA9548A
 def setFloor(bus, floor):
     I2C_address = 0x70
 
-    if(floor == 'EG'):
+    if(floor == 'EGN'):
         subbus=5
-    elif(floor=='OG'):
+    if(floor == 'EGS'):
+        subbus=5
+    elif(floor=='OGN'):
+        subbus=3
+    elif(floor=='OGS'):
         subbus=3
     else:
         subbus=-1

@@ -1,17 +1,17 @@
 {
     "devices": {
         "sunset": [
-            {"channel": "EGN", "address": "addrKueche"},
-            {"channel": "EGN", "address": "addrWc"},
-            {"channel": "EGN", "address": "addrWc_bug"},
-            {"channel": "OGN", "address": "addrBad"},
-            {"channel": "OGN", "address": "addrSchlafzimmer"}
+            {"name": "Kueche", "channel": "EGN", "address": "addrKueche"},
+            {"name": "WC", "channel": "EGN", "address": "addrWc"},
+            {"name": "WC_bug", "channel": "EGN", "address": "addrWc_bug"},
+            {"name": "Bad", "channel": "OGN", "address": "addrBad"},
+            {"name": "Schlafzimmer", "channel": "OGN", "address": "addrSchlafzimmer"}
         ],
         "dusk": [
-            {"channel": "EGS", "address": "addrWohnzimmer"},
-            {"channel": "EGS", "address": "addrTerasse"},
-            {"channel": "OGS", "address": "addrYoga"},
-            {"channel": "OGS", "address": "addrPuzzle"}
+            {"name": "Wohnzimmer", "channel": "EGS", "address": "addrWohnzimmer"},
+            {"name": "Terassentür", "channel": "EGS", "address": "addrTerasse"},
+            {"name": "Yogazimmer", "channel": "OGS", "address": "addrYoga"},
+            {"name": "Puzzlezimmer", "channel": "OGS", "address": "addrPuzzle"}
         ]
     }
 }
