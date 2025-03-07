@@ -23,7 +23,7 @@ def setFloor(bus, floor):
     if(subbus > 0):
         print('set floor')
        # bus.write_byte(I2C_address,subbus)
-        TCA9548A.I2C_setup(I2C_address,subbus)
+      #  TCA9548A.I2C_setup(I2C_address,subbus)  reaktivate when seperate buses
         time.sleep(0.1)
 
     return
