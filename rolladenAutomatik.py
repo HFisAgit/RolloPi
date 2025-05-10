@@ -93,6 +93,9 @@ while True:
     #startzeitutc = time.time().now(datetime.timezone.utc) # new variant
     startzeit = datetime.now() # local time
 
+    with open(path_log, 'a') as f:
+            f.write(str(startzeit) + " new Roll loop!" + '\n')
+
     # check if reload of regeln is triggered
     with open(path_reloadRegeln, 'r') as fr:
         if("true" == fr.readline()):
