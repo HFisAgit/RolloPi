@@ -17,7 +17,7 @@ Die Seiten werden über die URL ausgewählt.
 Es gibt je eine Seite für die Lüfter und die Rolläden. Auf diesen können die Geräte manuel gesteuert werden.
 Auf der Seite Regeln wird die aktuelle Konfiguration der automatik angezeigt und kann angepasst werden.
 Es gibt noch weitere Seiten, die Aktionen ausführen (Rolläden fahren, Lüfter schalten) aber nichts anzeigen und automatisch auf die Rolladen- bzw Lüfter- Seite umleiten.
-Die PHP, css Dateien und der ing Ordner müsssen nach /var/www/html kopiert werden. (Wahlweise Link) 
+Die PHP, css Dateien und der img Ordner müsssen nach /var/www/html kopiert werden. (Wahlweise Link) 
 #Automatik
 automatik.py wird über systemd automatisch gestartet.
 Es liest die regeln.json ein und läuft dann in einer endlosschleife. Alle 2 Sekunden wird überprüft, ob zu dieser Zeit eine aktion nötig ist.
@@ -54,4 +54,15 @@ sudo apt install php
 in /etc/passwd dem user www-data die /bin/bash als shell geben.
 
 index.php, styles.css und img/ nach /var/www/html/ kopieren.
+
+TODO:
+# Alles was sich zwischen Golle und Crumscht unterscheidet in separate Dateien auslagern, um branches so nah wie möglich zusammen zu halten
+    - Webseite in mehrere *.php files aufteilen und mit include('header.php'); einbinden
+    - I2C Addressen in json auslagern - OK
+    - Dateinamen eideutiger machen
+    - Ordnerstruktur verbessern
+    
+# Sonnensensor in betrieb nehmen
+# Telefon Signal überwachen und Ton ausgeben
+# Klingel Signal überwachen und Ton ausgeben
 
