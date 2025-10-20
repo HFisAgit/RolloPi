@@ -61,6 +61,9 @@ TODO:
     - I2C Addressen in json auslagern - OK
     - Dateinamen eideutiger machen
     - Ordnerstruktur verbessern
+    - Kommunikation auf WebSocket umstellen 
+    - Für jeden Raum eine Seite anlegen, mit Hintergrundbild
+    - API Dokumentieren
     
 # Sonnensensor in betrieb nehmen
 # Telefon Signal überwachen und Ton ausgeben
