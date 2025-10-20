@@ -45,9 +45,9 @@
             $rollaeden = [];
             #$path_to_regeln = "/home/harald/regeln.json";
             $path_to_regeln = "/home/pi/RolloPi/regeln.json";
-            $path_to_reloadRegeln = '/home/pi/RolloPi/reloadRegeln.txt';
+            $path_to_reloadRegeln = '/home/pi/RolloPi/ramdisk/reloadRegeln.txt';
             $path_to_rolladiono = "/home/pi/RolloPi/Rolladoino.py";
-            $path_to_suntimes = "/home/pi/RolloPi/suntimes.json";
+            $path_to_suntimes = "/home/pi/RolloPi/ramdisk/suntimes.json";
             $path_to_analogVals = "/home/pi/RolloPi/analogValues.json";
             $path_to_temperaturVals = "/home/pi/RolloPi/temperaturValues.json";
 

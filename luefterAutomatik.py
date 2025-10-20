@@ -54,7 +54,7 @@ clearReloadFile = False
 # initialisire Program
 path_regeln = './regeln.json'
 path_log = './luft_automatisierung.log'
-path_reloadRegeln = './reloadRegeln.txt'
+path_reloadRegeln = './ramdisk/reloadRegeln.txt'
 path_rolladoino = './drivers/Rolladoino.py'
 config_path = 'luefterAddr.json'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'

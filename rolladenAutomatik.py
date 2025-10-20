@@ -61,8 +61,9 @@ clearReloadFile = False
 path_regeln = './regeln.json'
 config_path = 'rolladenAddr.json'
 path_log = './roll_automatisierung.log'
-path_reloadRegeln = './reloadRegeln.txt'
+path_reloadRegeln = './ramdisk/reloadRegeln.txt'
 path_rolladoino = './drivers/Rolladoino.py'
+path_suntimes = './ramdisk/suntimes.json'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
 
 heuteSchonZeitenAktualisiert = False
@@ -139,7 +140,7 @@ while True:
             "sunrise": s_sunrise[:sunriseCropIndex],
             "sunset": s_sunset[:sunsetCropIndex]
         }
-        with open('suntimes.json', 'w') as f:
+        with open(path_suntimes, 'w') as f:
             json.dump(suntimes, f)
     
     # prüfe regel 1 Rolladen hoch

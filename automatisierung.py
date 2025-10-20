@@ -115,7 +115,8 @@ path_regeln = './regeln.json'
 #path_rolladoino = './Rolladoino3.py'
 path_rolladoino = './RolladoinoNew.py'
 path_log = './automatisierung.log'
-path_reloadRegeln = './reloadRegeln.txt'
+path_reloadRegeln = './ramdisk/reloadRegeln.txt'
+path_suntimes = './ramdisk/suntimes.json'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
 
 #GPIO
@@ -219,7 +220,7 @@ while True:
             "sunrise": s_sunrise[:sunriseCropIndex],
             "sunset": s_sunset[:sunsetCropIndex]
         }
-        with open('suntimes.json', 'w') as f:
+        with open(path_suntimes, 'w') as f:
             json.dump(suntimes, f)
     
     # prüfe regel 1 Rolladen hoch
