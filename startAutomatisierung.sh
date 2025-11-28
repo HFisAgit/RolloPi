@@ -8,5 +8,6 @@ cp /home/pi/RolloPi/reloadRegeln.txt /home/pi/RolloPi/ramdisk/reloadRegeln.txt
 #starte automatisierungs skripte
 python3 LuefterAutomatik.py &
 python3 rolladenAutomatik.py &
+python3 telefonUeberwachung.py &
 #python3 hwtest.py &
 
