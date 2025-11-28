@@ -82,6 +82,12 @@ def main(cmd, floor, addr, param=0):
         pos = SendSingleByte(bus, addr, 0x60)
         return pos
 
+    elif(cmd=="CMD_Summer"):
+        print("CMD_Summer")
+        setFloor(bus, floor)
+        SendTwoBytes(bus, addr, 0x13, param)
+        return None
+
     else:
         print("ERROR: Unknown command.")
         return None
@@ -90,13 +96,22 @@ def main(cmd, floor, addr, param=0):
 parser = argparse.ArgumentParser()
 parser.add_argument("floor", help="Das stockwerk auf dem sich das Device befindet", choices=['EGN', 'EGS', 'OGN', 'OGS'])
 parser.add_argument("address", help="Die Adresse des I2C device", type=lambda x: int(x,16))
-parser.add_argument("command", help="Der Befehl, der ausgefuehrt werden soll. [CMD_Rolladen_Hoch ; CMD_Rolladen_Runter ; CMD_Rolladen_Stop ; CMD_Luefter ; CMD_Read_Pos ]")
+parser.add_argument("command", help="Der Befehl, der ausgefuehrt werden soll. [CMD_Rolladen_Hoch ; CMD_Rolladen_Runter ; CMD_Rolladen_Stop ; CMD_Luefter ; CMD_Read_Pos ; CMD_Summer ]")
 parser.add_argument("--stufe", help="Die Stufe auf die der Luefter gesetzt werden soll", type=int, choices=[0,1,2,3])
-
+parser.add_argument("--summer", help="Summer an (2) oder aus (0)", type=int, choices=[0,2])
 args = parser.parse_args()
 
 bus = smbus.SMBus(1)    # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
 
-main(args.command, args.floor, args.address, args.stufe) # !! What if stufe is empty???
+# Wähle den richtigen Parameter basierend auf dem Befehl
+if args.command == "CMD_Summer":
+    param = args.summer if args.summer is not None else 0
+elif args.command == "CMD_Luefter":
+    param = args.stufe if args.stufe is not None else 0
+else:
+    param = args.stufe if args.stufe is not None else 0
+
+main(args.command, args.floor, args.address, param)
+print(args.command)args.floor, args.address, args.stufe) # !! What if stufe is empty???
 print(args.command)
 
