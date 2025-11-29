@@ -4,7 +4,7 @@ Description=Hausautomatisierung
 [Service]
 User=pi
 #ExecStart=/usr/bin/python /path-to-your-python-project/python_file.py
-ExecStart=/home/pi/RolloPi/startAutomatisierung.sh
+ExecStart=/home/pi/RolloPi/systemd/startAutomatisierung.sh
 #ExecStart=/bin/bash -c 'cd /home/pi/gitRepos/RolloPi/ && python autimatisierung.py'
 
 [Install]
