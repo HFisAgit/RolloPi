@@ -15,15 +15,7 @@
 </head>
 
 <body>
-    # Kopfzeile
-    <div class="menubar">
-        <h1>Haussteuerung</h1>
-
-        <div class="myname">
-            <div class="avatar">8</div>Brentanoweg
-        </div>
-    </div>
-
+    <?php include 'header.php'; ?>
 
     <div class="main">
         # Hauptmenue
@@ -121,14 +113,29 @@
             ];
             array_push($rollaeden, $newshutter14);
 
-            ########################################################################
+            ###
 
+            $newLufter1 = [
+                'name' => 'Küche',
+                'stufe' => '1'
+            ];
+            array_push($luefter, $newLufter1);
+
+            $newLufter2 = [
+                'name' => 'WC',
+                'stufe' => '2'
+            ];
+            array_push($luefter, $newLufter2);
+
+
+            ########################################################################
+            
             # lade suntimes aus Datei
             if (file_exists($path_to_suntimes)) {
                 $textsun = file_get_contents($path_to_suntimes, true);
                 $suntimes = json_decode($textsun, true);
             }
-            
+
             # lade analogwerte aus Datei
             if (file_exists($path_to_analogVals)) {
                 $textadc = file_get_contents($path_to_analogVals, true);
@@ -141,7 +148,7 @@
                 $tempvals = json_decode($texttemp, true);
             }
 
-            
+
 
             # lade Regeln aus Datei
             if (file_exists($path_to_regeln)) {
@@ -244,7 +251,7 @@
             }
 
             #############################################################################################
-
+            
 
             # Überschrift der Seiten
             if ($_GET['page'] == 'start') {
@@ -253,6 +260,10 @@
 
             if ($_GET['page'] == 'rollaeden') {
                 $headline = 'Rolläden';
+            }
+
+            if ($_GET['page'] == 'luefter') {
+                $headline = 'Lüfter';
             }
 
             if ($_GET['page'] == 'editRules') {
@@ -269,9 +280,9 @@
             ######################################################################################################
             # ************************************************************************************************** #
             ######################################################################################################
-
+            
             # Hier kommt der Inhalt der Seiten
-
+            
             # Seite zum Rolläden fahren - unsichtbar nur für aktion
             if ($_GET['page'] == 'fahreshutter') {
                 $deviceId;
@@ -304,11 +315,16 @@
 
             # Inhalt von Rolläden
             else if ($_GET['page'] == 'rollaeden') {
-                echo '<p>Eine Liste mit Rolläden</p>';
+                include 'rolladenSeite.php';
+            }
 
-                foreach ($rollaeden as $index => $row) {
+            # Inhalt von Lüftern
+            else if ($_GET['page'] == 'luefter') {
+                echo '<p>Eine Liste mit Lüftern</p>';
+
+                foreach ($luefter as $index => $row) {
                     $name = $row['name'];
-                    $phone = $row['pos'];
+                    $phone = $row['stufe'];
 
                     echo "
                     <div class='card'>
@@ -316,12 +332,30 @@
                         <b>$name</b><br>
                         $phone
 
-                        <a class='ersterbtn' href='?page=fahreshutter&richtung=hoch&device=$name'>Hoch</a>
-                        <a class='ersterbtn' href='?page=fahreshutter&richtung=stop&device=$name'>Stop</a>
-                        <a class='ersterbtn' href='?page=fahreshutter&richtung=runter&device=$name'>Runter</a>
+                        <a class='ersterbtn' href='?page=schaltelufter&stufe=0&device=$name'>Stufe 0</a>
+                        <a class='ersterbtn' href='?page=schaltelufter&stufe=1&device=$name'>Stufe 1</a>
+                        <a class='ersterbtn' href='?page=schaltelufter&stufe=2&device=$name'>Stufe 2</a>
+                        <a class='ersterbtn' href='?page=schaltelufter&stufe=3&device=$name'>Stufe 3</a>
                     </div>
                     ";
                 }
+            }
+
+            #Seite zum Lüfter schalten
+            else if ($_GET['page'] == 'schaltelufter') {
+                $deviceId;
+
+                if ($_GET['device'] == 'Küche') {
+                    $deviceId = '0x0D';
+                } else if ($_GET['device'] == 'WC') {
+                    $deviceId = '0x0F';
+                }
+
+                $command_with_parameter = $path_to_rolladiono . " " . $deviceId . " " . "CMD_Luefter " . $_GET['stufe'];
+                exec($command_with_parameter);
+
+                # zurück zur Lüfter seite
+                header('Location: index.php?page=luefter');
             } else if ($_GET['page'] == 'contacts') {
                 echo "
                     <p>Diese Seite Kann gelöscht werden. Die ist nur noch zum Abschreiben da... <b>Kontakte</b></p>
@@ -464,9 +498,9 @@
                     </form>
                     
                 ";
-            } 
+            }
             # Startseite
-            else { 
+            else {
                 echo '<p>Startseite der Haussteuerunng</p>';
                 echo 'Sonnenaufgang: ' . $suntimes['sunrise'] . '<br>';
                 echo 'Sonnenuntergang: ' . $suntimes['sunset'] . '<br>';

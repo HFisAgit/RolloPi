@@ -46,6 +46,7 @@ def datetime2local(dto:datetime, s_tz: str='Europe/Berlin'):
 # Funktion zum Steuern der Lüfter
 # time can be 'sunset' or 'dusk'
 def control_shutter(time, pos):
+    print("call rolladoino")
     for device in config['devices'][time]:
         if pos == "hoch":
             Rolladoino.main('CMD_Rolladen_Hoch', device['channel'], device['address'])
@@ -53,6 +54,8 @@ def control_shutter(time, pos):
             Rolladoino.main('CMD_Rolladen_Runter', device['channel'], device['address'])
         time.sleep(1)
 
+
+print("Hello World")
 
 # global vars
 clearReloadFile = False

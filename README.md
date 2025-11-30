@@ -54,4 +54,5 @@ sudo apt install php
 in /etc/passwd dem user www-data die /bin/bash als shell geben.
 
 index.php, styles.css und img/ nach /var/www/html/ kopieren.
+( sudo /etc/init.d/apache2 start/stop/restart )
 
