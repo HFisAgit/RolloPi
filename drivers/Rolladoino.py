@@ -23,7 +23,7 @@ def setFloor(bus, floor):
     if(subbus > 0):
         print('set floor')
        # bus.write_byte(I2C_address,subbus)
-      #  TCA9548A.I2C_setup(I2C_address,subbus)  reaktivate when seperate buses
+        TCA9548A.I2C_setup(I2C_address,subbus) # reaktivate when seperate buses
         time.sleep(0.1)
 
     return
@@ -98,7 +98,7 @@ parser.add_argument("floor", help="Das stockwerk auf dem sich das Device befinde
 parser.add_argument("address", help="Die Adresse des I2C device", type=lambda x: int(x,16))
 parser.add_argument("command", help="Der Befehl, der ausgefuehrt werden soll. [CMD_Rolladen_Hoch ; CMD_Rolladen_Runter ; CMD_Rolladen_Stop ; CMD_Luefter ; CMD_Read_Pos ; CMD_Summer ]")
 parser.add_argument("--stufe", help="Die Stufe auf die der Luefter gesetzt werden soll", type=int, choices=[0,1,2,3])
-parser.add_argument("--summer", help="Summer an (2) oder aus (0)", type=int, choices=[0,2])
+parser.add_argument("--summer", help="Summer an (2) oder aus (0)", type=int, choices=[0,1,2])
 args = parser.parse_args()
 
 bus = smbus.SMBus(1)    # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
