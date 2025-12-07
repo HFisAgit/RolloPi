@@ -20,7 +20,8 @@ GPIO_INPUT = 6    # Klingel-Eingang
 GPIO_OUTPUT = 19  # Ausgang zur Anzeige
 
 # Pfad zur Rolladoino-Konfiguration (wie im Repo)
-CONFIG_PATH = './rolladenAddr.json'
+#CONFIG_PATH = './rolladenAddr.json'
+CONFIG_PATH = './luefterAddr.json'
 
 # Entprellzeit für Event-Detection (ms)
 BOUNCE_MS = 50
@@ -46,7 +47,9 @@ class KlingelMonitor:
     def load_config(self):
         try:
             with open(CONFIG_PATH, 'r') as f:
-                return json.load(f)
+                data = json.load(f)
+                print(data)
+                return data
         except Exception as e:
             print(f"Fehler beim Laden der Konfiguration '{CONFIG_PATH}': {e}")
             return {"devices": [] }

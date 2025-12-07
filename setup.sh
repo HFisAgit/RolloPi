@@ -36,8 +36,8 @@ sudo mkdir -p /var/www/html/img/
 sudo cp ./webseite/img/* /var/www/html/img/
 
 echo "configuriere systemd"
-sudo cp ./systemd/automatisirung.service /lib/systemd/system/
+sudo cp ./systemd/automatisierung.service /lib/systemd/system/
 sudo chmod 644 /lib/systemd/system/automatisierung.service
 sudo systemctl daemon-reload
-sudo systemctl enable automatisirung.service
-sudo systemctl start automatisirung.service
+sudo systemctl enable automatisierung.service
+sudo systemctl start automatisierung.service
