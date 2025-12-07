@@ -112,6 +112,6 @@ else:
     param = args.stufe if args.stufe is not None else 0
 
 main(args.command, args.floor, args.address, param)
-print(args.command)args.floor, args.address, args.stufe) # !! What if stufe is empty???
+#print(args.command)args.floor, args.address, args.stufe) # !! What if stufe is empty???
 print(args.command)
 
