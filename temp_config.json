@@ -1,0 +1,10 @@
+{
+  "error_threshold": 3.0,
+  "read_interval": 10,
+  "sun_diff_threshold": 6.0,
+  "sun_debounce_count": 3,
+  "sun_release_count": 2,
+  "sensor1": "/sys/bus/w1/devices/28-0000039a30a1/w1_slave",
+  "sensor2": "/sys/bus/w1/devices/28-0000039a478d/w1_slave",
+  "output_file": "/home/pi/RolloPi/ramdisk/temperatures.json"
+}
