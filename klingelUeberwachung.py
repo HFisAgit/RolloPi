@@ -32,7 +32,7 @@ class KlingelMonitor:
         self.config = self.load_config()
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(GPIO_INPUT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(GPIO_INPUT, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(GPIO_OUTPUT, GPIO.OUT)
         GPIO.output(GPIO_OUTPUT, GPIO.LOW)
 
@@ -79,12 +79,21 @@ class KlingelMonitor:
             GPIO.output(GPIO_OUTPUT, GPIO.HIGH)
             self.send_summer_command(True)
 
+    def deactivate(self):
+        if self.active:
+            print("Klingel: AUS")
+            self.active = False
+            GPIO.output(GPIO_OUTPUT, GPIO.LOW)
+            #self.send_summer_command(True)
+
     def on_edge(self, channel):
         # Lese aktuellen Pegel und schalte entsprechend
         try:
             val = GPIO.input(GPIO_INPUT)
             if val:
                 self.activate()
+            else:
+                self.deactivate()
         except Exception as e:
             print(f"Fehler im Edge-Callback: {e}")
 
