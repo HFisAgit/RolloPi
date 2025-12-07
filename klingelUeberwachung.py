@@ -91,9 +91,9 @@ class KlingelMonitor:
         try:
             val = GPIO.input(GPIO_INPUT)
             if val:
-                self.activate()
-            else:
                 self.deactivate()
+            else:
+                self.activate()
         except Exception as e:
             print(f"Fehler im Edge-Callback: {e}")
 
