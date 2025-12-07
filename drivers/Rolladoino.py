@@ -10,11 +10,11 @@ def setFloor(bus, floor):
     I2C_address = 0x70
 
     if(floor == 'EGN'):
-        subbus=5
+        subbus=0
     if(floor == 'EGS'):
-        subbus=5
+        subbus=1
     elif(floor=='OGN'):
-        subbus=3
+        subbus=2
     elif(floor=='OGS'):
         subbus=3
     else:

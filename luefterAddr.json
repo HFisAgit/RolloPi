@@ -1,8 +1,8 @@
 {
     "devices": [
-        {"name": "Kueche", "channel": "EGN", "address": "0x0d"},
-        {"name": "Wc", "channel": "EGN", "address": "0x0e"},
-        {"name": "Wc_bug", "channel": "EGN", "address": "0x0f"},
-        {"name": "Bad", "channel": "OGN", "address": "0x01"}
+        {"name": "Kueche", "channel": "EGN", "address": "0x21"},
+        {"name": "Wc", "channel": "EGS", "address": "0x22"},
+        {"name": "Wc_bug", "channel": "OGN", "address": "0x20"},
+        {"name": "Bad", "channel": "OGS", "address": "0x1f"}
     ]
 }
