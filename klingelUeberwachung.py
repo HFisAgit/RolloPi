@@ -39,8 +39,6 @@ class KlingelMonitor:
         initial = GPIO.input(GPIO_INPUT)
         if initial:
             self.activate()
-        else:
-            self.deactivate()
 
         print("Klingel-Überwachung gestartet")
         print(f"Eingang: GPIO{GPIO_INPUT}, Ausgang: GPIO{GPIO_OUTPUT}")
@@ -51,8 +49,7 @@ class KlingelMonitor:
                 return json.load(f)
         except Exception as e:
             print(f"Fehler beim Laden der Konfiguration '{CONFIG_PATH}': {e}")
-            # Kompatible Standardstruktur wie in anderen Skripten
-            return {"devices": {"sunset": [], "dusk": []}}
+            return {"devices": [] }
 
     def send_summer_command(self, state):
         """
@@ -61,17 +58,16 @@ class KlingelMonitor:
         """
         param = 1 if state else 0
         print(f"Sende CMD_Summer, param={param}")
-        for category in ['sunset', 'dusk']:
-            for device in self.config.get('devices', {}).get(category, []):
-                try:
-                    channel = device['channel']
-                    address = int(device['address'], 16)
-                    name = device.get('name', 'Unbekannt')
-                    print(f"  -> {name} ({channel}, {device['address']})")
-                    Rolladoino.main('CMD_Summer', channel, address, param)
-                    time.sleep(0.05)
-                except Exception as e:
-                    print(f"  Fehler bei {device.get('name', 'Unbekannt')}: {e}")
+        for device in self.config.get('devices', {}):
+            try:
+                channel = device['channel']
+                address = int(device['address'], 16)
+                name = device.get('name', 'Unbekannt')
+                print(f"  -> {name} ({channel}, {device['address']})")
+                Rolladoino.main('CMD_Summer', channel, address, param)
+                time.sleep(0.05)
+            except Exception as e:
+                print(f"  Fehler bei {device.get('name', 'Unbekannt')}: {e}")
 
     def activate(self):
         if not self.active:
@@ -80,21 +76,12 @@ class KlingelMonitor:
             GPIO.output(GPIO_OUTPUT, GPIO.HIGH)
             self.send_summer_command(True)
 
-    def deactivate(self):
-        if self.active:
-            print("Klingel: AUS")
-            self.active = False
-            GPIO.output(GPIO_OUTPUT, GPIO.LOW)
-            self.send_summer_command(False)
-
     def on_edge(self, channel):
         # Lese aktuellen Pegel und schalte entsprechend
         try:
             val = GPIO.input(GPIO_INPUT)
             if val:
                 self.activate()
-            else:
-                self.deactivate()
         except Exception as e:
             print(f"Fehler im Edge-Callback: {e}")
 
