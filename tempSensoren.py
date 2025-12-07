@@ -36,16 +36,20 @@ class TemperatureSensor:
                 content = f.read()
             
             lines = content.split('\n')
-            
-            # Erste Zeile muss YES enthalten
-            if lines[0].strip() != 'YES':
+            if not lines or len(lines) < 2:
+                return None
+
+            # Erste Zeile muss 'YES' enthalten (CRC-Prüfung)
+            if 'YES' not in lines[0]:
                 return None
             
             # Temperaturwert aus der zweiten Zeile extrahieren
-            for line in lines[1:]:
-                if 't=' in line:
-                    temp_raw = int(line.split('t=')[1])
+            if 't=' in lines[1]:
+                try:
+                    temp_raw = int(lines[1].split('t=')[1])
                     return temp_raw / 1000.0  # In °C umwandeln
+                except (ValueError, IndexError):
+                    return None
             
             return None
         
@@ -95,11 +99,11 @@ def main():
             data = {
                 "timestamp": datetime.now().isoformat(),
                 "sensor1": {
-                    "address": "28-0000039a30a1",
+                    "address": os.path.basename(os.path.dirname(SENSOR1)) if SENSOR1 else "unknown",
                     "temperature": round(temp1, 2) if temp1 is not None else None
                 },
                 "sensor2": {
-                    "address": "28-0000039a478d",
+                    "address": os.path.basename(os.path.dirname(SENSOR2)) if SENSOR2 else "unknown",
                     "temperature": round(temp2, 2) if temp2 is not None else None
                 }
             }
