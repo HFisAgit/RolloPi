@@ -1,0 +1,8 @@
+{
+    "fritzbox": {
+        "host": "192.168.178.1",
+        "port": 1012,
+        "timeout": 30
+    },
+    "comment": "Der CallMonitor Port ist standardmäßig 1012. Passen Sie die IP-Adresse an Ihre Fritzbox an."
+}
