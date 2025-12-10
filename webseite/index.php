@@ -1,4 +1,19 @@
 #https://github.com/JunusErgin/php-kontaktbuch/tree/6bfee1b36af1daf4229a1a10dc73f2c93d33a45b
+<?php
+# Lade Hardware-Konfiguration zu Beginn
+$path_to_hardware_config = "/var/www/html/hardware_config_Brentanoweg.json";
+# $path_to_hardware_config = "/var/www/html/hardware_config_AmLohrein.json";
+$house_name = 'Brentanoweg';
+$house_number = '8';
+if (file_exists($path_to_hardware_config)) {
+    $hardware_text = file_get_contents($path_to_hardware_config, true);
+    $hardware_config = json_decode($hardware_text, true);
+    if ($hardware_config) {
+        $house_name = $hardware_config['house_name'] ?? 'Brentanoweg';
+        $house_number = $hardware_config['house_number'] ?? '8';
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,7 +35,7 @@
         <h1>Haussteuerung</h1>
 
         <div class="myname">
-            <div class="avatar">8</div>Brentanoweg
+            <div class="avatar"><?php echo htmlspecialchars($house_number); ?></div><?php echo htmlspecialchars($house_name); ?>
         </div>
     </div>
 
@@ -51,75 +66,10 @@
             $path_to_analogVals = "/home/pi/RolloPi/analogValues.json";
             $path_to_temperaturVals = "/home/pi/RolloPi/temperaturValues.json";
 
-
-            # fülle die Hardware
-            # EG
-            $newshutter1 = [
-                'name' => 'Küche',
-                'pos' => '1'
-            ];
-            array_push($rollaeden, $newshutter1);
-
-            $newshutter2 = [
-                'name' => 'HWR',
-                'pos' => '1'
-            ];
-            array_push($rollaeden, $newshutter1);
-
-            $newshutter3 = [
-                'name' => 'WC',
-                'pos' => '0'
-            ];
-            array_push($rollaeden, $newshutter3);
-
-            $newshutter4 = [
-                'name' => 'Gaderobe',
-                'pos' => '1'
-            ];
-            array_push($rollaeden, $newshutter4);
-
-            $newshutter5 = [
-                'name' => 'Büro Peter',
-                'pos' => '1'
-            ];
-            array_push($rollaeden, $newshutter5);
-
-            $newshutter6 = [
-                'name' => 'Wohnzimmer',
-                'pos' => '0'
-            ];
-            array_push($rollaeden, $newshutter6);
-
-            $newshutter7 = [
-                'name' => 'Terrasse',
-                'pos' => '0'
-            ];
-            array_push($rollaeden, $newshutter7);
-
-            # 1 OG
-            $newshutter11 = [
-                'name' => 'Schlafzimmer',
-                'pos' => '0'
-            ];
-            array_push($rollaeden, $newshutter11);
-
-            $newshutter12 = [
-                'name' => 'Bad',
-                'pos' => '0'
-            ];
-            array_push($rollaeden, $newshutter12);
-
-            $newshutter13 = [
-                'name' => 'Büro Rita',
-                'pos' => '0'
-            ];
-            array_push($rollaeden, $newshutter13);
-
-            $newshutter14 = [
-                'name' => 'Gästezimmer',
-                'pos' => '0'
-            ];
-            array_push($rollaeden, $newshutter14);
+            # lade Rolladen-Konfiguration aus der bereits geladenen Hardware-Config
+            if (isset($hardware_config) && isset($hardware_config['rollaeden'])) {
+                $rollaeden = $hardware_config['rollaeden'];
+            }
 
             ########################################################################
 

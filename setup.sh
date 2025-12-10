@@ -34,6 +34,8 @@ sudo cp ./webseite/index.php /var/www/html/
 sudo cp ./webseite/style.css /var/www/html/
 sudo mkdir -p /var/www/html/img/
 sudo cp ./webseite/img/* /var/www/html/img/
+sudo cp ./webseite/hardware_config_Brentanoweg.json /var/www/html/hardware_config_Brentanoweg.json
+sudo cp ./webseite/hardware_config_AmLohrein.json /var/www/html/hardware_config_AmLohrein.json
 
 echo "configuriere systemd"
 sudo cp ./systemd/automatisierung.service /lib/systemd/system/

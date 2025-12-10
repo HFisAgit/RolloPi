@@ -1,0 +1,61 @@
+{
+    "house_name": "Brentanoweg",
+    "house_number": "8",
+    "rollaeden": [
+        {
+            "name": "Küche",
+            "pos": "1",
+            "floor": "EG"
+        },
+        {
+            "name": "HWR",
+            "pos": "1",
+            "floor": "EG"
+        },
+        {
+            "name": "WC",
+            "pos": "0",
+            "floor": "EG"
+        },
+        {
+            "name": "Gaderobe",
+            "pos": "1",
+            "floor": "EG"
+        },
+        {
+            "name": "Büro Peter",
+            "pos": "1",
+            "floor": "EG"
+        },
+        {
+            "name": "Wohnzimmer",
+            "pos": "0",
+            "floor": "EG"
+        },
+        {
+            "name": "Terrasse",
+            "pos": "0",
+            "floor": "EG"
+        },
+        {
+            "name": "Schlafzimmer",
+            "pos": "0",
+            "floor": "1OG"
+        },
+        {
+            "name": "Bad",
+            "pos": "0",
+            "floor": "1OG"
+        },
+        {
+            "name": "Büro Rita",
+            "pos": "0",
+            "floor": "1OG"
+        },
+        {
+            "name": "Gästezimmer",
+            "pos": "0",
+            "floor": "1OG"
+        }
+    ]
+}

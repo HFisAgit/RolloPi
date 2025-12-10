@@ -1,0 +1,26 @@
+{
+    "house_name": "Am Lohrein",
+    "house_number": "25",
+    "rollaeden": [
+        {
+            "name": "Wohnzimmer",
+            "pos": "0",
+            "floor": "EG"
+        },
+        {
+            "name": "Küche",
+            "pos": "1",
+            "floor": "EG"
+        },
+        {
+            "name": "Schlafzimmer 1",
+            "pos": "0",
+            "floor": "OG"
+        },
+        {
+            "name": "Schlafzimmer 2",
+            "pos": "1",
+            "floor": "OG"
+        }
+    ]
+}
