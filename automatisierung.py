@@ -362,19 +362,6 @@ while True:
             json.dump(analogVals, f)
 
     
-    # Temperatur auslesen
-    """Mit einem Timestamp versehe ich meine Messung und lasse mir diese in der Console ausgeben."""
-   # print(time.strftime('%H:%M:%S') +" - " + str(readTempSensor(sensor)))
-    
-    tempSensVal = {
-        "time": time.strftime('%H:%M:%S'),
-        "temp1": str(readTempLines(sensor1)),
-        "temp2": str(readTempLines(sensor2))
-    }
-    with open('temperaturValues.json', 'w') as f:
-            json.dump(tempSensVal, f)
-
-
     #########################################################################################
     # hole neuen Zeitstempel
     endzeit = datetime.now()

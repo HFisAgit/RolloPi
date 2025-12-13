@@ -224,8 +224,9 @@ if (file_exists($path_to_hardware_config)) {
 
             # Seite zum Rolläden fahren - unsichtbar nur für aktion
             if ($_GET['page'] == 'fahreshutter') {
-                $deviceId;
-                $richtung;
+                $deviceId = null;
+                $floor = null;
+                $richtung = null;
 
                 if ($_GET['richtung'] == 'runter') {
                     $richtung = 'CMD_Rolladen_Runter';
@@ -235,18 +236,44 @@ if (file_exists($path_to_hardware_config)) {
                     $richtung = 'CMD_Rolladen_Stop';
                 }
 
-                if ($_GET['device'] == 'Küche') {
-                    $deviceId = '0x0D';
-                } else if ($_GET['device'] == 'WC') {
-                    $deviceId = '0x0F';
-                } else if ($_GET['device'] == 'Terrasse') {
-                    $deviceId = '0x0b';
-                } elseif ($_GET['device'] == 'Wohnzimmer') {
-                    $deviceId = '0x0C';
+                // Find device in loaded rollaeden config
+                if (isset($_GET['device']) && isset($rollaeden)) {
+                    $deviceName = $_GET['device'];
+                    foreach ($rollaeden as $row) {
+                        if ($row['name'] == $deviceName) {
+                            $deviceId = $row['i2c'] ?? null;
+                            $floor = $row['floor'] ?? null;
+                            break;
+                        }
+                    }
                 }
 
-                $command_with_parameter = $path_to_rolladiono . " " . $deviceId . " " . $richtung;
-                exec($command_with_parameter, $output, $retval);
+                // Fallback to old hard-coded mapping for backward compatibility if i2c not found in config
+                if (!$deviceId) {
+                    if ($_GET['device'] == 'Küche') {
+                        $deviceId = '0x0D';
+                        $floor = 'EGN';
+                    } else if ($_GET['device'] == 'WC') {
+                        $deviceId = '0x0F';
+                        $floor = 'EGN';
+                    } else if ($_GET['device'] == 'Terrasse') {
+                        $deviceId = '0x0b';
+                        $floor = 'EGN';
+                    } elseif ($_GET['device'] == 'Wohnzimmer') {
+                        $deviceId = '0x0C';
+                        $floor = 'EGN';
+                    }
+                }
+
+                // Build the command including floor and i2c address
+                // Use escapeshellarg to avoid shell injection
+                if ($deviceId && $floor && $richtung) {
+                    $command_with_parameter = $path_to_rolladiono . " " . escapeshellarg($floor) . " " . escapeshellarg($deviceId) . " " . escapeshellarg($richtung);
+                    exec($command_with_parameter, $output, $retval);
+                } else {
+                    // Optionally, log or debug missing parameter here
+                    // echo 'ERROR: missing device or floor or direction!';
+                }
 
                 # zurück zur Rolladenseite...
                 header('Location: index.php?page=rollaeden');
@@ -259,6 +286,7 @@ if (file_exists($path_to_hardware_config)) {
                 foreach ($rollaeden as $index => $row) {
                     $name = $row['name'];
                     $phone = $row['pos'];
+                    $deviceUrlName = urlencode($name);
 
                     echo "
                     <div class='card'>
@@ -266,9 +294,9 @@ if (file_exists($path_to_hardware_config)) {
                         <b>$name</b><br>
                         $phone
 
-                        <a class='ersterbtn' href='?page=fahreshutter&richtung=hoch&device=$name'>Hoch</a>
-                        <a class='ersterbtn' href='?page=fahreshutter&richtung=stop&device=$name'>Stop</a>
-                        <a class='ersterbtn' href='?page=fahreshutter&richtung=runter&device=$name'>Runter</a>
+                        <a class='ersterbtn' href='?page=fahreshutter&richtung=hoch&device=$deviceUrlName'>Hoch</a>
+                        <a class='ersterbtn' href='?page=fahreshutter&richtung=stop&device=$deviceUrlName'>Stop</a>
+                        <a class='ersterbtn' href='?page=fahreshutter&richtung=runter&device=$deviceUrlName'>Runter</a>
                     </div>
                     ";
                 }

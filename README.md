@@ -67,5 +67,5 @@ TODO:
     
 # Sonnensensor in betrieb nehmen
 # Telefon Signal überwachen und Ton ausgeben
-# Klingel Signal überwachen und Ton ausgeben
+# Klingel Signal überwachen und Ton ausgeben - ok
 

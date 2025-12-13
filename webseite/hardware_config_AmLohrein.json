@@ -5,22 +5,26 @@
         {
             "name": "Wohnzimmer",
             "pos": "0",
-            "floor": "EG"
+            "floor": "EGN",
+            "i2c": "0x20"
         },
         {
             "name": "Küche",
             "pos": "1",
-            "floor": "EG"
+            "floor": "EGN",
+            "i2c": "0x21"
         },
         {
             "name": "Schlafzimmer 1",
             "pos": "0",
-            "floor": "OG"
+            "floor": "OGN",
+            "i2c": "0x22"
         },
         {
             "name": "Schlafzimmer 2",
             "pos": "1",
-            "floor": "OG"
+            "floor": "OGN",
+            "i2c": "0x23"
         }
     ]
 }
