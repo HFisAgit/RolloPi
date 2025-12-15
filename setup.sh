@@ -2,6 +2,7 @@
 # This script sets up the development environment
 #!/bin/bash
 
+# ist RolloPi vorhanden?
 if [ "$PWD" = "/home/pi/RolloPi" ]; then
     echo "Du befindest dich im richtigen Verzeichnis!"
 else
@@ -16,19 +17,28 @@ echo "sudo raspi-config"
 #bash ./scripts/enable-i2c.sh
 #bash ./scripts/enable-1wire.sh
 
+# installiere benötigte pakete
 echo "update apt und installiere pakete"
 sudo apt update
 sudo apt install -y git vim python3 
 sudo apt install -y python3-smbus python3-dev i2c-tools
 sudo apt install -y python3-pip
 sudo apt install -y php
+sudo apt install -y composer
 
+# installiere benötigte logging fuer php module
+cd /home/pi/RolloPi/webseite
+composer require monolog/monolog
+
+# installiere benötigte python module
 pip3 install python-dateutil
 pip3 install suncalc
 
+# konfiguriere user www-data für den webserver zugriff auf I2C
 echo "bearbeite user www-data"
 usermod -s /bin/bash www-data
 
+# kopiere webseite
 echo "kopiere webseite"
 sudo cp ./webseite/index.php /var/www/html/
 sudo cp ./webseite/style.css /var/www/html/
@@ -37,6 +47,7 @@ sudo cp ./webseite/img/* /var/www/html/img/
 sudo cp ./webseite/hardware_config_Brentanoweg.json /var/www/html/hardware_config_Brentanoweg.json
 sudo cp ./webseite/hardware_config_AmLohrein.json /var/www/html/hardware_config_AmLohrein.json
 
+# konfiguriere systemd für autostart
 echo "configuriere systemd"
 sudo cp ./systemd/automatisierung.service /lib/systemd/system/
 sudo chmod 644 /lib/systemd/system/automatisierung.service
