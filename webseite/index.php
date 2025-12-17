@@ -1,5 +1,21 @@
 #https://github.com/JunusErgin/php-kontaktbuch/tree/6bfee1b36af1daf4229a1a10dc73f2c93d33a45b
 <?php
+# === Monolog Logging Setup ===
+# Autoloader einbinden (nach Composer-Installation vorhanden)
+require_once __DIR__ . '/../vendor/autoload.php';
+use Monolog\Logger;
+use Monolog\Handler\SyslogHandler;
+
+# Logger initialisieren (Logdatei: webseite.log im aktuellen Verzeichnis)
+$log = new Logger('webseite');
+$log->pushHandler(new SyslogHandler('webseite', LOG_USER, Logger::INFO));
+
+# Beispiel-Logeintrag (wird bei jedem Seitenaufruf geschrieben)
+$log->info('index.php aufgerufen', [
+    'remote_addr' => $_SERVER['REMOTE_ADDR'] ?? null,
+    'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null
+]);
+
 # Lade Hardware-Konfiguration zu Beginn
 $path_to_hardware_config = "/var/www/html/hardware_config_Brentanoweg.json";
 # $path_to_hardware_config = "/var/www/html/hardware_config_AmLohrein.json";
@@ -58,7 +74,6 @@ if (file_exists($path_to_hardware_config)) {
             $rules = [];
             $luefter = [];
             $rollaeden = [];
-            #$path_to_regeln = "/home/harald/regeln.json";
             $path_to_regeln = "/home/pi/RolloPi/regeln.json";
             $path_to_reloadRegeln = '/home/pi/RolloPi/ramdisk/reloadRegeln.txt';
             $path_to_rolladiono = "/home/pi/RolloPi/Rolladoino.py";
@@ -78,11 +93,17 @@ if (file_exists($path_to_hardware_config)) {
                 $textsun = file_get_contents($path_to_suntimes, true);
                 $suntimes = json_decode($textsun, true);
             }
+            else {
+                log->error('Suntimes Datei nicht gefunden: ' . $path_to_suntimes);
+            }
             
             # lade analogwerte aus Datei
             if (file_exists($path_to_analogVals)) {
                 $textadc = file_get_contents($path_to_analogVals, true);
                 $adcvals = json_decode($textadc, true);
+            }
+            else {
+                log->error('Analogwerte Datei nicht gefunden: ' . $path_to_analogVals);
             }
 
             # lade Temperaturwerte aus Datei
@@ -90,13 +111,17 @@ if (file_exists($path_to_hardware_config)) {
                 $texttemp = file_get_contents($path_to_temperaturVals, true);
                 $tempvals = json_decode($texttemp, true);
             }
-
-            
+            else {
+                log->error('Temperaturwerte Datei nicht gefunden: ' . $path_to_temperaturVals);
+            }
 
             # lade Regeln aus Datei
             if (file_exists($path_to_regeln)) {
                 $text = file_get_contents($path_to_regeln, true);
                 $rules = json_decode($text, true);
+            }
+            else {
+                log->error('Regeln Datei nicht gefunden: ' . $path_to_regeln);
             }
 
             # Speichere neue Regeln falls nötig
@@ -270,9 +295,17 @@ if (file_exists($path_to_hardware_config)) {
                 if ($deviceId && $floor && $richtung) {
                     $command_with_parameter = $path_to_rolladiono . " " . escapeshellarg($floor) . " " . escapeshellarg($deviceId) . " " . escapeshellarg($richtung);
                     exec($command_with_parameter, $output, $retval);
+                    log->info('Rolladenbefehl ausgeführt', [
+                        'command' => $command_with_parameter,
+                        'output' => $output,
+                        'return_value' => $retval
+                    ]);
                 } else {
-                    // Optionally, log or debug missing parameter here
-                    // echo 'ERROR: missing device or floor or direction!';
+                    log->error('Fehlende Parameter für Rolladenbefehl', [
+                        'device' => $deviceId,
+                        'floor' => $floor,
+                        'richtung' => $richtung
+                    ]);
                 }
 
                 # zurück zur Rolladenseite...
