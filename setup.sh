@@ -97,6 +97,7 @@ sudo mkdir -p /var/www/html/img/
 sudo cp ./webseite/img/* /var/www/html/img/
 sudo cp ./webseite/hardware_config_Brentanoweg.json /var/www/html/hardware_config_Brentanoweg.json
 sudo cp ./webseite/hardware_config_AmLohrein.json /var/www/html/hardware_config_AmLohrein.json
+sudo cp -r ./webseite/vendor/ /var/www/html/vendor/
 
 # konfiguriere systemd für autostart
 echo "configuriere systemd"
