@@ -336,31 +336,6 @@ while True:
         time.sleep(1)
         os.system('python3 ' + path_rolladoino + ' ' + addrGaste + ' CMD_Rolladen_Hoch')
     
-    #######################################################################################
-
-    # Hardware Tests:
-    # lauflicht
-    if (lauflicht < 7):
-        lauflicht += 1
-    else:
-        lauflicht = 0
-    updateLauflicht(lauflicht)
-    
-    # ADC
-    adc1 = ads1115.readSingle(0)
-    adc2 = ads1115.readSingle(1)
-    adc3 = ads1115.readSingle(2)
-    adc4 = ads1115.readSingle(3)
-
-    analogVals = {
-            "adc1": str(adc1),
-            "adc2": str(adc2),
-            "adc3": str(adc3),
-            "adc4": str(adc4)
-        }
-    with open('analogValues.json', 'w') as f:
-            json.dump(analogVals, f)
-
     
     #########################################################################################
     # hole neuen Zeitstempel

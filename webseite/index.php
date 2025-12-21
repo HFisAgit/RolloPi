@@ -93,12 +93,11 @@ if (file_exists($path_to_hardware_config)) {
             $rules = [];
             $luefter = [];
             $rollaeden = [];
-            $path_to_regeln = "/home/pi/RolloPi/regeln.json";
+            $path_to_regeln = "/home/pi/RolloPi/ramdisk/regeln.json";
             $path_to_reloadRegeln = '/home/pi/RolloPi/ramdisk/reloadRegeln.txt';
-            $path_to_rolladiono = "/home/pi/RolloPi/Rolladoino.py";
+            $path_to_rolladiono = "/home/pi/RolloPi/drivers/Rolladoino.py";
             $path_to_suntimes = "/home/pi/RolloPi/ramdisk/suntimes.json";
-            $path_to_analogVals = "/home/pi/RolloPi/analogValues.json";
-            $path_to_temperaturVals = "/home/pi/RolloPi/temperaturValues.json";
+            $path_to_temperaturVals = "/home/pi/RolloPi/ramdisk/temperatures.json";
 
             # lade Rolladen-Konfiguration aus der bereits geladenen Hardware-Config
             if (isset($hardware_config) && isset($hardware_config['rollaeden'])) {
@@ -116,15 +115,6 @@ if (file_exists($path_to_hardware_config)) {
                 $log->error('Suntimes Datei nicht gefunden: ' . $path_to_suntimes);
             }
             
-            # lade analogwerte aus Datei
-            if (file_exists($path_to_analogVals)) {
-                $textadc = file_get_contents($path_to_analogVals, true);
-                $adcvals = json_decode($textadc, true);
-            }
-            else {
-                $log->error('Analogwerte Datei nicht gefunden: ' . $path_to_analogVals);
-            }
-
             # lade Temperaturwerte aus Datei
             if (file_exists($path_to_temperaturVals)) {
                 $texttemp = file_get_contents($path_to_temperaturVals, true);
@@ -500,11 +490,6 @@ if (file_exists($path_to_hardware_config)) {
                 echo '<p>Startseite der Haussteuerunng</p>';
                 echo 'Sonnenaufgang: ' . $suntimes['sunrise'] . '<br>';
                 echo 'Sonnenuntergang: ' . $suntimes['sunset'] . '<br>';
-                echo '<br>';
-                echo 'ADC Kanal 1: ' . $adcvals['adc1'] . '<br>';
-                echo 'ADC Kanal 2: ' . $adcvals['adc2'] . '<br>';
-                echo 'ADC Kanal 3: ' . $adcvals['adc3'] . '<br>';
-                echo 'ADC Kanal 4: ' . $adcvals['adc4'] . '<br>';
                 echo '<br>';
                 echo 'Temperatur Kanal 1: ' . $tempvals['temp1'] . '<br>';
                 echo 'Temperatur Kanal 2: ' . $tempvals['temp2'] . '<br>';

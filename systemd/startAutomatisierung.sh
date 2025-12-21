@@ -12,6 +12,6 @@ python3 rolladenAutomatik.py &
 #python3 telefonUeberwachung.py &
 python3 fritzboxCallMonitor.py &
 python3 klingelUeberwachung.py &
-python3 tempsensoren.py &
+python3 tempSensoren.py &
 #python3 hwtest.py &
 
