@@ -2,13 +2,35 @@
 <?php
 # === Monolog Logging Setup ===
 # Autoloader einbinden (nach Composer-Installation vorhanden)
-require_once __DIR__ . '/../vendor/autoload.php';
-use Monolog\Logger;
-use Monolog\Handler\SyslogHandler;
+# Try common vendor locations and provide a lightweight fallback logger if Monolog is not available.
+$autoload_found = false;
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+    $autoload_found = true;
+} elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+    $autoload_found = true;
+}
 
-# Logger initialisieren (Logdatei: webseite.log im aktuellen Verzeichnis)
-$log = new Logger('webseite');
-$log->pushHandler(new SyslogHandler('webseite', LOG_USER, Logger::INFO));
+if ($autoload_found && class_exists('Monolog\\Logger')) {
+    use Monolog\Logger;
+    use Monolog\Handler\SyslogHandler;
+
+    # Logger initialisieren (Syslog-Handler)
+    $log = new Logger('webseite');
+    $log->pushHandler(new SyslogHandler('webseite', LOG_USER, Logger::INFO));
+} else {
+    # Fallback logger: einfache wrapper-Objekt mit info/error Methoden
+    $log = new class {
+        public function info($msg, $context = []) {
+            error_log("INFO: $msg " . json_encode($context));
+        }
+        public function error($msg, $context = []) {
+            error_log("ERROR: $msg " . json_encode($context));
+        }
+    };
+    $log->info('Monolog nicht gefunden, verwende Fallback-Logger');
+}
 
 # Beispiel-Logeintrag (wird bei jedem Seitenaufruf geschrieben)
 $log->info('index.php aufgerufen', [
@@ -94,7 +116,7 @@ if (file_exists($path_to_hardware_config)) {
                 $suntimes = json_decode($textsun, true);
             }
             else {
-                log->error('Suntimes Datei nicht gefunden: ' . $path_to_suntimes);
+                $log->error('Suntimes Datei nicht gefunden: ' . $path_to_suntimes);
             }
             
             # lade analogwerte aus Datei
@@ -103,7 +125,7 @@ if (file_exists($path_to_hardware_config)) {
                 $adcvals = json_decode($textadc, true);
             }
             else {
-                log->error('Analogwerte Datei nicht gefunden: ' . $path_to_analogVals);
+                $log->error('Analogwerte Datei nicht gefunden: ' . $path_to_analogVals);
             }
 
             # lade Temperaturwerte aus Datei
@@ -112,7 +134,7 @@ if (file_exists($path_to_hardware_config)) {
                 $tempvals = json_decode($texttemp, true);
             }
             else {
-                log->error('Temperaturwerte Datei nicht gefunden: ' . $path_to_temperaturVals);
+                $log->error('Temperaturwerte Datei nicht gefunden: ' . $path_to_temperaturVals);
             }
 
             # lade Regeln aus Datei
@@ -121,7 +143,7 @@ if (file_exists($path_to_hardware_config)) {
                 $rules = json_decode($text, true);
             }
             else {
-                log->error('Regeln Datei nicht gefunden: ' . $path_to_regeln);
+                $log->error('Regeln Datei nicht gefunden: ' . $path_to_regeln);
             }
 
             # Speichere neue Regeln falls nötig
@@ -295,13 +317,13 @@ if (file_exists($path_to_hardware_config)) {
                 if ($deviceId && $floor && $richtung) {
                     $command_with_parameter = $path_to_rolladiono . " " . escapeshellarg($floor) . " " . escapeshellarg($deviceId) . " " . escapeshellarg($richtung);
                     exec($command_with_parameter, $output, $retval);
-                    log->info('Rolladenbefehl ausgeführt', [
+                    $log->info('Rolladenbefehl ausgeführt', [
                         'command' => $command_with_parameter,
                         'output' => $output,
                         'return_value' => $retval
                     ]);
                 } else {
-                    log->error('Fehlende Parameter für Rolladenbefehl', [
+                    $log->error('Fehlende Parameter für Rolladenbefehl', [
                         'device' => $deviceId,
                         'floor' => $floor,
                         'richtung' => $richtung
