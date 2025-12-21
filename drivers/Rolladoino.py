@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
+# run with python3 -m drivers.Rolladoino ...
 import sys
 import time
 import smbus
 import argparse
-import TCA9548A
+from . import TCA9548A
 
 def setFloor(bus, floor):
     I2C_address = 0x70

@@ -2,7 +2,7 @@
 
 import time
 import smbus
-import TCA9548A
+from . import TCA9548A
 
 # ADS1115 + hardware constants
 I2C_BUS = 1
