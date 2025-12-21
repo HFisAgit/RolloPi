@@ -17,18 +17,69 @@ echo "sudo raspi-config"
 #bash ./scripts/enable-i2c.sh
 #bash ./scripts/enable-1wire.sh
 
+# Default: execute apt commands. Use -n/--no-apt to skip all apt calls.
+DO_APT=1
+
+usage() {
+    echo "Usage: $0 [-n] [--no-apt] [-h] [--help]"
+    echo "  -n, --no-apt   skip all apt update/install calls"
+    echo "  -h, --help     show this help message"
+}
+
+# Parse short options with getopts; accept -n and -h
+while getopts ":nh" opt; do
+    case "$opt" in
+        n)
+            DO_APT=0
+            ;;
+        h)
+            usage
+            exit 0
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG"
+            usage
+            exit 1
+            ;;
+    esac
+done
+shift $((OPTIND -1))
+
+# Support long options (--no-apt, --help) if provided
+for arg in "$@"; do
+    case "$arg" in
+        --no-apt)
+            DO_APT=0
+            ;;
+        --help)
+            usage
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $arg"
+            usage
+            exit 1
+            ;;
+    esac
+done
+
 # installiere benötigte pakete
 echo "update apt und installiere pakete"
-sudo apt update
-sudo apt install -y git vim python3 
-sudo apt install -y python3-smbus python3-dev i2c-tools
-sudo apt install -y python3-pip
-sudo apt install -y php
-sudo apt install -y composer
+if [ "$DO_APT" -eq 1 ]; then
+    sudo apt update
+    sudo apt install -y git vim python3 
+    sudo apt install -y python3-smbus python3-dev i2c-tools
+    sudo apt install -y python3-pip
+    sudo apt install -y php
+    sudo apt install -y composer
+else
+    echo "--no-apt gesetzt: apt update/install wird übersprungen"
+fi
 
 # installiere benötigte logging fuer php module
 cd /home/pi/RolloPi/webseite
 composer require monolog/monolog
+cd /home/pi/RolloPi
 
 # installiere benötigte python module
 pip3 install python-dateutil
