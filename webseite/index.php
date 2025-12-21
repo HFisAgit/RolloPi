@@ -13,12 +13,9 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 }
 
 if ($autoload_found && class_exists('Monolog\\Logger')) {
-    use Monolog\Logger;
-    use Monolog\Handler\SyslogHandler;
-
-    # Logger initialisieren (Syslog-Handler)
-    $log = new Logger('webseite');
-    $log->pushHandler(new SyslogHandler('webseite', LOG_USER, Logger::INFO));
+    # Logger initialisieren (Syslog-Handler) using fully-qualified class names
+    $log = new \Monolog\Logger('webseite');
+    $log->pushHandler(new \Monolog\Handler\SyslogHandler('webseite', LOG_USER, \Monolog\Logger::INFO));
 } else {
     # Fallback logger: einfache wrapper-Objekt mit info/error Methoden
     $log = new class {
