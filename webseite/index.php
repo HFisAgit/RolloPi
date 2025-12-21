@@ -303,12 +303,21 @@ if (file_exists($path_to_hardware_config)) {
                 // Use escapeshellarg to avoid shell injection
                 if ($deviceId && $floor && $richtung) {
                     $command_with_parameter = $path_to_rolladiono . " " . escapeshellarg($floor) . " " . escapeshellarg($deviceId) . " " . escapeshellarg($richtung);
-                    exec($command_with_parameter, $output, $retval);
-                    $log->info('Rolladenbefehl ausgeführt', [
-                        'command' => $command_with_parameter,
-                        'output' => $output,
-                        'return_value' => $retval
-                    ]);
+                    # capture stderr as well so we see errors from the script
+                    exec($command_with_parameter . ' 2>&1', $output, $retval);
+                    if ($retval === 0) {
+                        $log->info('Rolladenbefehl ausgeführt', [
+                            'command' => $command_with_parameter,
+                            'output' => $output,
+                            'return_value' => $retval
+                        ]);
+                    } else {
+                        $log->error('Rolladenbefehl fehlgeschlagen', [
+                            'command' => $command_with_parameter,
+                            'output' => $output,
+                            'return_value' => $retval
+                        ]);
+                    }
                 } else {
                     $log->error('Fehlende Parameter für Rolladenbefehl', [
                         'device' => $deviceId,

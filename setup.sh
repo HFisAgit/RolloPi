@@ -88,6 +88,18 @@ pip3 install suncalc
 # konfiguriere user www-data für den webserver zugriff auf I2C
 echo "bearbeite user www-data"
 usermod -s /bin/bash www-data
+echo "Füge www-data zur i2c-Gruppe hinzu und erstelle udev-Regel für i2c-Geräte"
+if ! getent group i2c >/dev/null 2>&1; then
+    echo "Gruppe 'i2c' existiert nicht, erstelle sie"
+    sudo groupadd i2c || true
+fi
+sudo usermod -a -G i2c www-data
+
+# Erstelle udev-Regel, die i2c-Geräte für Gruppe i2c lesbar/ Schreibbar macht
+#UDEV_RULE="/etc/udev/rules.d/99-i2c.rules"
+#echo "KERNEL==\"i2c-[0-9]*\", MODE=\"0660\", GROUP=\"i2c\"" | sudo tee "$UDEV_RULE" >/dev/null
+#sudo udevadm control --reload-rules && sudo udevadm trigger
+#echo "udev-Regel $UDEV_RULE gesetzt und Regeln neu geladen"
 
 # kopiere webseite
 echo "kopiere webseite"
