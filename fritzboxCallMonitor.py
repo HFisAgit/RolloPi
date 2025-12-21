@@ -244,5 +244,6 @@ class FritzboxCallMonitor:
 
 
 if __name__ == "__main__":
+    print('Starte Fritzbox CallMonitor Überwachung')
     monitor = FritzboxCallMonitor()
     monitor.run()

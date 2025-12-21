@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "Starte RolloPi Automatisierungsskripte"
 cd /home/pi/RolloPi
 #RAM disk für dateien
 mkdir -p /home/pi/RolloPi/ramdisk
@@ -14,4 +15,6 @@ python3 fritzboxCallMonitor.py &
 python3 klingelUeberwachung.py &
 python3 tempSensoren.py &
 #python3 hwtest.py &
+
+echo "RolloPi Automatisierungsskripte gestartet"
 

@@ -54,6 +54,8 @@ def control_shutter(time, pos):
         time.sleep(1)
 
 
+print('Starte RolladenAutomatik')
+
 # global vars
 clearReloadFile = False
 

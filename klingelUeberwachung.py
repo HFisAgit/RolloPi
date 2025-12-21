@@ -117,5 +117,6 @@ class KlingelMonitor:
         print("Fertig.")
 
 if __name__ == "__main__":
+    print('Starte Klingel-Überwachung')
     monitor = KlingelMonitor()
     monitor.run()

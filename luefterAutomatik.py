@@ -47,6 +47,7 @@ def control_fans(stufe):
         Rolladoino.main('CMD_Luefter', device['channel'], device['address'], stufe)
         time.sleep(1)
 
+print('Starte LuefterAutomatik')
 
 # global vars
 clearReloadFile = False

@@ -209,4 +209,5 @@ def main():
     return 0
 
 if __name__ == "__main__":
+    print('Starte Klingel-Überwachung')
     exit(main())
