@@ -111,22 +111,38 @@ sudo cp ./webseite/hardware_config_Brentanoweg.json /var/www/html/hardware_confi
 sudo cp ./webseite/hardware_config_AmLohrein.json /var/www/html/hardware_config_AmLohrein.json
 sudo cp -r ./webseite/vendor/ /var/www/html/vendor/
 
+#RAM-Disk für webseite
+mkdir -p /home/pi/RolloPi/ramdisk
+FSTAB_LINE='tmpfs /home/pi/RolloPi/ramdisk tmpfs size=100M,mode=0775 0 0' 
+
+# Prüfen, ob die Zeile bereits existiert 
+if ! grep -Fxq "$FSTAB_LINE" /etc/fstab; then 
+    echo "RAM-Disk Eintrag nicht gefunden – füge hinzu." 
+    sudo echo "$FSTAB_LINE" | sudo tee -a /etc/fstab > /dev/null 
+else 
+    echo "RAM-Disk Eintrag bereits vorhanden." 
+fi
+
 # konfiguriere systemd für autostart
 echo "configuriere systemd"
 sudo cp ./systemd/rolladenAutomatik.service /etc/systemd/system/
 sudo cp ./systemd/luefterAutomatik.service /etc/systemd/system/
 sudo cp ./systemd/fritzboxCallMonitor.service /etc/systemd/system/
 sudo cp ./systemd/klingelUeberwachung.service /etc/systemd/system/
+sudo cp ./systemd/tempSensoren.service /etc/systemd/system/
 sudo chmod 644 /etc/systemd/system/rolladenAutomatik.service
 sudo chmod 644 /etc/systemd/system/luefterAutomatik.service
 sudo chmod 644 /etc/systemd/system/fritzboxCallMonitor.service
 sudo chmod 644 /etc/systemd/system/klingelUeberwachung.service
+sudo chmod 644 /etc/systemd/system/tempSensoren.service
 sudo systemctl daemon-reload
 sudo systemctl enable rolladenAutomatik.service
 sudo systemctl enable luefterAutomatik.service
 sudo systemctl enable fritzboxCallMonitor.service
 sudo systemctl enable klingelUeberwachung.service
+sudo systemctl enable tempSensoren.service
 sudo systemctl start rolladenAutomatik.service
 sudo systemctl start luefterAutomatik.service
 sudo systemctl start fritzboxCallMonitor.service
 sudo systemctl start klingelUeberwachung.service
+sudo systemctl start tempSensoren.service
