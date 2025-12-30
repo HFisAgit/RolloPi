@@ -113,8 +113,20 @@ sudo cp -r ./webseite/vendor/ /var/www/html/vendor/
 
 # konfiguriere systemd für autostart
 echo "configuriere systemd"
-sudo cp ./systemd/automatisierung.service /etc/systemd/system/
-sudo chmod 644 /etc/systemd/system/automatisierung.service
+sudo cp ./systemd/rolladenAutomatk.service /etc/systemd/system/
+sudo cp ./systemd/lueferAutomatk.service /etc/systemd/system/
+sudo cp ./systemd/fritzboxCallMonitor.service /etc/systemd/system/
+sudo cp ./systemd/klingelUeberwachung.service /etc/systemd/system/
+sudo chmod 644 /etc/systemd/system/rolladenAutomatk.service
+sudo chmod 644 /etc/systemd/system/lueferAutomatk.service
+sudo chmod 644 /etc/systemd/system/fritzboxCallMonitor.service
+sudo chmod 644 /etc/systemd/system/klingelUeberwachung.service
 sudo systemctl daemon-reload
-sudo systemctl enable automatisierung.service
-sudo systemctl start automatisierung.service
+sudo systemctl enable rolladenAutomatk.service
+sudo systemctl enable lueferAutomatk.service
+sudo systemctl enable fritzboxCallMonitor.service
+sudo systemctl enable klingelUeberwachung.service
+sudo systemctl start rolladenAutomatk.service
+sudo systemctl start lueferAutomatk.service
+sudo systemctl start fritzboxCallMonitor.service
+sudo systemctl start klingelUeberwachung.service

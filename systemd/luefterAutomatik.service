@@ -1,0 +1,12 @@
+[Unit]
+Description=Rolladen Automatik
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/RolloPi
+ExecStart=/usr/bin/python3 /home/pi/RolloPi/luefterAutomatik.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
