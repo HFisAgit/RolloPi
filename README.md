@@ -55,6 +55,19 @@ in /etc/passwd dem user www-data die /bin/bash als shell geben.
 
 index.php, styles.css und img/ nach /var/www/html/ kopieren.
 
+
+- logging:
+Loginformationen finden sich im journald
+journalctl -n 30 -u rolladenAutomatik.service 
+journalctl -n 30 -u luefterAutomatik.service 
+journalctl -n 30 -u fritzboxCallMonitor.service 
+journalctl -n 30 -u klingelUeberwachung.service 
+journalctl -n 30 -u tempSensoren.service 
+
+journalctl -n 30 -t webseite
+
+journal beenden mit "q" 
+
 TODO:
 # Alles was sich zwischen Golle und Crumscht unterscheidet in separate Dateien auslagern, um branches so nah wie möglich zusammen zu halten
     - Webseite in mehrere *.php files aufteilen und mit include('header.php'); einbinden
