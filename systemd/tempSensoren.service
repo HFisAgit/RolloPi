@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=pi
 WorkingDirectory=/home/pi/RolloPi
-ExecStart=/usr/bin/python3 /home/pi/RolloPi/tempsensoren.py
+ExecStart=/usr/bin/python3 /home/pi/RolloPi/tempSensoren.py
 Restart=always
 
 [Install]
