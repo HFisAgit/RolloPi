@@ -123,6 +123,17 @@ else
     echo "RAM-Disk Eintrag bereits vorhanden." 
 fi
 
+#add python path
+ENV_PATH_LINE='PYTHONPATH="/home/pi/RolloPi"'
+
+# Prüfen, ob die Zeile bereits existiert 
+if ! grep -Fxq "$ENV_PATH_LINE" /etc/environment; then 
+    echo "Python Path Eintrag nicht gefunden – füge hinzu." 
+    sudo echo "$ENV_PATH_LINE" | sudo tee -a /etc/environment > /dev/null 
+else 
+    echo "Python Path Eintrag bereits vorhanden." 
+fi 
+
 # konfiguriere systemd für autostart
 echo "configuriere systemd"
 sudo cp ./systemd/rolladenAutomatik.service /etc/systemd/system/
