@@ -95,7 +95,7 @@ if (file_exists($path_to_hardware_config)) {
             $rollaeden = [];
             $path_to_regeln = "/home/pi/RolloPi/ramdisk/regeln.json";
             $path_to_reloadRegeln = '/home/pi/RolloPi/ramdisk/reloadRegeln.txt';
-            $path_to_rolladiono = "python3 -m drivers.Rolladoino";
+            $path_to_rolladiono = "cd /home/pi/RolloPi && python3 -m drivers.Rolladoino";
             $path_to_suntimes = "/home/pi/RolloPi/ramdisk/suntimes.json";
             $path_to_temperaturVals = "/home/pi/RolloPi/ramdisk/temperatures.json";
 
