@@ -396,100 +396,52 @@ if (file_exists($path_to_hardware_config)) {
                         Auf dieser Seite kannst du die Regeln verwalten
                     </div>
 
-                    <form action='?page=contacts' method='POST'>
-                        <div>
-                            <a>Zeit Morgens früherstens</a>
-                            $MorgensEarly
-                        </div>
-                        <div>
-                            <a>Neue Zeit: </a>
-                            <input placeholder='00:00:00' name='morningearly'>
-                            <button type='Submit'>Absenden</button>
-                        </div>
-                    </form>
-                    
-                    <form action='?page=contacts' method='POST'>
-                        <div>
-                            <a>Zeit Morgens spätestens</a>
-                            $MorgensLate
-                        </div>
-                        <div>
-                            <a>Neue Zeit: </a>
-                            <input placeholder='00:00:00' name='morninglate'>
-                            <button type='Submit'>Absenden</button>
-                        </div>
+                    <form action='?page=editRules' method='POST'>
+                        <label>Zeit Morgens früherstens</label>
+                        <input placeholder='00:00:00' name='morningearly' value='" . htmlspecialchars($MorgensEarly) . "'>
+                        <button type='Submit'>Absenden</button>
                     </form>
                     
                     <form action='?page=editRules' method='POST'>
-                        <div>
-                            <a> Zeit Abends frühestens</a>
-                            $AbendsEarly
-                        </div>
-                        <div>
-                            <a>Neue Zeit: </a>
-                            <input placeholder='00:00:00' name='eveningearly'>
-                            <button type='Submit'>Absenden</button>
-                        </div>
+                        <label>Zeit Morgens spätestens</label>
+                        <input placeholder='00:00:00' name='morninglate' value='" . htmlspecialchars($MorgensLate) . "'>
+                        <button type='Submit'>Absenden</button>
                     </form>
                     
                     <form action='?page=editRules' method='POST'>
-                        <div>
-                            <a> Zeit Abends spätestens</a>
-                            $AbendsLate
-                        </div>
-                        <div>
-                            <a>Neue Zeit: </a>
-                            <input placeholder='00:00:00' name='eveninglate'>
-                            <button type='Submit'>Absenden</button>
-                        </div>
+                        <label>Zeit Abends frühestens</label>
+                        <input placeholder='00:00:00' name='eveningearly' value='" . htmlspecialchars($AbendsEarly) . "'>
+                        <button type='Submit'>Absenden</button>
                     </form>
                     
                     <form action='?page=editRules' method='POST'>
-                        <div>
-                            <a> Sonnenautomatik </a>
-                            $SonneEin
-                        </div>
-                        <div>
-                            <a>Ein/Aus schalten: </a>
-                            <input placeholder='true / false' name='Sonne'>
-                            <button type='Submit'>Absenden</button>
-                        </div>
+                        <label>Zeit Abends spätestens</label>
+                        <input placeholder='00:00:00' name='eveninglate' value='" . htmlspecialchars($AbendsLate) . "'>
+                        <button type='Submit'>Absenden</button>
+                    </form>
+                    
+                    <form action='?page=editRules' method='POST'>
+                        <label>Sonnenautomatik</label>
+                        <input placeholder='true / false' name='Sonne' value='" . htmlspecialchars($SonneEin) . "'>
+                        <button type='Submit'>Absenden</button>
                     </form>
 
                     <form action='?page=editRules' method='POST'>
-                        <div>
-                            <a> Sonnenautomatik Runter </a>
-                            $SonneRunter
-                        </div>
-                        <div>
-                            <a>Neue Zeit: </a>
-                            <input placeholder='00:00:00' name='SonneRunter'>
-                            <button type='Submit'>Absenden</button>
-                        </div>
+                        <label>Sonnenautomatik Runter</label>
+                        <input placeholder='00:00:00' name='SonneRunter' value='" . htmlspecialchars($SonneRunter) . "'>
+                        <button type='Submit'>Absenden</button>
                     </form>
 
                     <form action='?page=editRules' method='POST'>
-                        <div>
-                            <a> Sonnenautomatik Hoch </a>
-                            $SonneHoch
-                        </div>
-                        <div>
-                            <a>Neue Zeit: </a>
-                            <input placeholder='00:00:00' name='SonneHoch'>
-                            <button type='Submit'>Absenden</button>
-                        </div>
+                        <label>Sonnenautomatik Hoch</label>
+                        <input placeholder='00:00:00' name='SonneHoch' value='" . htmlspecialchars($SonneHoch) . "'>
+                        <button type='Submit'>Absenden</button>
                     </form>
 
                     <form action='?page=editRules' method='POST'>
-                        <div>
-                            <a> Lüfter reduzieren </a>
-                            $Luftreduziert
-                        </div>
-                        <div>
-                            <a>Ein/Aus schalten: </a>
-                            <input placeholder='true / false' name='LuftReduzieren'>
-                            <button type='Submit'>Absenden</button>
-                        </div>
+                        <label>Lüfter reduzieren</label>
+                        <input placeholder='true / false' name='LuftReduzieren' value='" . htmlspecialchars($Luftreduziert) . "'>
+                        <button type='Submit'>Absenden</button>
                     </form>
                     
                 ";
