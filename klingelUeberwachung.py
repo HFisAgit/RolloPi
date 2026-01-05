@@ -13,7 +13,7 @@ import os
 
 # Rolladoino-Modul aus dem drivers-Verzeichnis importieren
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'drivers'))
-import Rolladoino
+import drivers.Rolladoino as Rolladoino
 
 # GPIO-Konfiguration
 GPIO_INPUT = 6    # Klingel-Eingang

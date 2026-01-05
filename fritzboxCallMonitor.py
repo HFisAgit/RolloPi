@@ -15,7 +15,7 @@ from datetime import datetime
 # Importiere GPIO und Rolladoino-Modul
 import RPi.GPIO as GPIO
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'drivers'))
-import Rolladoino
+import drivers.Rolladoino as Rolladoino
 
 # GPIO Konfiguration
 GPIO_OUTPUT = 13    # Ausgang zum Setzen

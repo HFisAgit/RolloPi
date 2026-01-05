@@ -12,7 +12,7 @@ import os
 
 # Importiere Rolladoino-Modul
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'drivers'))
-import Rolladoino
+import drivers.Rolladoino as Rolladoino
 
 # GPIO Konfiguration
 GPIO_INPUT = 5      # Eingang zum Überwachen
