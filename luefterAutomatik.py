@@ -6,10 +6,21 @@ import subprocess
 import os
 import drivers.ads1115 as ads1115
 import drivers.Rolladoino as Rolladoino
+import logging
+import sys
 
 from datetime import datetime, timedelta
 from time import mktime
 from dateutil import tz
+
+
+# Logging to stdout so systemd/journald captures logs
+logger = logging.getLogger('luefterAutomatik')
+handler = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 
 
 def is_time_between(begin_time, end_time, check_time=None):
@@ -47,14 +58,13 @@ def control_fans(stufe):
         Rolladoino.main('CMD_Luefter', device['channel'], device['address'], stufe)
         time.sleep(1)
 
-print('Starte LuefterAutomatik')
+logger.info('Starte LuefterAutomatik')
 
 # global vars
 clearReloadFile = False
 
 # initialisire Program
 path_regeln = './regeln.json'
-path_log = './luft_automatisierung.log'
 path_reloadRegeln = './ramdisk/reloadRegeln.txt'
 path_rolladoino = './drivers/Rolladoino.py'
 config_path = 'luefterAddr.json'
@@ -100,14 +110,12 @@ while True:
 
     if (isLuefterActive and isHourEven == True):
         print('aus')
-        with open(path_log, 'a') as f:
-            f.write(str(startzeit) + "Luefter aus" + '\n')
+        logger.info("Luefter aus")
         control_fans(0) 
 
     if (isLuefterActive and isHourUneven == True):
         print('an')
-        with open(path_log, 'a') as f:
-            f.write(str(startzeit) + "Luefter an" + '\n')
+        logger.info("Luefter an")
         control_fans(1) 
 
     #########################################################################################
@@ -123,9 +131,8 @@ while True:
     else:
         print("Warning: loop takes longer then time_delta!")
         print(sleeptime.total_seconds())
-        with open(path_log, 'a') as f:
-            f.write(str(startzeit) + "Warning: loop takes longer then time_delta!" + '\n')
+        logger.info("Warning: loop takes longer then time_delta!")
         time.sleep(1)
 # ende Schleife
 
-print('end of program')
+logger.info('end of program')

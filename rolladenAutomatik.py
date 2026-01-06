@@ -7,11 +7,21 @@ import subprocess
 import os
 import drivers.ads1115 as ads1115
 import drivers.Rolladoino as Rolladoino
+import logging
+import sys
 
 from suncalc import get_position, get_times
 from datetime import datetime, timedelta
 from time import mktime
 from dateutil import tz
+
+# Logging to stdout so systemd/journald captures logs
+logger = logging.getLogger('rolladenAutomatik')
+handler = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 
 
 def is_time_between(begin_time, end_time, check_time=None):
@@ -54,7 +64,7 @@ def control_shutter(time, pos):
         time.sleep(1)
 
 
-print('Starte RolladenAutomatik')
+logger.info('Starte RolladenAutomatik')
 
 # global vars
 clearReloadFile = False
@@ -62,10 +72,10 @@ clearReloadFile = False
 # initialisire Program
 path_regeln = './regeln.json'
 config_path = 'rolladenAddr.json'
-path_log = './roll_automatisierung.log'
+# note: log file removed; using systemd/journald via stdout/stderr
 path_reloadRegeln = './ramdisk/reloadRegeln.txt'
 path_rolladoino = './drivers/Rolladoino.py'
-path_suntimes = './ramdisk/suntimes.json'
+path_suntimes = './ramdisk/suntimes.json' 
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
 
 heuteSchonZeitenAktualisiert = False
@@ -96,8 +106,7 @@ while True:
     #startzeitutc = time.time().now(datetime.timezone.utc) # new variant
     startzeit = datetime.now() # local time
 
-    with open(path_log, 'a') as f:
-            f.write(str(startzeit) + " new Roll loop!" + '\n')
+    logger.info(str(startzeit) + " new Roll loop!")
 
     # check if reload of regeln is triggered
     with open(path_reloadRegeln, 'r') as fr:
@@ -121,7 +130,7 @@ while True:
     # prüfe, ob heute schon die Sonnen auf und Untergangszeiten geholt wprden
     if heuteSchonZeitenAktualisiert == False:
         # hole Zeiten, wenn nötig
-        print("Neue Sonnen auf/unterganz Zeiten.")
+        logger.info("Neue Sonnen auf/unterganz Zeiten.")
         _times = get_times(startzeitutc, lon, lat)
         # and convert to local time
         for x in _times:
@@ -158,8 +167,7 @@ while True:
     sunriseAfter =  is_time_between( startzeit.time(), (startzeit + delta_time).time(), morgensspaet )
 
     if ( sunriseBefore or surriseBetwen or sunriseAfter ):
-        with open(path_log, 'a') as f:
-            f.write(str(startzeit) + " Rolladen hoch" + '\n')
+        logger.info(str(startzeit) + " Rolladen hoch")
         # wir fahren alle Rolläden. die Zeitinformation ist nur bein Runterfahren relevant.
         control_shutter('dusk', 'hoch')
         control_shutter('sunset', 'hoch')
@@ -176,8 +184,7 @@ while True:
     duskAfter   = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)
 
     if ( duskBefore or duskBetween or duskAfter ):
-        with open(path_log, 'a') as f:
-            f.write(str(startzeit) + " Rolladen runter Straße" + '\n')
+        logger.info(str(startzeit) + " Rolladen runter Straße")
         control_shutter('dusk', 'runter')
     
     # prüfe regel 2 Rolladen runter Garten - sunset ist die frühere Zeit
@@ -189,8 +196,7 @@ while True:
     sunsetAfter   = is_time_between(startzeit.time(), (startzeit + delta_time).time(), abendsspaet)
 
     if ( sunsetBefore or sunsetBetween or sunsetAfter ):
-        with open(path_log, 'a') as f:
-            f.write(str(startzeit) + " Rolladen runter Garten" + '\n')
+        logger.info(str(startzeit) + " Rolladen runter Garten")
         control_shutter('sunset', 'runter')
         
 
@@ -221,10 +227,9 @@ while True:
     if (sleeptime.total_seconds() > 0):
         time.sleep(sleeptime.total_seconds())
     else:
-        print("Warning: loop takes longer then time_delta!")
-        print(sleeptime.total_seconds())
-        with open(path_log, 'a') as f:
-            f.write(str(startzeit) + "Warning: loop takes longer then time_delta!" + '\n')
+        logger.warning("Warning: loop takes longer then time_delta!")
+        logger.warning(sleeptime.total_seconds())
+        logger.warning(str(startzeit) + " Warning: loop takes longer then time_delta!")
         time.sleep(1)
 # ende Schleife
 
