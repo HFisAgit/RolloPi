@@ -458,8 +458,16 @@ if (file_exists($path_to_hardware_config)) {
                 echo '<br>';
                 $t1 = $tempvals['sensor1']['temperature'] ?? $tempvals['sensor1']['temp'] ?? null;
                 $t2 = $tempvals['sensor2']['temperature'] ?? $tempvals['sensor2']['temp'] ?? null;
-                echo 'Temperatur Kanal 1: ' . (isset($t1) ? htmlspecialchars(number_format($t1, 2)) . ' °C' : 'n/a') . '<br>';
-                echo 'Temperatur Kanal 2: ' . (isset($t2) ? htmlspecialchars(number_format($t2, 2)) . ' °C' : 'n/a') . '<br>';
+                $weatherImg = '';
+                if (array_key_exists('sonnenschein', $tempvals)) {
+                    if ($tempvals['sonnenschein']) {
+                        $weatherImg = '<img src="img/sun.svg" alt="Sonnenschein" class="icon-weather" title="Sonnenschein">';
+                    } else {
+                        $weatherImg = '<img src="img/cloud.svg" alt="Bewölkt" class="icon-weather" title="Bewölkt">';
+                    }
+                }
+                echo 'Temperatur Kanal 1: ' . (isset($t1) ? htmlspecialchars(number_format($t1, 2)) . ' °C' : 'n/a') . ' ' . $weatherImg . '<br>';
+                echo 'Temperatur Kanal 2: ' . (isset($t2) ? htmlspecialchars(number_format($t2, 2)) . ' °C' : 'n/a') . ' ' . $weatherImg . '<br>';
             }
             ?>
         </div>

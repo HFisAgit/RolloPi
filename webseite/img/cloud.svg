@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img" aria-labelledby="cloudTitle">
+  <title id="cloudTitle">Bewölkt</title>
+  <g fill="#B0BEC5" stroke="#90A4AE" stroke-width="0">
+    <path d="M19 18H6a4 4 0 0 1 0-8c.5 0 1 .1 1.4.2A6 6 0 0 1 19 12a3 3 0 0 1 0 6z"/>
+  </g>
+</svg>

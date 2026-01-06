@@ -120,3 +120,10 @@
     .ersterbtn:hover {
         background-color: #FF3333;
     }
+
+    .icon-weather {
+        width: 18px;
+        height: 18px;
+        vertical-align: middle;
+        margin-left: 6px;
+    }
