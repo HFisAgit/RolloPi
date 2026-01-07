@@ -109,12 +109,18 @@ while True:
     logger.info(str(startzeit) + " new Roll loop!")
 
     # check if reload of regeln is triggered
-    with open(path_reloadRegeln, 'r') as fr:
-        if("true" == fr.readline()):
-            with open(path_regeln, 'r') as regelnFile:
-                data = json.load(regelnFile)
-            clearReloadFile = True
-    
+    try:
+        with open(path_reloadRegeln, 'r') as fr:
+            if("true" == fr.readline()):
+                with open(path_regeln, 'r') as regelnFile:
+                    data = json.load(regelnFile)
+                clearReloadFile = True
+    except FileNotFoundError:
+        # Datei anlegen, falls sie fehlt
+        with open(path_reloadRegeln, 'w') as fw:
+            fw.write(" ")
+        clearReloadFile = False
+
     # clear 
     if(clearReloadFile):
         with open(path_reloadRegeln, 'w') as fw:

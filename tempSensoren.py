@@ -25,7 +25,7 @@ from datetime import datetime
 DEFAULT_SENSOR1 = "/sys/bus/w1/devices/28-0000039a30a1/w1_slave"
 DEFAULT_SENSOR2 = "/sys/bus/w1/devices/28-0000039a478d/w1_slave"
 DEFAULT_OUTPUT = "/home/pi/RolloPi/ramdisk/temperatures.json"
-DEFAULT_CONFIG = Path(__file__).parent / "temp_config.json"
+DEFAULT_CONFIG = Path(__file__).parent / "tempSensor_config.json"
 
 # Default-Parameter
 DEFAULTS = {
@@ -117,7 +117,7 @@ def make_output_dir_if_needed(path: str):
 def main():
     parser = argparse.ArgumentParser(description="DS18B20 Ausleser mit Config und Sonnenschein-Entprellung")
     parser.add_argument("--config", "-c", type=str, default=str(DEFAULT_CONFIG),
-                        help="Pfad zur JSON-Config (default: temp_config.json neben dem Script)")
+                        help="Pfad zur JSON-Config (default: tempSensor_config.json neben dem Script)")
     args = parser.parse_args()
 
     cfg_path = Path(args.config)
