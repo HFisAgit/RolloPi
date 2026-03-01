@@ -130,19 +130,23 @@ sudo cp ./systemd/luefterAutomatik.service /etc/systemd/system/
 sudo cp ./systemd/fritzboxCallMonitor.service /etc/systemd/system/
 sudo cp ./systemd/klingelUeberwachung.service /etc/systemd/system/
 sudo cp ./systemd/tempSensoren.service /etc/systemd/system/
+sudo cp ./systemd/lichtSensor.service /etc/systemd/system/
 sudo chmod 644 /etc/systemd/system/rolladenAutomatik.service
 sudo chmod 644 /etc/systemd/system/luefterAutomatik.service
 sudo chmod 644 /etc/systemd/system/fritzboxCallMonitor.service
 sudo chmod 644 /etc/systemd/system/klingelUeberwachung.service
 sudo chmod 644 /etc/systemd/system/tempSensoren.service
+sudo chmod 644 /etc/systemd/system/lichtSensor.service
 sudo systemctl daemon-reload
 sudo systemctl enable rolladenAutomatik.service
 sudo systemctl enable luefterAutomatik.service
 sudo systemctl enable fritzboxCallMonitor.service
 sudo systemctl enable klingelUeberwachung.service
 sudo systemctl enable tempSensoren.service
+sudo systemctl enable lichtSensor.service
 sudo systemctl start rolladenAutomatik.service
 sudo systemctl start luefterAutomatik.service
 sudo systemctl start fritzboxCallMonitor.service
 sudo systemctl start klingelUeberwachung.service
 sudo systemctl start tempSensoren.service
+sudo systemctl start lichtSensor.service

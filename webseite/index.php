@@ -254,6 +254,37 @@ if (file_exists($path_to_hardware_config)) {
             # Überschrift tatsächlich anzeigen
             echo '<h1>' . $headline . '</h1>';
 
+            # Lade Licht-Sensor Werte
+            $path_to_lightVals = "/home/pi/RolloPi/ramdisk/light.json";
+            if (file_exists($path_to_lightVals)) {
+                $textlight = file_get_contents($path_to_lightVals, true);
+                $lightvals = json_decode($textlight, true);
+                if ($lightvals === null) {
+                    $log->error('Lightwerte konnten nicht geparst werden', ['path' => $path_to_lightVals, 'json' => $textlight]);
+                    $lightvals = [];
+                }
+            } else {
+                $log->error('Lightwerte Datei nicht gefunden: ' . $path_to_lightVals);
+                $lightvals = [];
+            }
+
+            # Zeige Temperatur- und Lichtwerte (falls vorhanden)
+            echo "<div class='card'>";
+            if (isset($tempvals['sensor1']['temperature'])) {
+                $t1 = htmlspecialchars((string)$tempvals['sensor1']['temperature']);
+                echo "Temperatur 1: $t1 °C<br>";
+            }
+            if (isset($tempvals['sensor2']['temperature'])) {
+                $t2 = htmlspecialchars((string)$tempvals['sensor2']['temperature']);
+                echo "Temperatur 2: $t2 °C<br>";
+            }
+            if (isset($lightvals['raw'])) {
+                $lr = htmlspecialchars((string)$lightvals['raw']);
+                $lv = isset($lightvals['voltage']) ? htmlspecialchars((string)$lightvals['voltage']) : 'n/a';
+                echo "Licht (ADC raw): $lr, Spannung: $lv V";
+            }
+            echo "</div>";
+
             ######################################################################################################
             # ************************************************************************************************** #
             ######################################################################################################
