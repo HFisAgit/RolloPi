@@ -90,7 +90,9 @@ def readSingle(input):
     return value
 
 #test program
-setFloor()
-value = readSingle(1)
-print("Value: " + str(value))
+if __name__ == '__main__':
+    # When run as script perform a single read on channel 1 for diagnostics
+    setFloor()
+    value = readSingle(1)
+    print("Value: " + str(value))
       
