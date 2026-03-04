@@ -150,7 +150,7 @@ class FritzboxCallMonitor:
             try:
                 print(f"Verbinde mit Fritzbox ({self.fritzbox_config['host']}:{self.fritzbox_config['port']})...")
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.socket.settimeout(self.fritzbox_config['timeout'])
+                self.socket.settimeout(1)
                 self.socket.connect((self.fritzbox_config['host'], self.fritzbox_config['port']))
                 print("Verbindung hergestellt!")
                 return True
@@ -206,6 +206,9 @@ class FritzboxCallMonitor:
                                 # Bei eingehendem Anruf (RING) Alarm aktivieren
                                 if event['type'] == 'RING':
                                     self.activate_alarm()
+                                # Bei Annahme oder Auflegen Alarm deaktivieren
+                                elif event['type'] in ('CONNECT', 'DISCONNECT'):
+                                    self.deactivate_alarm()
                 
                 except socket.timeout:
                     # Timeout ist normal, einfach weitermachen
