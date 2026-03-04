@@ -1,11 +1,14 @@
 {
     "morgens": {
         "early": "6:00:00",
-        "late": "8:00:00"
+        "late": "8:00:00",
+        "sonnenwinkel": -6
     },
     "abends": {
         "early": "18:00:00",
-        "late": "21:00:00"
+        "late": "21:00:00",
+        "sonnenwinkel_strasse": -6,
+        "sonnenwinkel_garten": -0.833
     },
     "sonne": {
         "ein": "false",

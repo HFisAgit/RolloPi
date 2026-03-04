@@ -5,6 +5,7 @@ import json
 import time
 import subprocess
 import os
+import math
 import drivers.ads1115 as ads1115
 import drivers.Rolladoino as Rolladoino
 import logging
@@ -52,6 +53,43 @@ def datetime2local(dto:datetime, s_tz: str='Europe/Berlin'):
     _local = dto.replace(tzinfo=from_zone)
     # and convert to local time
     return _local.astimezone(to_zone)
+
+def get_sun_time_for_angle(date_utc, lng, lat, target_angle_deg, rising=True):
+    """
+    Berechne den UTC-Zeitpunkt, an dem die Sonne einen bestimmten Höhenwinkel erreicht.
+    Verwendet Binärsuche mit suncalc.get_position().
+    rising=True für morgens (Sonne steigt), rising=False für abends (Sonne sinkt).
+    Gibt einen datetime in UTC zurück.
+    """
+    target_rad = target_angle_deg * math.pi / 180.0
+
+    noon_utc = date_utc.replace(hour=12, minute=0, second=0, microsecond=0)
+
+    if rising:
+        low = noon_utc - timedelta(hours=14)
+        high = noon_utc
+    else:
+        low = noon_utc
+        high = noon_utc + timedelta(hours=14)
+
+    # 50 Iterationen → Sub-Sekunden-Genauigkeit
+    for _ in range(50):
+        mid = low + (high - low) / 2
+        pos = get_position(mid, lng, lat)
+        altitude = pos['altitude']  # Radiant
+
+        if rising:
+            if altitude < target_rad:
+                low = mid
+            else:
+                high = mid
+        else:
+            if altitude > target_rad:
+                low = mid
+            else:
+                high = mid
+
+    return low + (high - low) / 2
 
 # Funktion zum Steuern der Lüfter
 # time can be 'sunset' or 'dusk'
@@ -115,6 +153,7 @@ while True:
                 with open(path_regeln, 'r') as regelnFile:
                     data = json.load(regelnFile)
                 clearReloadFile = True
+                heuteSchonZeitenAktualisiert = False  # Sonnenzeiten mit neuen Winkeln neu berechnen
     except FileNotFoundError:
         # Datei anlegen, falls sie fehlt
         with open(path_reloadRegeln, 'w') as fw:
@@ -137,25 +176,48 @@ while True:
     if heuteSchonZeitenAktualisiert == False:
         # hole Zeiten, wenn nötig
         logger.info("Neue Sonnen auf/unterganz Zeiten.")
+
+        # Lese benutzerdefinierte Sonnenwinkel aus Regeln (Defaultwerte = bisheriges Verhalten)
+        morgen_winkel = data['morgens'].get('sonnenwinkel', -6)        # Default: -6° (bürgerliche Dämmerung / dawn)
+        strasse_winkel = data['abends'].get('sonnenwinkel_strasse', -6)  # Default: -6° (bürgerliche Dämmerung / dusk)
+        garten_winkel = data['abends'].get('sonnenwinkel_garten', -0.833)  # Default: -0.833° (Sonnenuntergang / sunset)
+
+        logger.info(f"Sonnenwinkel: morgens={morgen_winkel}°, strasse={strasse_winkel}°, garten={garten_winkel}°")
+
+        # Standard-Sonnenzeiten für Anzeige
         _times = get_times(startzeitutc, lon, lat)
-        # and convert to local time
         for x in _times:
             _times[x] = datetime2local(_times[x])
 
-        dawn_time = _times["dawn"]
-        dusk_time = _times["dusk"]
-        sunset_time = _times['sunset']
+        # Berechne benutzerdefinierte Sonnenzeiten basierend auf konfigurierten Winkeln
+        dawn_time = datetime2local(get_sun_time_for_angle(startzeitutc, lon, lat, morgen_winkel, rising=True))
+        dusk_time = datetime2local(get_sun_time_for_angle(startzeitutc, lon, lat, strasse_winkel, rising=False))
+        sunset_time = datetime2local(get_sun_time_for_angle(startzeitutc, lon, lat, garten_winkel, rising=False))
+
+        logger.info(f"Berechnete Zeiten: morgens={dawn_time.strftime('%H:%M:%S')}, strasse={dusk_time.strftime('%H:%M:%S')}, garten={sunset_time.strftime('%H:%M:%S')}")
+
         heuteSchonZeitenAktualisiert = True 
 
-        # zeiten für Anzeige exportiere
+        # Zeiten für Anzeige exportieren
         s_sunrise = _times["sunrise"].isoformat()
         s_sunset  = _times["sunset"].isoformat()
         sunriseCropIndex = s_sunrise.rfind(".")
         sunsetCropIndex = s_sunset.rfind(".")
+
+        def _crop_iso(iso_str):
+            idx = iso_str.rfind(".")
+            return iso_str[:idx] if idx > 0 else iso_str
+
         suntimes = {
             "date": startzeit.date().isoformat(),
             "sunrise": s_sunrise[:sunriseCropIndex],
-            "sunset": s_sunset[:sunsetCropIndex]
+            "sunset": s_sunset[:sunsetCropIndex],
+            "custom_morgen": _crop_iso(dawn_time.isoformat()),
+            "custom_strasse": _crop_iso(dusk_time.isoformat()),
+            "custom_garten": _crop_iso(sunset_time.isoformat()),
+            "winkel_morgen": morgen_winkel,
+            "winkel_strasse": strasse_winkel,
+            "winkel_garten": garten_winkel
         }
         with open(path_suntimes, 'w') as f:
             json.dump(suntimes, f)

@@ -229,8 +229,39 @@ if (file_exists($path_to_hardware_config)) {
                 } else {
                     echo 'ERROR kein gültiger boolscher Ausdruck!';
                 }
+            }            if (isset($_POST['sonnenwinkelMorgens'])) {
+                $winkel = floatval($_POST['sonnenwinkelMorgens']);
+                if ($winkel >= -18 && $winkel <= 10) {
+                    echo "Jetzt speichern!";
+                    $rules['morgens']['sonnenwinkel'] = $winkel;
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
+                } else {
+                    echo "ERROR: Winkel muss zwischen -18 und 10 liegen.";
+                }
             }
-
+            if (isset($_POST['sonnenwinkelStrasse'])) {
+                $winkel = floatval($_POST['sonnenwinkelStrasse']);
+                if ($winkel >= -18 && $winkel <= 10) {
+                    echo "Jetzt speichern!";
+                    $rules['abends']['sonnenwinkel_strasse'] = $winkel;
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
+                } else {
+                    echo "ERROR: Winkel muss zwischen -18 und 10 liegen.";
+                }
+            }
+            if (isset($_POST['sonnenwinkelGarten'])) {
+                $winkel = floatval($_POST['sonnenwinkelGarten']);
+                if ($winkel >= -18 && $winkel <= 10) {
+                    echo "Jetzt speichern!";
+                    $rules['abends']['sonnenwinkel_garten'] = $winkel;
+                    file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    file_put_contents($path_to_reloadRegeln, "true");
+                } else {
+                    echo "ERROR: Winkel muss zwischen -18 und 10 liegen.";
+                }
+            }
             #############################################################################################
 
 
@@ -423,6 +454,9 @@ if (file_exists($path_to_hardware_config)) {
                 $SonneRunter = $rules['sonne']['runter'];
                 $SonneHoch = $rules['sonne']['hoch'];
                 $Luftreduziert = $rules['luftreduziert'];
+                $WinkelMorgens = $rules['morgens']['sonnenwinkel'] ?? -6;
+                $WinkelStrasse = $rules['abends']['sonnenwinkel_strasse'] ?? -6;
+                $WinkelGarten = $rules['abends']['sonnenwinkel_garten'] ?? -0.833;
 
                 echo "$eineVariable";
                 echo "$eineAndereVar";
@@ -478,7 +512,38 @@ if (file_exists($path_to_hardware_config)) {
                         <input placeholder='true / false' name='LuftReduzieren' value='" . htmlspecialchars($Luftreduziert) . "'>
                         <button type='Submit'>Absenden</button>
                     </form>
-                    
+                    <hr style='margin: 20px 0;'>
+                    <h3>Sonnenstand-Winkel</h3>
+                    <div class='card' style='background-color: #f5f5dc; padding: 12px; margin-bottom: 15px;'>
+                        <b>&#9432; Vordefinierte Sonnenwinkel (Referenz):</b><br>
+                        <table style='margin-top: 8px; border-collapse: collapse;'>
+                            <tr><td style='padding: 2px 12px 2px 0;'><b>-0.833&deg;</b></td><td>Sonnenauf-/untergang (Oberkante Sonne am Horizont)</td></tr>
+                            <tr><td style='padding: 2px 12px 2px 0;'><b>-6&deg;</b></td><td>B&uuml;rgerliche D&auml;mmerung &ndash; man kann noch ohne Licht lesen</td></tr>
+                            <tr><td style='padding: 2px 12px 2px 0;'><b>-12&deg;</b></td><td>Nautische D&auml;mmerung &ndash; Horizont noch sichtbar</td></tr>
+                            <tr><td style='padding: 2px 12px 2px 0;'><b>-18&deg;</b></td><td>Astronomische D&auml;mmerung &ndash; vollst&auml;ndige Dunkelheit</td></tr>
+                        </table>
+                        <br>
+                        <small>Negative Werte = Sonne unter dem Horizont. Je kleiner (negativer) der Wert, desto dunkler ist es.<br>
+                        Beispiel: Bei <b>-6&deg;</b> ist es schon recht dunkel, bei <b>-0.833&deg;</b> geht die Sonne gerade unter.</small>
+                    </div>
+
+                    <form action='?page=editRules' method='POST'>
+                        <label>Sonnenwinkel Morgens (Rolladen hoch)</label>
+                        <input type='number' step='0.1' min='-18' max='10' name='sonnenwinkelMorgens' value='" . htmlspecialchars($WinkelMorgens) . "'>
+                        <button type='Submit'>Absenden</button>
+                    </form>
+
+                    <form action='?page=editRules' method='POST'>
+                        <label>Sonnenwinkel Abends Stra&szlig;e (Rolladen runter)</label>
+                        <input type='number' step='0.1' min='-18' max='10' name='sonnenwinkelStrasse' value='" . htmlspecialchars($WinkelStrasse) . "'>
+                        <button type='Submit'>Absenden</button>
+                    </form>
+
+                    <form action='?page=editRules' method='POST'>
+                        <label>Sonnenwinkel Abends Garten (Rolladen runter)</label>
+                        <input type='number' step='0.1' min='-18' max='10' name='sonnenwinkelGarten' value='" . htmlspecialchars($WinkelGarten) . "'>
+                        <button type='Submit'>Absenden</button>
+                    </form>                    
                 ";
             } 
             # Startseite
