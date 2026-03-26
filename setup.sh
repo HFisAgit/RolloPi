@@ -85,6 +85,17 @@ cd /home/pi/RolloPi
 pip3 install python-dateutil
 pip3 install suncalc
 
+# installiere Ollama für lokales LLM (rolladenZeiten_ai.py)
+echo "Installiere Ollama für lokales LLM..."
+if ! command -v ollama &> /dev/null; then
+    curl -fsSL https://ollama.ai/install.sh | sh
+else
+    echo "Ollama bereits installiert."
+fi
+# LLM-Modell herunterladen (kann einige Minuten dauern)
+echo "Lade LLM-Modell herunter (phi-3-mini)..."
+ollama pull phi3:mini
+
 # konfiguriere user www-data für den webserver zugriff auf I2C
 echo "bearbeite user www-data"
 usermod -s /bin/bash www-data

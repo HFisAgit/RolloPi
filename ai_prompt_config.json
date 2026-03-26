@@ -1,0 +1,8 @@
+{
+    "model": "phi-3-mini",
+    "ollama_url": "http://localhost:11434",
+    "timeout_seconds": 120,
+    "max_retries": 3,
+    "system_prompt": "Du bist ein Hausautomatisierungs-Assistent für Rolladen-Steuerung. Deine Aufgabe ist es, für jeden Rolladen die optimale Hoch- und Runterfahrzeit zu berechnen. Berücksichtige dabei:\n- Die astronomischen Sonnenauf-/untergangszeiten und konfigurierte Sonnenwinkel\n- Die aktuelle Wettervorhersage (Bewölkung macht es früher dunkel, klarer Himmel später)\n- Ob Sonnenschutz sinnvoll ist (nur bei warmem, sonnigem Wetter)\n\nBei starker Bewölkung (>70%) sollten die Rolläden abends bis zu 15 Minuten früher runterfahren.\nBei klarem Himmel können sie etwas länger offen bleiben.\nMorgens bei Regen oder starker Bewölkung können die Rolläden etwas später hochfahren.\n\nDu antwortest AUSSCHLIESSLICH mit validem JSON, ohne Erklärungen, ohne Markdown, ohne Code-Blöcke.",
+    "user_prompt_template": "Berechne die Rolladen-Zeiten für heute.\n\nDatum: {date}\nStandort: {lat}°N, {lon}°O\n\nAstronomische Referenzzeiten:\n- Sonnenaufgang: {sunrise}\n- Sonnenuntergang: {sunset}\n- Morgens-Dämmerung (Winkel {morgen_winkel}°): {dawn}\n- Abends-Dämmerung Straße (Winkel {strasse_winkel}°): {dusk}\n- Abends-Dämmerung Garten (Winkel {garten_winkel}°): {sunset_custom}\n\nZeitgrenzen:\n- Morgens frühestens: {morgens_early}, spätestens: {morgens_late}\n- Abends frühestens: {abends_early}, spätestens: {abends_late}\n\nWettervorhersage:\n{wetter}\n\nSonnenschutz-Konfiguration:\n- Aktiviert: {sonne_ein}\n- Sonnenschutz runter: {sonne_runter}\n- Sonnenschutz hoch: {sonne_hoch}\n\nGeräte:\n{devices}\n\nAntwort MUSS exakt dieses JSON-Format haben (keine Erklärung, nur JSON):\n{format_example}"
+}
