@@ -1,0 +1,9 @@
+[Unit]
+Description=Rolladen Zeiten berechnen
+After=network.target
+
+[Service]
+Type=oneshot
+User=pi
+WorkingDirectory=/home/pi/RolloPi
+ExecStart=/usr/bin/python3 /home/pi/RolloPi/rolladenZeiten.py

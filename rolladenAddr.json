@@ -1,17 +1,58 @@
 {
-    "devices": {
-        "sunset": [
-            {"name": "Kueche", "channel": "EGN", "address": "0x0d"},
-            {"name": "WC", "channel": "EGN", "address": "0x0e"},
-            {"name": "WC_bug", "channel": "EGN", "address": "0x0f"},
-            {"name": "Bad", "channel": "OGN", "address": "0x01"},
-            {"name": "Schlafzimmer", "channel": "OGN", "address": "0x02"}
-        ],
-        "dusk": [
-            {"name": "Wohnzimmer", "channel": "EGS", "address": "0x0c"},
-            {"name": "Terassentür", "channel": "EGS", "address": "0x0b"},
-            {"name": "Yogazimmer", "channel": "OGS", "address": "0x03"},
-            {"name": "Puzzlezimmer", "channel": "OGS", "address": "0x04"}
-        ]
-    }
+    "devices": [
+        {
+            "name": "Kueche",
+            "channel": "EGN",
+            "address": "0x0d",
+            "gruppe": "sunset"
+        },
+        {
+            "name": "WC",
+            "channel": "EGN",
+            "address": "0x0e",
+            "gruppe": "sunset"
+        },
+        {
+            "name": "WC_bug",
+            "channel": "EGN",
+            "address": "0x0f",
+            "gruppe": "sunset"
+        },
+        {
+            "name": "Bad",
+            "channel": "OGN",
+            "address": "0x01",
+            "gruppe": "sunset"
+        },
+        {
+            "name": "Schlafzimmer",
+            "channel": "OGN",
+            "address": "0x02",
+            "gruppe": "sunset"
+        },
+        {
+            "name": "Wohnzimmer",
+            "channel": "EGS",
+            "address": "0x0c",
+            "gruppe": "dusk"
+        },
+        {
+            "name": "Terassentür",
+            "channel": "EGS",
+            "address": "0x0b",
+            "gruppe": "dusk"
+        },
+        {
+            "name": "Yogazimmer",
+            "channel": "OGS",
+            "address": "0x03",
+            "gruppe": "dusk"
+        },
+        {
+            "name": "Puzzlezimmer",
+            "channel": "OGS",
+            "address": "0x04",
+            "gruppe": "dusk"
+        }
+    ]
 }
