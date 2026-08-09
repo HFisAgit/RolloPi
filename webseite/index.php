@@ -48,6 +48,55 @@ if (file_exists($path_to_hardware_config)) {
         $house_number = $hardware_config['house_number'] ?? '8';
     }
 }
+
+function ensure_parent_directory_exists($path) {
+    $directory = dirname($path);
+    if ($directory !== '' && !is_dir($directory)) {
+        @mkdir($directory, 0777, true);
+    }
+}
+
+function apply_missing_ramdisk_defaults(&$rules, &$suntimes, &$tempvals, &$lightvals) {
+    $rules = is_array($rules) ? $rules : [];
+    $suntimes = is_array($suntimes) ? $suntimes : [];
+    $tempvals = is_array($tempvals) ? $tempvals : [];
+    $lightvals = is_array($lightvals) ? $lightvals : [];
+
+    $rules = array_replace_recursive([
+        'morgens' => [
+            'early' => '06:00:00',
+            'late' => '08:00:00',
+            'sonnenwinkel' => -6,
+        ],
+        'abends' => [
+            'early' => '19:00:00',
+            'late' => '21:00:00',
+            'sonnenwinkel_strasse' => -6,
+            'sonnenwinkel_garten' => -0.833,
+        ],
+        'sonne' => [
+            'ein' => 'false',
+            'runter' => '20:00:00',
+            'hoch' => '07:00:00',
+        ],
+        'luftreduziert' => 'false',
+    ], $rules);
+
+    $suntimes = array_replace_recursive([
+        'sunrise' => 'n/a',
+        'sunset' => 'n/a',
+    ], $suntimes);
+
+    $tempvals = array_replace_recursive([
+        'sensor1' => ['temperature' => null],
+        'sensor2' => ['temperature' => null],
+    ], $tempvals);
+
+    $lightvals = array_replace_recursive([
+        'raw' => null,
+        'voltage' => null,
+    ], $lightvals);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -91,6 +140,9 @@ if (file_exists($path_to_hardware_config)) {
             <?php
             $headline = 'Herzlich willkommen';
             $rules = [];
+            $suntimes = [];
+            $tempvals = [];
+            $lightvals = [];
             $luefter = [];
             $rollaeden = [];
             $path_to_regeln = "/home/pi/RolloPi/ramdisk/regeln.json";
@@ -98,6 +150,7 @@ if (file_exists($path_to_hardware_config)) {
             $path_to_rolladiono = "cd /home/pi/RolloPi && python3 -m drivers.Rolladoino";
             $path_to_suntimes = "/home/pi/RolloPi/ramdisk/suntimes.json";
             $path_to_temperaturVals = "/home/pi/RolloPi/ramdisk/temperatures.json";
+            $path_to_lightVals = "/home/pi/RolloPi/ramdisk/light.json";
 
             # lade Rolladen-Konfiguration aus der bereits geladenen Hardware-Config
             if (isset($hardware_config) && isset($hardware_config['rollaeden'])) {
@@ -114,7 +167,7 @@ if (file_exists($path_to_hardware_config)) {
             else {
                 $log->error('Suntimes Datei nicht gefunden: ' . $path_to_suntimes);
             }
-            
+
             # lade Temperaturwerte aus Datei
             if (file_exists($path_to_temperaturVals)) {
                 $texttemp = file_get_contents($path_to_temperaturVals, true);
@@ -137,6 +190,8 @@ if (file_exists($path_to_hardware_config)) {
                 $log->error('Regeln Datei nicht gefunden: ' . $path_to_regeln);
             }
 
+            apply_missing_ramdisk_defaults($rules, $suntimes, $tempvals, $lightvals);
+
             # Speichere neue Regeln falls nötig
             if (isset($_POST['morningearly'])) {
                 if (($timestamp = strtotime($_POST['morningearly'])) === false) {
@@ -144,9 +199,9 @@ if (file_exists($path_to_hardware_config)) {
                 } else {
                     echo "Jetzt speichern!";
                     $rules['morgens']['early'] = date('G:i:s', $timestamp);
-                    print_r($rules);
-                    # ich habe keine schreibrechte... glaube ich
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 }
             }
@@ -156,7 +211,9 @@ if (file_exists($path_to_hardware_config)) {
                 } else {
                     echo "Jetzt speichern!";
                     $rules['morgens']['late'] = date('G:i:s', $timestamp);
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 }
             }
@@ -166,7 +223,9 @@ if (file_exists($path_to_hardware_config)) {
                 } else {
                     echo "Jetzt speichern!";
                     $rules['abends']['early'] = date('G:i:s', $timestamp);
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 }
             }
@@ -176,7 +235,9 @@ if (file_exists($path_to_hardware_config)) {
                 } else {
                     echo "Jetzt speichern!";
                     $rules['abends']['late'] = date('G:i:s', $timestamp);
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 }
             }
@@ -184,12 +245,16 @@ if (file_exists($path_to_hardware_config)) {
                 if ($_POST['Sonne'] == "True" || $_POST['Sonne'] == "true") {
                     echo "Jetzt speichern!";
                     $rules['sonne']['ein'] = "true";
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 } else if ($_POST['Sonne'] == "False" || $_POST['Sonne'] == "false") {
                     echo "Jetzt speichern!";
                     $rules['sonne']['ein'] = "false";
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 } else {
                     echo 'ERROR kein gültiger boolscher Ausdruck!';
@@ -201,7 +266,9 @@ if (file_exists($path_to_hardware_config)) {
                 } else {
                     echo "Jetzt speichern!";
                     $rules['sonne']['runter'] = date('G:i:s', $timestamp);
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 }
             }
@@ -211,7 +278,9 @@ if (file_exists($path_to_hardware_config)) {
                 } else {
                     echo "Jetzt speichern!";
                     $rules['sonne']['hoch'] = date('G:i:s', $timestamp);
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 }
             }
@@ -219,12 +288,16 @@ if (file_exists($path_to_hardware_config)) {
                 if ($_POST['LuftReduzieren'] == "True" || $_POST['LuftReduzieren'] == "true") {
                     echo "Jetzt speichern!";
                     $rules['luftreduziert'] = "true";
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 } else if ($_POST['LuftReduzieren'] == "False" || $_POST['LuftReduzieren'] == "false") {
                     echo "Jetzt speichern!";
                     $rules['luftreduziert'] = "false";
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 } else {
                     echo 'ERROR kein gültiger boolscher Ausdruck!';
@@ -234,7 +307,9 @@ if (file_exists($path_to_hardware_config)) {
                 if ($winkel >= -18 && $winkel <= 10) {
                     echo "Jetzt speichern!";
                     $rules['morgens']['sonnenwinkel'] = $winkel;
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 } else {
                     echo "ERROR: Winkel muss zwischen -18 und 10 liegen.";
@@ -245,7 +320,9 @@ if (file_exists($path_to_hardware_config)) {
                 if ($winkel >= -18 && $winkel <= 10) {
                     echo "Jetzt speichern!";
                     $rules['abends']['sonnenwinkel_strasse'] = $winkel;
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 } else {
                     echo "ERROR: Winkel muss zwischen -18 und 10 liegen.";
@@ -256,7 +333,9 @@ if (file_exists($path_to_hardware_config)) {
                 if ($winkel >= -18 && $winkel <= 10) {
                     echo "Jetzt speichern!";
                     $rules['abends']['sonnenwinkel_garten'] = $winkel;
+                    ensure_parent_directory_exists($path_to_regeln);
                     file_put_contents($path_to_regeln, json_encode($rules, JSON_PRETTY_PRINT));
+                    ensure_parent_directory_exists($path_to_reloadRegeln);
                     file_put_contents($path_to_reloadRegeln, "true");
                 } else {
                     echo "ERROR: Winkel muss zwischen -18 und 10 liegen.";
@@ -286,7 +365,6 @@ if (file_exists($path_to_hardware_config)) {
             echo '<h1>' . $headline . '</h1>';
 
             # Lade Licht-Sensor Werte
-            $path_to_lightVals = "/home/pi/RolloPi/ramdisk/light.json";
             if (file_exists($path_to_lightVals)) {
                 $textlight = file_get_contents($path_to_lightVals, true);
                 $lightvals = json_decode($textlight, true);
@@ -298,6 +376,8 @@ if (file_exists($path_to_hardware_config)) {
                 $log->error('Lightwerte Datei nicht gefunden: ' . $path_to_lightVals);
                 $lightvals = [];
             }
+
+            apply_missing_ramdisk_defaults($rules, $suntimes, $tempvals, $lightvals);
 
             # Zeige Temperatur- und Lichtwerte (falls vorhanden)
             echo "<div class='card'>";
