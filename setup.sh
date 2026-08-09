@@ -103,6 +103,10 @@ sudo usermod -a -G i2c www-data
 
 # kopiere webseite
 echo "kopiere webseite"
+# Entferne die Standard-Apache-Startseite, damit index.php des Projekts beim Aufruf der Pi-IP genutzt wird.
+if [ -f /var/www/html/index.html ]; then
+    sudo rm -f /var/www/html/index.html
+fi
 sudo cp ./webseite/index.php /var/www/html/
 sudo cp ./webseite/style.css /var/www/html/
 sudo mkdir -p /var/www/html/img/

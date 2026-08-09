@@ -2,9 +2,13 @@
     "house_name": "Brentanoweg",
     "house_number": "8",
     "rollaeden": [
-        { "name": "Küche", "pos": "0", "floor": "EGN", "i2c": "0x21" },
-        { "name": "HWR", "pos": "1", "floor": "EGS", "i2c": "0x22" },
-        { "name": "Schlafzimmer", "pos": "2", "floor": "OGN", "i2c": "0x20" },
-        { "name": "Bad", "pos": "3", "floor": "OGS", "i2c": "0x1f" }
+        { "name": "Küche", "pos": "0", "floor": "EGN", "i2c": "0x0d" },
+        { "name": "WC", "pos": "1", "floor": "EGN", "i2c": "0x0e" },
+        { "name": "WohnzimmerFenster", "pos": "3", "floor": "EGS", "i2c": "0x0c" },
+        { "name": "WohnzimmerTür", "pos": "4", "floor": "EGS", "i2c": "0x0b" },
+        { "name": "Yoga", "pos": "5", "floor": "OGS", "i2c": "0x22" },
+        { "name": "Puzzle", "pos": "6", "floor": "OGS", "i2c": "0x00" },
+        { "name": "Schlafzimmer", "pos": "7", "floor": "OGN", "i2c": "0x00" },
+        { "name": "Bad", "pos": "8", "floor": "OGN", "i2c": "0x00" }
     ]
 }
