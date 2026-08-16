@@ -18,7 +18,10 @@ import sys
 channel_array=[0b00000001,0b00000010,0b00000100,0b00001000,0b00010000,0b00100000,0b01000000,0b10000000]
 
 def I2C_setup(multiplexer,i2c_channel_setup):
+    print("select Bus 1 on SMBUS")
     bus = smbus.SMBus(1)
+
+    print("selecting channel", i2c_channel_setup, "on multiplexer", hex(multiplexer))
     try:
         bus.write_byte(multiplexer, channel_array[i2c_channel_setup])
     except OSError as err:
