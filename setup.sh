@@ -115,16 +115,69 @@ sudo cp ./webseite/hardware_config_Brentanoweg.json /var/www/html/hardware_confi
 sudo cp ./webseite/hardware_config_AmLohrein.json /var/www/html/hardware_config_AmLohrein.json
 sudo cp -r ./webseite/vendor/ /var/www/html/vendor/
 
-#RAM-Disk für webseite
+# RAM-Disk für Webseite und Sensor-Dienste
 mkdir -p /home/pi/RolloPi/ramdisk
-FSTAB_LINE='tmpfs /home/pi/RolloPi/ramdisk tmpfs size=100M,mode=0775 0 0' 
+WWW_DATA_GID=$(getent group www-data | cut -d: -f3)
+if [ -z "$WWW_DATA_GID" ]; then
+    echo "Gruppe www-data wurde nicht gefunden."
+    exit 1
+fi
+FSTAB_LINE="tmpfs /home/pi/RolloPi/ramdisk tmpfs size=100M,uid=pi,gid=$WWW_DATA_GID,mode=2775 0 0"
 
-# Prüfen, ob die Zeile bereits existiert 
-if ! grep -Fxq "$FSTAB_LINE" /etc/fstab; then 
-    echo "RAM-Disk Eintrag nicht gefunden – füge hinzu." 
-    sudo echo "$FSTAB_LINE" | sudo tee -a /etc/fstab > /dev/null 
-else 
-    echo "RAM-Disk Eintrag bereits vorhanden." 
+# Vorhandene Einträge für diesen Mountpoint ersetzen, damit keine doppelten
+# fstab-Einträge entstehen und die Rechte auch bei erneuter Ausführung stimmen.
+if ! (
+    set -o pipefail
+    awk -v mountpoint="/home/pi/RolloPi/ramdisk" -v replacement="$FSTAB_LINE" '
+        $2 == mountpoint {
+            if (!updated) {
+                print replacement
+                updated = 1
+            }
+            next
+        }
+        { print }
+        END {
+            if (!updated) {
+                print replacement
+            }
+        }
+    ' /etc/fstab | sudo tee /etc/fstab.tmp >/dev/null
+); then
+    echo "Fehler beim Aktualisieren von /etc/fstab."
+    exit 1
+fi
+if ! sudo chmod --reference=/etc/fstab /etc/fstab.tmp ||
+   ! sudo chown --reference=/etc/fstab /etc/fstab.tmp ||
+   ! sudo mv /etc/fstab.tmp /etc/fstab; then
+    echo "Fehler beim Installieren des RAM-Disk-Eintrags in /etc/fstab."
+    sudo rm -f /etc/fstab.tmp
+    exit 1
+fi
+
+# RAM-Disk einhängen, damit Initialdateien nicht im darunterliegenden
+# Verzeichnis statt im flüchtigen Dateisystem angelegt werden.
+if ! mountpoint -q /home/pi/RolloPi/ramdisk; then
+    if ! sudo mount /home/pi/RolloPi/ramdisk; then
+        echo "Fehler beim Einhängen der RAM-Disk."
+        exit 1
+    fi
+fi
+
+# Rechte auch für die aktuell eingehängte RAM-Disk sofort setzen.
+if ! sudo chown pi:www-data /home/pi/RolloPi/ramdisk ||
+   ! sudo chmod 2775 /home/pi/RolloPi/ramdisk; then
+    echo "Fehler beim Setzen der RAM-Disk-Berechtigungen."
+    exit 1
+fi
+
+# Regeln mit den eingecheckten Defaults initialisieren, aber keine bereits
+# vorhandenen Einstellungen überschreiben.
+if [ ! -e /home/pi/RolloPi/ramdisk/regeln.json ]; then
+    if ! sudo install -o pi -g www-data -m 0664 ./regeln.json /home/pi/RolloPi/ramdisk/regeln.json; then
+        echo "Fehler beim Initialisieren von ramdisk/regeln.json."
+        exit 1
+    fi
 fi
 
 # konfiguriere systemd für autostart

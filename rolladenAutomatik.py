@@ -108,7 +108,7 @@ logger.info('Starte RolladenAutomatik')
 clearReloadFile = False
 
 # initialisire Program
-path_regeln = './regeln.json'
+path_regeln = './ramdisk/regeln.json'
 config_path = 'rolladenAddr.json'
 # note: log file removed; using systemd/journald via stdout/stderr
 path_reloadRegeln = './ramdisk/reloadRegeln.txt'

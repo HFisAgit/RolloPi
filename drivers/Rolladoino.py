@@ -5,7 +5,13 @@ import sys
 import time
 import smbus
 import argparse
+import os
 from . import TCA9548A
+
+
+def log(message):
+    print(f"[Rolladoino] {message}", flush=True)
+
 
 def setFloor(bus, floor):
     I2C_address = 0x70
@@ -22,78 +28,90 @@ def setFloor(bus, floor):
         subbus=-1
 
     if(subbus >= 0):
-        print('set floor')
+        log(f"Multiplexer-Kanal {subbus} für Etage {floor} auswählen")
        # bus.write_byte(I2C_address,subbus)
         TCA9548A.I2C_setup(I2C_address,subbus) # reaktivate when seperate buses
         time.sleep(0.1)
+        log(f"Multiplexer-Kanal {subbus} ausgewählt")
 
     return
 
 def SendSingleByte(bus, address, SendByte):
 
-  print("Schreiben...")
+  log(f"I2C write_byte: Adresse={hex(address)}, Wert={hex(SendByte)}")
   bus.write_byte(address, SendByte)
 
-  print("Lesen...")
+  log(f"I2C write_byte erfolgreich; Antwort von {hex(address)} lesen")
   ret = bus.read_byte(address)
+  log(f"I2C-Leseantwort von {hex(address)}: {hex(ret)}")
 
-  return ret 
+  return ret
 
 
 def SendTwoBytes(bus, address, Command, Argument):
   
-  print("Schreiben...")
+  log(f"I2C write_byte_data: Adresse={hex(address)}, Befehl={hex(Command)}, Argument={hex(Argument)}")
   bus.write_byte_data(address, Command, Argument) 
 
-  print("Lesen...")
+  log(f"I2C write_byte_data erfolgreich; Antwort von {hex(address)} lesen")
   ret = bus.read_byte(address)
+  log(f"I2C-Leseantwort von {hex(address)}: {hex(ret)}")
 
   return ret
 
 def main(cmd, floor, addr, param=0):
+    log(f"Öffne SMBus 1; Befehl={cmd}, Etage={floor}, Adresse={hex(addr)}, Parameter={param}")
     bus = smbus.SMBus(1)    # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
+    log("SMBus 1 geöffnet")
 
     if(cmd=="CMD_Rolladen_Hoch"):
-        print("CMD_Rolladen_Hoch")
+        log("Führe CMD_Rolladen_Hoch aus")
         setFloor(bus, floor)
         SendSingleByte(bus, addr, 0x00)
+        log("CMD_Rolladen_Hoch abgeschlossen")
         return None
 
     elif(cmd=="CMD_Rolladen_Runter"):
-        print("CMD_Rolladen_Runter")
+        log("Führe CMD_Rolladen_Runter aus")
         setFloor(bus, floor)
         SendSingleByte(bus, addr, 0x06)
+        log("CMD_Rolladen_Runter abgeschlossen")
         return None
 
     elif(cmd=="CMD_Rolladen_Stop"):
-        print("CMD_Rolladen_Stop")
+        log("Führe CMD_Rolladen_Stop aus")
         setFloor(bus, floor)
         SendSingleByte(bus, addr, 0x08)
+        log("CMD_Rolladen_Stop abgeschlossen")
         return None
 
     elif(cmd=="CMD_Luefter"):
-        print("CMD_Luefter")
+        log("Führe CMD_Luefter aus")
         setFloor(bus, floor)
         SendTwoBytes(bus, addr, 0x12, param)
+        log("CMD_Luefter abgeschlossen")
         return None
 
     elif(cmd=="CMD_Read_Pos"):
-        print("CMD_Read_Pos")
+        log("Führe CMD_Read_Pos aus")
         setFloor(bus, floor)
         pos = SendSingleByte(bus, addr, 0x60)
+        log(f"CMD_Read_Pos abgeschlossen: Position={pos}")
         return pos
 
     elif(cmd=="CMD_Summer"):
-        print("CMD_Summer")
+        log("Führe CMD_Summer aus")
         setFloor(bus, floor)
         SendTwoBytes(bus, addr, 0x13, param)
+        log("CMD_Summer abgeschlossen")
         return None
 
     else:
-        print("ERROR: Unknown command.")
+        log(f"ERROR: Unbekannter Befehl: {cmd}")
         return None
 
 if __name__ == "__main__":
+    log(f"Prozess gestartet: executable={sys.executable}, cwd={os.getcwd()}, euid={os.geteuid()}, argv={sys.argv!r}")
     parser = argparse.ArgumentParser()
     parser.add_argument("floor", help="Das stockwerk auf dem sich das Device befindet", choices=['EGN', 'EGS', 'OGN', 'OGS'])
     parser.add_argument("address", help="Die Adresse des I2C device", type=lambda x: int(x,16))
@@ -102,7 +120,9 @@ if __name__ == "__main__":
     parser.add_argument("--summer", help="Summer an (2) oder aus (0)", type=int, choices=[0,1,2])
     args = parser.parse_args()
     
+    log("Öffne SMBus 1 für CLI-Start")
     bus = smbus.SMBus(1)    # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
+    log("SMBus 1 für CLI-Start geöffnet")
     
     # Wähle den richtigen Parameter basierend auf dem Befehl
     if args.command == "CMD_Summer":
@@ -112,7 +132,7 @@ if __name__ == "__main__":
     else:
         param = args.stufe if args.stufe is not None else 0
     
+    log(f"Argumente geparst: floor={args.floor}, address={hex(args.address)}, command={args.command}, parameter={param}")
     main(args.command, args.floor, args.address, param)
     #print(args.command)args.floor, args.address, args.stufe) # !! What if stufe is empty???
-    print(args.command)
-
+    log(f"CLI-Befehl {args.command} beendet")

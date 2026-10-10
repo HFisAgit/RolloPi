@@ -18,16 +18,26 @@ import sys
 channel_array=[0b00000001,0b00000010,0b00000100,0b00001000,0b00010000,0b00100000,0b01000000,0b10000000]
 
 def I2C_setup(multiplexer,i2c_channel_setup):
-    print("select Bus 1 on SMBUS")
+    if not isinstance(i2c_channel_setup, int) or not 0 <= i2c_channel_setup < len(channel_array):
+        raise ValueError(f"Ungültiger TCA9548A-Kanal: {i2c_channel_setup!r}")
+
+    print("[TCA9548A] Öffne SMBus 1", flush=True)
     bus = smbus.SMBus(1)
 
-    print("selecting channel", i2c_channel_setup, "on multiplexer", hex(multiplexer))
+    print(f"[TCA9548A] Wähle Kanal {i2c_channel_setup} (Maske {hex(channel_array[i2c_channel_setup])}) "
+          f"am Multiplexer {hex(multiplexer)}", flush=True)
     try:
         bus.write_byte(multiplexer, channel_array[i2c_channel_setup])
+        print(f"[TCA9548A] Kanal {i2c_channel_setup} erfolgreich ausgewählt", flush=True)
     except OSError as err:
-        status = bus.read_byte(multiplexer)  # log
-        print("TCA9548A - I2C Bus Error:", err)
-        print("TCA9548A I2C channel status:", bin(status))
+        print(f"[TCA9548A] I2C-Schreibfehler an {hex(multiplexer)} beim Wählen von Kanal "
+              f"{i2c_channel_setup}: {err!r}", flush=True)
+        try:
+            status = bus.read_byte(multiplexer)
+            print(f"[TCA9548A] Multiplexer-Status nach Fehler: {bin(status)}", flush=True)
+        except OSError as status_error:
+            print(f"[TCA9548A] Statusabfrage ebenfalls fehlgeschlagen: {status_error!r}", flush=True)
+        raise
 
     time.sleep(0.01)
 

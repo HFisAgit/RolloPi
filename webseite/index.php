@@ -449,20 +449,36 @@ function apply_missing_ramdisk_defaults(&$rules, &$suntimes, &$tempvals, &$light
                 // Use escapeshellarg to avoid shell injection
                 if ($deviceId && $floor && $richtung) {
                     $command_with_parameter = $path_to_rolladiono . " " . escapeshellarg($floor) . " " . escapeshellarg($deviceId) . " " . escapeshellarg($richtung);
+                    $output = [];
+                    $started_at = microtime(true);
+                    $log->info('Starte Rolladenbefehl', [
+                        'device' => $_GET['device'] ?? null,
+                        'floor' => $floor,
+                        'address' => $deviceId,
+                        'direction' => $richtung,
+                        'command' => $command_with_parameter,
+                        'working_directory' => '/home/pi/RolloPi',
+                        'php_uid' => function_exists('posix_geteuid') ? posix_geteuid() : null,
+                        'php_version' => PHP_VERSION,
+                    ]);
                     # capture stderr as well so we see errors from the script
                     exec($command_with_parameter . ' 2>&1', $output, $retval);
+                    $execution_details = [
+                        'device' => $_GET['device'] ?? null,
+                        'floor' => $floor,
+                        'address' => $deviceId,
+                        'direction' => $richtung,
+                        'command' => $command_with_parameter,
+                        'output' => $output,
+                        'output_line_count' => count($output),
+                        'output_empty' => count($output) === 0,
+                        'return_value' => $retval,
+                        'duration_ms' => round((microtime(true) - $started_at) * 1000, 2),
+                    ];
                     if ($retval === 0) {
-                        $log->info('Rolladenbefehl ausgeführt', [
-                            'command' => $command_with_parameter,
-                            'output' => $output,
-                            'return_value' => $retval
-                        ]);
+                        $log->info('Rolladenbefehl ausgeführt', $execution_details);
                     } else {
-                        $log->error('Rolladenbefehl fehlgeschlagen', [
-                            'command' => $command_with_parameter,
-                            'output' => $output,
-                            'return_value' => $retval
-                        ]);
+                        $log->error('Rolladenbefehl fehlgeschlagen', $execution_details);
                     }
                 } else {
                     $log->error('Fehlende Parameter für Rolladenbefehl', [
