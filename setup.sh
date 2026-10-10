@@ -1,6 +1,15 @@
 #!/bin/bash
+set -e
+
 # This script sets up the development environment
-#!/bin/bash
+
+if [ "$EUID" -ne 0 ]; then
+    if ! command -v sudo >/dev/null 2>&1; then
+        echo "Bitte mit sudo ausführen (sudo wurde nicht gefunden)."
+        exit 1
+    fi
+    exec sudo -- "$0" "$@"
+fi
 
 # ist RolloPi vorhanden?
 if [ "$PWD" = "/home/pi/RolloPi" ]; then
@@ -68,8 +77,7 @@ echo "update apt und installiere pakete"
 if [ "$DO_APT" -eq 1 ]; then
     sudo apt update
     sudo apt install -y git vim python3 
-    sudo apt install -y python3-smbus python3-dev i2c-tools
-    sudo apt install -y python3-pip
+    sudo apt install -y python3-smbus python3-dev python3-venv i2c-tools acl
     sudo apt install -y php
     sudo apt install -y composer
 else
@@ -77,23 +85,24 @@ else
 fi
 
 # installiere benötigte logging fuer php module
-cd /home/pi/RolloPi/webseite
-composer require monolog/monolog
-cd /home/pi/RolloPi
+sudo -u pi composer require --working-dir=/home/pi/RolloPi/webseite monolog/monolog
 
-# installiere benötigte python module
-pip3 install python-dateutil
-pip3 install suncalc
+# Installiere Python-Abhängigkeiten in einer venv. Systempakete wie smbus
+# bleiben über --system-site-packages für die venv verfügbar.
+if [ ! -x /home/pi/RolloPi/.venv/bin/python ]; then
+    sudo -u pi /usr/bin/python3 -m venv --system-site-packages /home/pi/RolloPi/.venv
+fi
+sudo -u pi /home/pi/RolloPi/.venv/bin/python -m pip install python-dateutil suncalc
 
 # konfiguriere user www-data für den webserver zugriff auf I2C
 echo "bearbeite user www-data"
-usermod -s /bin/bash www-data
 echo "Füge www-data zur i2c-Gruppe hinzu und erstelle udev-Regel für i2c-Geräte"
 if ! getent group i2c >/dev/null 2>&1; then
     echo "Gruppe 'i2c' existiert nicht, erstelle sie"
-    sudo groupadd i2c || true
+    groupadd i2c
 fi
-sudo usermod -a -G i2c www-data
+usermod -a -G i2c www-data
+setfacl -m u:www-data:--x /home/pi
 
 # Erstelle udev-Regel, die i2c-Geräte für Gruppe i2c lesbar/ Schreibbar macht
 #UDEV_RULE="/etc/udev/rules.d/99-i2c.rules"
@@ -195,6 +204,7 @@ sudo chmod 644 /etc/systemd/system/klingelUeberwachung.service
 sudo chmod 644 /etc/systemd/system/tempSensoren.service
 sudo chmod 644 /etc/systemd/system/lichtSensor.service
 sudo systemctl daemon-reload
+sudo systemctl restart apache2
 sudo systemctl enable rolladenAutomatik.service
 sudo systemctl enable luefterAutomatik.service
 sudo systemctl enable fritzboxCallMonitor.service

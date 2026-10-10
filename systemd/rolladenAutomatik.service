@@ -6,7 +6,7 @@ After=network.target
 User=pi
 WorkingDirectory=/home/pi/RolloPi
 ExecStartPre=/bin/sh -c 'test -e /home/pi/RolloPi/ramdisk/regeln.json || install -m 0664 /home/pi/RolloPi/regeln.json /home/pi/RolloPi/ramdisk/regeln.json'
-ExecStart=/usr/bin/python3 /home/pi/RolloPi/rolladenAutomatik.py
+ExecStart=/home/pi/RolloPi/.venv/bin/python /home/pi/RolloPi/rolladenAutomatik.py
 Restart=always
 
 [Install]

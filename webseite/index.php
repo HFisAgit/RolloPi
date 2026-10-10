@@ -147,7 +147,7 @@ function apply_missing_ramdisk_defaults(&$rules, &$suntimes, &$tempvals, &$light
             $rollaeden = [];
             $path_to_regeln = "/home/pi/RolloPi/ramdisk/regeln.json";
             $path_to_reloadRegeln = '/home/pi/RolloPi/ramdisk/reloadRegeln.txt';
-            $path_to_rolladiono = "cd /home/pi/RolloPi && python3 -m drivers.Rolladoino";
+            $path_to_rolladiono = "cd /home/pi/RolloPi && /home/pi/RolloPi/.venv/bin/python -m drivers.Rolladoino";
             $path_to_suntimes = "/home/pi/RolloPi/ramdisk/suntimes.json";
             $path_to_temperaturVals = "/home/pi/RolloPi/ramdisk/temperatures.json";
             $path_to_lightVals = "/home/pi/RolloPi/ramdisk/light.json";

@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=pi
 WorkingDirectory=/home/pi/RolloPi
-ExecStart=/usr/bin/python3 /home/pi/RolloPi/luefterAutomatik.py
+ExecStart=/home/pi/RolloPi/.venv/bin/python /home/pi/RolloPi/luefterAutomatik.py
 Restart=always
 
 [Install]
