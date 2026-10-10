@@ -60,6 +60,11 @@ def SendTwoBytes(bus, address, Command, Argument):
   return ret
 
 def main(cmd, floor, addr, param=0):
+    if isinstance(addr, str):
+        addr = int(addr, 0)
+    if not isinstance(addr, int) or isinstance(addr, bool) or not 0 <= addr <= 0x7f:
+        raise ValueError(f"Ungültige I2C-Adresse: {addr!r}")
+
     log(f"Öffne SMBus 1; Befehl={cmd}, Etage={floor}, Adresse={hex(addr)}, Parameter={param}")
     bus = smbus.SMBus(1)    # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
     log("SMBus 1 geöffnet")
