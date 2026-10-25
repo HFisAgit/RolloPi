@@ -93,8 +93,8 @@ def get_sun_time_for_angle(date_utc, lng, lat, target_angle_deg, rising=True):
 
 # Funktion zum Steuern der Lüfter
 # time can be 'sunset' or 'dusk'
-def control_shutter(time, pos):
-    for device in config['devices'][time]:
+def control_shutter(daytime, pos):
+    for device in config['devices'][daytime]:
         if pos == "hoch":
             Rolladoino.main('CMD_Rolladen_Hoch', device['channel'], device['address'])
         elif pos == "runter":
@@ -144,7 +144,7 @@ while True:
     #startzeitutc = time.time().now(datetime.timezone.utc) # new variant
     startzeit = datetime.now() # local time
 
-    logger.info(str(startzeit) + " new Roll loop!")
+    #logger.info(str(startzeit) + " new Roll loop!")
 
     # check if reload of regeln is triggered
     try:
