@@ -95,10 +95,21 @@ def get_sun_time_for_angle(date_utc, lng, lat, target_angle_deg, rising=True):
 # time can be 'sunset' or 'dusk'
 def control_shutter(daytime, pos):
     for device in config['devices'][daytime]:
-        if pos == "hoch":
-            Rolladoino.main('CMD_Rolladen_Hoch', device['channel'], device['address'])
-        elif pos == "runter":
-            Rolladoino.main('CMD_Rolladen_Runter', device['channel'], device['address'])
+        if pos == "runter" and not device.get('auto_down', True):
+            logger.info(f"Automatisches Runterfahren für {device['name']} deaktiviert")
+            continue
+        try:
+            if pos == "hoch":
+                Rolladoino.main('CMD_Rolladen_Hoch', device['channel'], device['address'])
+            elif pos == "runter":
+                Rolladoino.main('CMD_Rolladen_Runter', device['channel'], device['address'])
+        except OSError:
+            logger.exception(
+                "I2C-Fehler beim Fahren von %s (Etage %s, Adresse %s); fahre mit dem nächsten Rollladen fort",
+                device.get('name', 'unbekannt'),
+                device['channel'],
+                device['address'],
+            )
         time.sleep(1)
 
 
@@ -117,6 +128,7 @@ path_suntimes = './ramdisk/suntimes.json'
 #path_rolladoino = '/home/harald/daten/BackupUSB/fries/Simulator.py'
 
 heuteSchonZeitenAktualisiert = False
+letzterTagesReset = None
  
 # https://www.latlong.net/
 lon = 8.504561
@@ -169,8 +181,9 @@ while True:
 
     # reset heuteSchonZeitenAktualisiert wenn ein neuer Tag anbricht.
     # Nachts um vier, für den Fall, dass Sommerzeit anfängt oder endet. 
-    if( startzeit.hour == 4 & startzeit.minute == 0  & startzeit.second < 15 ):
+    if (startzeit.hour == 4 and startzeit.minute == 0 and letzterTagesReset != startzeit.date()):
         heuteSchonZeitenAktualisiert = False
+        letzterTagesReset = startzeit.date()
 
     # prüfe, ob heute schon die Sonnen auf und Untergangszeiten geholt wprden
     if heuteSchonZeitenAktualisiert == False:

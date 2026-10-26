@@ -22,6 +22,8 @@ Die PHP, css Dateien und der img Ordner müsssen nach /var/www/html kopiert werd
 automatik.py wird über systemd automatisch gestartet.
 Es liest die regeln.json ein und läuft dann in einer endlosschleife. Alle 2 Sekunden wird überprüft, ob zu dieser Zeit eine aktion nötig ist.
 
+In `rolladenAddr.json` kann pro Rollladen mit `"auto_down": false` das automatische Runterfahren deaktiviert werden. Das gilt für Abendautomatik und Sonnenschutz; das morgendliche Hochfahren bleibt aktiv. Nicht gesetzte Werte erlauben das Runterfahren weiterhin. Nach einer Änderung muss der Dienst neu gestartet werden.
+
 
 #Rasbian OS
 
@@ -81,4 +83,3 @@ TODO:
 # Sonnensensor in betrieb nehmen
 # Telefon Signal überwachen und Ton ausgeben
 # Klingel Signal überwachen und Ton ausgeben - ok
-
