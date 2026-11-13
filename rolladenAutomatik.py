@@ -12,7 +12,7 @@ import logging
 import sys
 
 from suncalc import get_position, get_times
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from time import mktime
 from dateutil import tz
 
@@ -50,9 +50,9 @@ def loadRegeln():
 def datetime2local(dto:datetime, s_tz: str='Europe/Berlin'):
     from_zone = tz.gettz('UTC')
     to_zone = tz.gettz(s_tz)
-    _local = dto.replace(tzinfo=from_zone)
-    # and convert to local time
-    return _local.astimezone(to_zone)
+    if dto.tzinfo is None:
+        dto = dto.replace(tzinfo=from_zone)
+    return dto.astimezone(to_zone)
 
 def get_sun_time_for_angle(date_utc, lng, lat, target_angle_deg, rising=True):
     """
@@ -139,6 +139,7 @@ lat = 49.809986
 #loadRegeln()
 with open(path_regeln, 'r') as regelnFile:
     data = json.load(regelnFile)
+regeln_mtime_ns = os.stat(path_regeln).st_mtime_ns
 
 
 # Konfiguration laden
@@ -152,20 +153,18 @@ delta_time = timedelta(seconds=10)
 #while heuteSchonZeitenAktualisiert == False:
 while True:
     # hole aktuelle Zeit
-    startzeitutc = datetime.utcnow() # deprecated ...
-    #startzeitutc = time.time().now(datetime.timezone.utc) # new variant
+    startzeitutc = datetime.now(timezone.utc)
     startzeit = datetime.now() # local time
 
     #logger.info(str(startzeit) + " new Roll loop!")
 
     # check if reload of regeln is triggered
+    regelnGeaendert = os.stat(path_regeln).st_mtime_ns != regeln_mtime_ns
     try:
         with open(path_reloadRegeln, 'r') as fr:
             if("true" == fr.readline()):
-                with open(path_regeln, 'r') as regelnFile:
-                    data = json.load(regelnFile)
+                regelnGeaendert = True
                 clearReloadFile = True
-                heuteSchonZeitenAktualisiert = False  # Sonnenzeiten mit neuen Winkeln neu berechnen
     except FileNotFoundError:
         # Datei anlegen, falls sie fehlt
         with open(path_reloadRegeln, 'w') as fw:
@@ -177,6 +176,12 @@ while True:
         with open(path_reloadRegeln, 'w') as fw:
             fw.write(" ")
             clearReloadFile = False
+
+    if regelnGeaendert:
+        with open(path_regeln, 'r') as regelnFile:
+            data = json.load(regelnFile)
+        regeln_mtime_ns = os.stat(path_regeln).st_mtime_ns
+        heuteSchonZeitenAktualisiert = False  # Sonnenzeiten mit neuen Winkeln neu berechnen
 
 
     # reset heuteSchonZeitenAktualisiert wenn ein neuer Tag anbricht.
